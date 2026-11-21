@@ -1,9 +1,16 @@
-"""Block-size selection: autotune search space, shared-memory pruning, defaults."""
+"""Block-size selection: autotune search spaces, shared-memory pruning, defaults.
+
+All three tuned kernels (forward, dK/dV, dQ) share one search space over
+BLOCK_M (query tile), BLOCK_N (key tile), num_warps and num_stages. They differ
+in which tiles stay resident for the whole program and which are streamed, and
+that is what the per-kernel shared-memory estimates below encode.
+"""
 
 from __future__ import annotations
 
 import itertools
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import triton
@@ -28,55 +35,91 @@ def autotune_enabled() -> bool:
     return not interpreting() and os.environ.get("FLASH_ATTN_TRITON_AUTOTUNE", "1") != "0"
 
 
+# Defaults fit in 48 KB of shared memory for every supported head dim, so they
+# are valid on any GPU Triton supports.
+
+
 def default_forward_config(head_dim: int) -> KernelConfig:
-    # Fits in 48 KB of shared memory for every supported head dim, so it is
-    # valid on any GPU Triton supports.
     if head_dim >= 128:
-        return KernelConfig(64, 32, num_warps=4, num_stages=1)
-    return KernelConfig(64, 64, num_warps=4, num_stages=1)
+        return KernelConfig(64, 32, num_warps=4)
+    return KernelConfig(64, 64, num_warps=4)
 
 
-def forward_configs() -> list[triton.Config]:
+def default_dkdv_config(head_dim: int) -> KernelConfig:
+    if head_dim >= 128:
+        return KernelConfig(32, 32, num_warps=2)
+    return KernelConfig(32, 64, num_warps=4)
+
+
+def default_dq_config(head_dim: int) -> KernelConfig:
+    if head_dim >= 128:
+        return KernelConfig(32, 32, num_warps=2)
+    return KernelConfig(64, 32, num_warps=4)
+
+
+def search_space() -> list[triton.Config]:
     return [
         triton.Config({"BLOCK_M": bm, "BLOCK_N": bn}, num_warps=w, num_stages=s)
         for bm, bn, w, s in itertools.product([32, 64, 128], [32, 64, 128], [2, 4, 8], [1, 2, 3])
     ]
 
 
-def estimate_forward_smem(block_m: int, block_n: int, head_dim: int, stages: int, elem: int) -> int:
-    """Conservative shared-memory estimate for one forward program.
+# Shared-memory estimates, in elements. Each is conservative: rejecting a config
+# that would have fit only loses a candidate, while accepting one that does not
+# fit costs a compile that Triton then discards. Matrices that are converted from
+# the accumulator layout to an MMA operand layout (P, dS) round-trip through
+# shared memory and are counted too.
 
-    Q is staged once, K and V are buffered `stages` deep by the software
-    pipeline, and P is round-tripped through shared memory to convert it from
-    the accumulator layout to an MMA operand layout. Rejecting a config that
-    would have fit only loses a candidate; accepting one that does not fit costs
-    a compile that Triton then discards.
+
+def smem_forward(bm: int, bn: int, d: int, stages: int) -> int:
+    # Q resident; K, V streamed; P converted.
+    return bm * d + 2 * bn * d * stages + bm * bn
+
+
+def smem_dkdv(bm: int, bn: int, d: int, stages: int) -> int:
+    # K, V resident; Q, dO streamed; P^T and dS^T converted.
+    return 2 * bn * d + 2 * bm * d * stages + 2 * bm * bn
+
+
+def smem_dq(bm: int, bn: int, d: int, stages: int) -> int:
+    # Q, dO resident; K, V streamed; P and dS converted.
+    return 2 * bm * d + 2 * bn * d * stages + 2 * bm * bn
+
+
+def make_pruner(smem_elems: Callable[[int, int, int, int], int], rows_key: str, tensor_arg: str):
+    """Build an early_config_prune hook.
+
+    rows_key names the tile dimension that indexes the rows of the kernel's
+    accumulator (BLOCK_M for forward and dQ, BLOCK_N for dK/dV).
     """
-    q = block_m * head_dim
-    kv = 2 * block_n * head_dim * max(stages, 1)
-    p = block_m * block_n
-    return (q + kv + p) * elem
+
+    def prune(configs, named_args, **kwargs):
+        args = {**named_args, **kwargs}
+        d = args["HEAD_DIM"]
+        t = args[tensor_arg]
+        limit = max_shared_memory(t.device)
+        # Multi-stage pipelining of global loads is built on cp.async, which
+        # first appeared in sm80. On Turing, extra stages only consume shared
+        # memory.
+        max_stages = 3 if compute_capability(t.device) >= (8, 0) else 1
+        kept = []
+        for c in configs:
+            bm, bn = c.kwargs["BLOCK_M"], c.kwargs["BLOCK_N"]
+            if c.num_stages > max_stages:
+                continue
+            if smem_elems(bm, bn, d, c.num_stages) * t.element_size() > limit:
+                continue
+            # With more than one warp per 16 accumulator rows, warps also split
+            # the other tile dimension, and every row reduction then needs a
+            # cross-warp exchange through shared memory.
+            if c.num_warps > c.kwargs[rows_key] // 16:
+                continue
+            kept.append(c)
+        return kept or configs[:1]
+
+    return prune
 
 
-def prune_forward(configs, named_args, **kwargs):
-    args = {**named_args, **kwargs}
-    head_dim = args["HEAD_DIM"]
-    q = args["q_ptr"]
-    limit = max_shared_memory(q.device)
-    # Multi-stage pipelining of global loads is built on cp.async, which first
-    # appeared in sm80. On Turing, extra stages only consume shared memory.
-    max_stages = 3 if compute_capability(q.device) >= (8, 0) else 1
-    kept = []
-    for c in configs:
-        bm, bn = c.kwargs["BLOCK_M"], c.kwargs["BLOCK_N"]
-        if c.num_stages > max_stages:
-            continue
-        if estimate_forward_smem(bm, bn, head_dim, c.num_stages, q.element_size()) > limit:
-            continue
-        # With more than one warp per 16 query rows, warps also split the key
-        # dimension of S, and the row max and row sum then need a cross-warp
-        # reduction through shared memory on every iteration.
-        if c.num_warps > bm // 16:
-            continue
-        kept.append(c)
-    return kept or configs[:1]
+prune_forward = make_pruner(smem_forward, "BLOCK_M", "q_ptr")
+prune_dkdv = make_pruner(smem_dkdv, "BLOCK_N", "k_ptr")
+prune_dq = make_pruner(smem_dq, "BLOCK_M", "q_ptr")

@@ -23,8 +23,8 @@ from ._autotune import (
     KernelConfig,
     autotune_enabled,
     default_forward_config,
-    forward_configs,
     prune_forward,
+    search_space,
 )
 
 # Kernels may only read module globals that are declared constexpr.
@@ -170,7 +170,7 @@ def _attn_fwd(
 # giving one search per power-of-two length range. Being non-constexpr, it does
 # not force a separate compilation per bucket.
 _attn_fwd_tuned = triton.autotune(
-    configs=forward_configs(),
+    configs=search_space(),
     key=["HEAD_DIM", "IS_CAUSAL", "seq_bucket"],
     prune_configs_by={"early_config_prune": prune_forward},
 )(_attn_fwd)
