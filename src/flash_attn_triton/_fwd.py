@@ -27,7 +27,8 @@ from ._autotune import (
     prune_forward,
 )
 
-NEG_INF = float("-inf")
+# Kernels may only read module globals that are declared constexpr.
+NEG_INF = tl.constexpr(float("-inf"))
 
 
 @triton.jit
