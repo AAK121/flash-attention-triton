@@ -1,8 +1,8 @@
 # flash-attention-triton
 
-FlashAttention-2 written from scratch in Triton. Work in progress: the forward
-kernel and its tests are in place; the backward kernel, autotuned benchmarks and
-the training demo follow.
+FlashAttention-2 written from scratch in Triton: forward and backward kernels
+behind a `torch.autograd.Function`. Work in progress: benchmarks, GQA, sliding
+window and the training demo follow.
 
 ## Install
 
@@ -23,6 +23,7 @@ q = torch.randn(2, 8, 1024, 64, device="cuda", dtype=torch.float16)
 k = torch.randn(2, 8, 1024, 64, device="cuda", dtype=torch.float16)
 v = torch.randn(2, 8, 1024, 64, device="cuda", dtype=torch.float16)
 out = flash_attention(q, k, v, causal=True)
+out.sum().backward()  # if q, k, v require grad
 ```
 
 Inputs are shaped `(batch, heads, seq, head_dim)` and may have arbitrary strides.
@@ -34,7 +35,7 @@ With `causal=True` and unequal lengths, query `i` attends keys `j <= i + seq_k -
 | --- | --- |
 | Forward, causal and non-causal, head_dim 16/32/64/128 | done |
 | Arbitrary and unequal Q/KV lengths, strided inputs | done |
-| Backward (dQ, dK, dV) | planned |
+| Backward (dQ, dK, dV), deterministic, no atomics | done |
 | GQA/MQA, sliding window | planned |
 | Benchmarks, training demo | planned |
 
