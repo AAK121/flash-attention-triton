@@ -54,7 +54,7 @@ def main() -> int:
         "print([torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])\"",
         "versions.txt",
     )
-    rc = sh(f"cd {src} && {sys.executable} -m pytest tests -q -rs --durations=10", "pytest_gpu.txt")
+    rc = sh(f"cd {src} && {sys.executable} -m pytest tests -v -rs --durations=10", "pytest_gpu.txt")
     return rc
 
 
