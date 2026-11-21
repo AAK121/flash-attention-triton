@@ -1,54 +1,82 @@
-"""Autotune search spaces and shared-memory pruning."""
+"""Block-size selection: autotune search space, shared-memory pruning, defaults."""
 
 from __future__ import annotations
 
 import itertools
+import os
+from dataclasses import dataclass
 
 import triton
 
-from ._device import interpreting, max_shared_memory
+from ._device import compute_capability, interpreting, max_shared_memory
 
 
-def _configs(block_ms, block_ns, warps, stages):
+@dataclass(frozen=True)
+class KernelConfig:
+    block_m: int
+    block_n: int
+    num_warps: int = 4
+    num_stages: int = 1
+
+
+def autotune_enabled() -> bool:
+    """Autotuning is on by default; FLASH_ATTN_TRITON_AUTOTUNE=0 uses fixed defaults.
+
+    The test suite turns it off so that hundreds of shapes do not each pay for a
+    search, and exercises block sizes explicitly instead.
+    """
+    return not interpreting() and os.environ.get("FLASH_ATTN_TRITON_AUTOTUNE", "1") != "0"
+
+
+def default_forward_config(head_dim: int) -> KernelConfig:
+    # Fits in 48 KB of shared memory for every supported head dim, so it is
+    # valid on any GPU Triton supports.
+    if head_dim >= 128:
+        return KernelConfig(64, 32, num_warps=4, num_stages=1)
+    return KernelConfig(64, 64, num_warps=4, num_stages=1)
+
+
+def forward_configs() -> list[triton.Config]:
     return [
         triton.Config({"BLOCK_M": bm, "BLOCK_N": bn}, num_warps=w, num_stages=s)
-        for bm, bn, w, s in itertools.product(block_ms, block_ns, warps, stages)
+        for bm, bn, w, s in itertools.product([32, 64, 128], [32, 64, 128], [2, 4, 8], [1, 2, 3])
     ]
 
 
-def forward_configs():
-    if interpreting():
-        return _configs([32], [32], [1], [1])
-    return _configs([32, 64, 128], [32, 64, 128], [2, 4, 8], [1, 2, 3])
-
-
 def estimate_forward_smem(block_m: int, block_n: int, head_dim: int, stages: int, elem: int) -> int:
-    """Upper-bound estimate of shared memory for one program.
+    """Conservative shared-memory estimate for one forward program.
 
-    The Q tile is staged once, K and V tiles are multi-buffered by the software
-    pipeline. The accumulator and softmax statistics live in registers. The
-    estimate is deliberately conservative: a config that is rejected here but
-    would have fit only costs a missed candidate, whereas one that is accepted
-    and does not fit aborts the launch.
+    Q is staged once, K and V are buffered `stages` deep by the software
+    pipeline, and P is round-tripped through shared memory to convert it from
+    the accumulator layout to an MMA operand layout. Rejecting a config that
+    would have fit only loses a candidate; accepting one that does not fit costs
+    a compile that Triton then discards.
     """
-    q = block_m * head_dim * elem
-    kv = 2 * block_n * head_dim * elem * max(stages, 1)
-    return q + kv
+    q = block_m * head_dim
+    kv = 2 * block_n * head_dim * max(stages, 1)
+    p = block_m * block_n
+    return (q + kv + p) * elem
 
 
 def prune_forward(configs, named_args, **kwargs):
     args = {**named_args, **kwargs}
     head_dim = args["HEAD_DIM"]
-    elem = args["q_ptr"].element_size()
-    limit = max_shared_memory(args["q_ptr"].device)
+    q = args["q_ptr"]
+    limit = max_shared_memory(q.device)
+    # Multi-stage pipelining of global loads is built on cp.async, which first
+    # appeared in sm80. On Turing, extra stages only consume shared memory.
+    max_stages = 3 if compute_capability(q.device) >= (8, 0) else 1
     kept = []
     for c in configs:
         bm, bn = c.kwargs["BLOCK_M"], c.kwargs["BLOCK_N"]
-        if estimate_forward_smem(bm, bn, head_dim, c.num_stages, elem) > limit:
+        if c.num_stages > max_stages:
             continue
-        # The MMA layout assigns at least 16 query rows to a warp; more warps
-        # than that leave warps idle and only add synchronization cost.
-        if c.num_warps > max(1, bm // 16) * 2:
+        if estimate_forward_smem(bm, bn, head_dim, c.num_stages, q.element_size()) > limit:
+            continue
+        # With more than one warp per 16 query rows, warps also split the key
+        # dimension of S, and the row max and row sum then need a cross-warp
+        # reduction through shared memory on every iteration.
+        if c.num_warps > bm // 16:
             continue
         kept.append(c)
     return kept or configs[:1]

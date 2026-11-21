@@ -25,22 +25,29 @@ def bf16_supported(device: torch.device | None = None) -> bool:
     return compute_capability(device) >= (8, 0)
 
 
+def _device_index(device: torch.device | None) -> int:
+    if device is None or device.index is None:
+        return torch.cuda.current_device()
+    return device.index
+
+
 def max_shared_memory(device: torch.device | None = None) -> int:
-    """Largest dynamic shared-memory allocation a single block may request, in bytes."""
+    """Largest shared-memory allocation a single program may request, in bytes.
+
+    Asks Triton's driver first, since that is the limit Triton itself checks
+    when it rejects a compiled kernel.
+    """
     if not torch.cuda.is_available():
         return 48 * 1024
-    props = torch.cuda.get_device_properties(device)
+    idx = _device_index(device)
+    try:
+        import triton
+
+        return int(triton.runtime.driver.active.utils.get_device_properties(idx)["max_shared_mem"])
+    except Exception:
+        pass
+    props = torch.cuda.get_device_properties(idx)
     opt_in = getattr(props, "shared_memory_per_block_optin", None)
     if opt_in:
         return int(opt_in)
-    major, minor = props.major, props.minor
-    # Turing 64 KB, Ampere GA100 163 KB, GA10x 99 KB, Hopper 227 KB.
-    if (major, minor) == (7, 5):
-        return 64 * 1024
-    if (major, minor) == (8, 0):
-        return 163 * 1024
-    if major == 8:
-        return 99 * 1024
-    if major >= 9:
-        return 227 * 1024
     return 48 * 1024

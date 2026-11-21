@@ -23,7 +23,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["slow: large shapes, skipped under the Triton interpreter"]
 
 [tool.ruff]
 line-length = 100
