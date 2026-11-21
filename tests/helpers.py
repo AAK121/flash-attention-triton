@@ -45,11 +45,14 @@ def low_precision_reference(q, k, v, causal, sm_scale=None):
     return attention_reference(q, k, v, causal=causal, sm_scale=sm_scale, compute_dtype=q.dtype)
 
 
-def reference_grads(q, k, v, do, causal, sm_scale=None, compute_dtype=torch.float32):
+def reference_grads(
+    q, k, v, do, causal, sm_scale=None, compute_dtype=torch.float32, window=None
+):
     """(o, [dq, dk, dv]) of the naive implementation computed in compute_dtype."""
     leaves = [t.detach().to(compute_dtype).requires_grad_() for t in (q, k, v)]
     o = attention_reference(
-        *leaves, causal=causal, sm_scale=sm_scale, compute_dtype=compute_dtype
+        *leaves, causal=causal, sm_scale=sm_scale, window_size=window,
+        compute_dtype=compute_dtype,
     )
     o.backward(do.to(compute_dtype))
     return o.detach(), [t.grad for t in leaves]
@@ -62,15 +65,15 @@ def kernel_grads(fn, q, k, v, do, **kwargs):
     return o.detach(), [t.grad for t in leaves]
 
 
-def assert_grads_close(q, k, v, do, causal, grads, dtype, what, sm_scale=None):
-    _, ref = reference_grads(q, k, v, do, causal, sm_scale)
-    _, low = reference_grads(q, k, v, do, causal, sm_scale, compute_dtype=dtype)
+def assert_grads_close(q, k, v, do, causal, grads, dtype, what, sm_scale=None, window=None):
+    _, ref = reference_grads(q, k, v, do, causal, sm_scale, window=window)
+    _, low = reference_grads(q, k, v, do, causal, sm_scale, compute_dtype=dtype, window=window)
     # dQ and dK are sums of P * (dP - delta) terms that cancel exactly in some
     # cases (a single visible key gives dQ = dK = 0), so their rounding floor is
     # set by the gradient scale of the whole problem rather than by their own
     # maximum.
     scale = max(r.abs().max().item() for r in ref)
     for name, g, r, lo in zip(("dq", "dk", "dv"), grads, ref, low):
-        assert g.dtype == dtype
+        assert g.dtype == dtype and g.shape == r.shape
         assert torch.isfinite(g.float()).all(), f"{what}: non-finite {name}"
         assert_close_to_reference(g, r, lo, dtype, f"{what} {name}", scale=scale)
