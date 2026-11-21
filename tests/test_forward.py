@@ -124,8 +124,9 @@ def test_block_configs(cfg, nq, nk, causal, device, require_size):
 
 
 @pytest.mark.skipif(not HAS_CUDA or INTERPRET, reason="autotuning needs a GPU")
-@pytest.mark.parametrize("d", [64, 128])
-@pytest.mark.parametrize("causal", [False, True])
+# One case only: each search compiles every surviving config, which takes
+# several minutes. head_dim 128 is where the shared-memory pruning matters on T4.
+@pytest.mark.parametrize("d,causal", [(128, True)])
 def test_autotuned_path(d, causal, device, monkeypatch):
     monkeypatch.setenv("FLASH_ATTN_TRITON_AUTOTUNE", "1")
     q, k, v = make_qkv(2, 4, 1000, 1000, d, torch.float16, device, seed=9)
