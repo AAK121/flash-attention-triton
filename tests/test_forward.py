@@ -6,8 +6,10 @@ import pytest
 import torch
 
 from flash_attn_triton import attention_reference, flash_attention
+from flash_attn_triton._autotune import KernelConfig
 from flash_attn_triton._fwd import attn_forward
 
+from .conftest import HAS_CUDA, INTERPRET
 from .helpers import assert_close_to_reference, low_precision_reference, make_qkv
 
 DTYPES = [torch.float16, torch.bfloat16]
@@ -71,21 +73,74 @@ def test_rows_without_visible_keys_are_zero(device, require_size):
 def test_non_contiguous_inputs(causal, device, require_size):
     require_size(50)
     b, h, n, d = 2, 3, 50, 64
-    # (batch, seq, heads, dim) storage viewed as (batch, heads, seq, dim): the
-    # layout produced by a QKV projection before any .contiguous() call.
-    q, k, v = (
-        t.transpose(1, 2)
-        for t in make_qkv(b, n, h, h, d, torch.float16, device, seed=4)[:3]
-    )
-    assert not q.is_contiguous()
-    # A strided slice of a wider tensor, with a gap between rows.
-    wide = torch.randn(b, h, n, 2 * d, device=device).to(torch.float16)
-    v = wide[..., ::2]
-    assert v.stride(-1) == 2
+    g = torch.Generator().manual_seed(4)
+    # Q and K: (batch, seq, heads, dim) storage viewed as (batch, heads, seq, dim),
+    # the layout a fused QKV projection produces before any .contiguous().
+    q = torch.randn(b, n, h, d, generator=g).half().to(device).transpose(1, 2)
+    k = torch.randn(b, n, h, d, generator=g).half().to(device).transpose(1, 2)
+    # V: every other column of a wider tensor, so the head-dim stride is 2.
+    v = torch.randn(b, h, n, 2 * d, generator=g).half().to(device)[..., ::2]
+    assert not q.is_contiguous() and not k.is_contiguous() and v.stride(-1) == 2
     out = flash_attention(q, k, v, causal=causal)
     ref = attention_reference(q, k, v, causal=causal)
     low = low_precision_reference(q, k, v, causal)
     assert_close_to_reference(out, ref, low, torch.float16, "non-contiguous")
+
+
+# Unequal BLOCK_M and BLOCK_N are where the causal block bounds are easiest to
+# get wrong: the diagonal then crosses several key tiles of one query tile, or
+# one key tile spans several query tiles.
+BLOCK_CONFIGS = [
+    KernelConfig(16, 16, num_warps=1),
+    KernelConfig(16, 64, num_warps=1),
+    KernelConfig(64, 16, num_warps=4),
+    KernelConfig(32, 128, num_warps=2),
+    KernelConfig(128, 32, num_warps=8),
+    KernelConfig(64, 64, num_warps=4),
+]
+
+
+# Offsets nk - nq of 1 and -2 (mod 16) put the causal diagonal exactly on a tile
+# boundary, which is what an off-by-one in the loop bounds needs to show up.
+BLOCK_SHAPES = [
+    (1, 1), (37, 37), (130, 130), (20, 150), (150, 20), (127, 129),
+    (31, 48), (64, 129), (130, 128), (40, 54),
+]
+
+
+@pytest.mark.parametrize("cfg", BLOCK_CONFIGS, ids=lambda c: f"{c.block_m}x{c.block_n}")
+@pytest.mark.parametrize("causal", [False, True])
+@pytest.mark.parametrize("nq,nk", BLOCK_SHAPES)
+def test_block_configs(cfg, nq, nk, causal, device, require_size):
+    require_size(nq, nk)
+    q, k, v = make_qkv(1, 2, nq, nk, 32, torch.float16, device, seed=8)
+    out, lse2 = attn_forward(q, k, v, causal, None, config=cfg)
+    ref, lse_ref = attention_reference(q, k, v, causal=causal, return_lse=True)
+    low = low_precision_reference(q, k, v, causal)
+    assert_close_to_reference(out, ref, low, torch.float16, f"{cfg} nq={nq} nk={nk}")
+    visible = torch.isfinite(lse_ref)
+    assert torch.equal(torch.isfinite(lse2), visible)
+    assert (lse2[visible] * math.log(2.0) - lse_ref[visible]).abs().max().item() < 2e-3
+
+
+@pytest.mark.skipif(not HAS_CUDA or INTERPRET, reason="autotuning needs a GPU")
+@pytest.mark.parametrize("d", [64, 128])
+@pytest.mark.parametrize("causal", [False, True])
+def test_autotuned_path(d, causal, device, monkeypatch):
+    monkeypatch.setenv("FLASH_ATTN_TRITON_AUTOTUNE", "1")
+    q, k, v = make_qkv(2, 4, 1000, 1000, d, torch.float16, device, seed=9)
+    out = flash_attention(q, k, v, causal=causal)
+    ref = attention_reference(q, k, v, causal=causal)
+    low = low_precision_reference(q, k, v, causal)
+    assert_close_to_reference(out, ref, low, torch.float16, f"autotuned d={d}")
+
+
+def test_empty_sequences(device):
+    q, k, v = make_qkv(1, 2, 0, 5, 32, torch.float16, device)
+    assert flash_attention(q, k, v).shape == (1, 2, 0, 32)
+    q, k, v = make_qkv(1, 2, 5, 0, 32, torch.float16, device)
+    out, lse2 = attn_forward(q, k, v, False, None)
+    assert (out == 0).all() and torch.isinf(lse2).all()
 
 
 def test_custom_sm_scale(device, require_size):
@@ -125,3 +180,10 @@ def test_input_validation(device):
         flash_attention(q[..., :24], k[..., :24], v[..., :24])
     with pytest.raises(ValueError):
         flash_attention(q, k, v[:, :, :4])
+
+
+@pytest.mark.skipif(INTERPRET, reason="CPU tensors are valid in interpreter mode")
+def test_rejects_cpu_tensors():
+    q, k, v = make_qkv(1, 1, 8, 8, 32, torch.float16, torch.device("cpu"))
+    with pytest.raises(ValueError):
+        flash_attention(q, k, v)

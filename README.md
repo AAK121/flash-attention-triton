@@ -45,6 +45,9 @@ pytest                         # GPU
 TRITON_INTERPRET=1 pytest      # CPU, small shapes, fp16 only
 ```
 
+The suite runs with fixed block sizes (`FLASH_ATTN_TRITON_AUTOTUNE=0`) and covers
+block-size choices explicitly; one test exercises the autotuner on GPU.
+
 ## Results
 
 Benchmark numbers will be added after the scripts are run on the target

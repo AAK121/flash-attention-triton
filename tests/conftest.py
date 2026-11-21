@@ -5,7 +5,11 @@ import os
 import pytest
 import torch
 
-from flash_attn_triton._device import bf16_supported, interpreting
+# Fixed block sizes keep the suite fast and reproducible; block-size coverage
+# comes from test_block_configs, and test_autotuned_path covers the tuner.
+os.environ.setdefault("FLASH_ATTN_TRITON_AUTOTUNE", "0")
+
+from flash_attn_triton._device import bf16_supported, interpreting  # noqa: E402
 
 INTERPRET = interpreting()
 HAS_CUDA = torch.cuda.is_available()
@@ -44,5 +48,3 @@ def require_size():
             pytest.skip("sequence too long for the Triton interpreter")
     return check
 
-
-os.environ.setdefault("PYTHONHASHSEED", "0")
