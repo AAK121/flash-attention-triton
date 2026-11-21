@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import glob
 import os
+import shutil
 import subprocess
 import sys
 
@@ -39,7 +40,11 @@ def find_source() -> str:
 
 def main() -> int:
     os.makedirs(WORK, exist_ok=True)
-    src = find_source()
+    # /kaggle/input is read-only, and both the editable install and pytest's
+    # cache write next to the sources, so work on a copy.
+    src = "/tmp/flash-attn-triton"
+    shutil.rmtree(src, ignore_errors=True)
+    shutil.copytree(find_source(), src)
     sh("nvidia-smi", "nvidia_smi.txt")
     sh(f"{sys.executable} -m pip install --no-deps -q -e {src}")
     sh(f"{sys.executable} -m pip install -q pytest")
