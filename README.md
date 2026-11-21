@@ -1,8 +1,8 @@
 # flash-attention-triton
 
 FlashAttention-2 written from scratch in Triton: forward and backward kernels
-behind a `torch.autograd.Function`. Work in progress: benchmarks, GQA, sliding
-window and the training demo follow.
+behind a `torch.autograd.Function`, with grouped-query and sliding-window
+attention. Work in progress: benchmarks and the training demo follow.
 
 ## Install
 
@@ -26,8 +26,11 @@ out = flash_attention(q, k, v, causal=True)
 out.sum().backward()  # if q, k, v require grad
 ```
 
-Inputs are shaped `(batch, heads, seq, head_dim)` and may have arbitrary strides.
-With `causal=True` and unequal lengths, query `i` attends keys `j <= i + seq_k - seq_q`.
+Inputs are shaped `(batch, heads, seq, head_dim)` and may have arbitrary strides;
+`k` and `v` may have fewer heads than `q` (grouped-query attention). Query `i`
+attends keys `j` with `i + off - left <= j <= i + off + right`, `off = seq_k - seq_q`:
+`causal=True` sets `right = 0`, and `window_size=(left, right)` bounds either side
+(`-1` for unbounded).
 
 ## Status
 
@@ -36,7 +39,8 @@ With `causal=True` and unequal lengths, query `i` attends keys `j <= i + seq_k -
 | Forward, causal and non-causal, head_dim 16/32/64/128 | done |
 | Arbitrary and unequal Q/KV lengths, strided inputs | done |
 | Backward (dQ, dK, dV), deterministic, no atomics | done |
-| GQA/MQA, sliding window | planned |
+| GQA/MQA (`kv_heads` dividing `heads`), dK/dV summed over the group in-kernel | done |
+| Sliding window `window_size=(left, right)`, with tile skipping outside it | done |
 | Benchmarks, training demo | planned |
 
 ## Tests
