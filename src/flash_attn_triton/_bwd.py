@@ -40,6 +40,8 @@ from ._autotune import (
     prune_dq,
     search_space,
 )
+from ._fwd import window_args
+from ._masking import scan_range, window_mask
 
 NEG_INF = tl.constexpr(float("-inf"))
 POS_INF = tl.constexpr(float("inf"))
@@ -81,11 +83,12 @@ def _dkdv_inner(
     dk, dv, k, v,
     q_base, do_base, lse_base, delta_base,
     stride_qm, stride_qd, stride_dom, stride_dod,
-    qk_scale, col_idx, offs_d, Nq, causal_off,
+    qk_scale, col_idx, offs_d, Nq, off, left, right,
     lo, hi,
     BLOCK_M: tl.constexpr,
     MASKED: tl.constexpr,
-    IS_CAUSAL: tl.constexpr,
+    LIMIT_LEFT: tl.constexpr,
+    LIMIT_RIGHT: tl.constexpr,
 ):
     # Works in the transposed orientation (keys along rows) so that dK and dV
     # accumulate as (BLOCK_N, HEAD_DIM) tiles without a transpose per step.
@@ -111,9 +114,10 @@ def _dkdv_inner(
 
         qkT = tl.dot(k, tl.trans(q)) * qk_scale
         if MASKED:
-            keep = row_ok[None, :]
-            if IS_CAUSAL:
-                keep = keep & (col_idx[:, None] <= row_idx[None, :] + causal_off)
+            keep = window_mask(
+                row_ok[None, :], row_idx[None, :], col_idx[:, None],
+                off, left, right, LIMIT_LEFT, LIMIT_RIGHT,
+            )
             # Masking the logits rather than P keeps exp2 from overflowing on
             # hidden positions whose raw score exceeds the row's lse.
             qkT = tl.where(keep, qkT, NEG_INF)
@@ -136,10 +140,11 @@ def _attn_bwd_dkdv(
     stride_dkb, stride_dkh, stride_dkn, stride_dkd,
     stride_dvb, stride_dvh, stride_dvn, stride_dvd,
     stride_lb, stride_lh,
-    H, Nq, Nk, sm_scale,
+    Hk, GROUP, Nq, Nk, sm_scale, left, right,
     seq_bucket,
     HEAD_DIM: tl.constexpr,
-    IS_CAUSAL: tl.constexpr,
+    LIMIT_LEFT: tl.constexpr,
+    LIMIT_RIGHT: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
@@ -147,24 +152,19 @@ def _attn_bwd_dkdv(
     # the natural launch order already issues the heaviest programs first.
     start_n = tl.program_id(0)
     off_bh = tl.program_id(1)
-    off_b = (off_bh // H).to(tl.int64)
-    off_h = (off_bh % H).to(tl.int64)
-
-    q_base = q_ptr + off_b * stride_qb + off_h * stride_qh
-    do_base = do_ptr + off_b * stride_dob + off_h * stride_doh
-    lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh
-    delta_base = delta_ptr + off_b * stride_lb + off_h * stride_lh
+    off_b = (off_bh // Hk).to(tl.int64)
+    off_hk = (off_bh % Hk).to(tl.int64)
 
     col_idx = start_n * BLOCK_N + tl.arange(0, BLOCK_N)
     offs_d = tl.arange(0, HEAD_DIM)
     col_ok = col_idx < Nk
     k = tl.load(
-        k_ptr + off_b * stride_kb + off_h * stride_kh
+        k_ptr + off_b * stride_kb + off_hk * stride_kh
         + col_idx[:, None] * stride_kn + offs_d[None, :] * stride_kd,
         mask=col_ok[:, None], other=0.0,
     )
     v = tl.load(
-        v_ptr + off_b * stride_vb + off_h * stride_vh
+        v_ptr + off_b * stride_vb + off_hk * stride_vh
         + col_idx[:, None] * stride_vn + offs_d[None, :] * stride_vd,
         mask=col_ok[:, None], other=0.0,
     )
@@ -173,56 +173,48 @@ def _attn_bwd_dkdv(
     qk_scale = sm_scale * 1.4426950408889634
 
     # Padded key rows (col >= Nk) only produce dK/dV rows that are never
-    # stored, so the loop needs a mask only for query rows and the diagonal.
-    causal_off = Nk - Nq
-    end = tl.cdiv(Nq, BLOCK_M) * BLOCK_M
-    full_rows_end = (Nq // BLOCK_M) * BLOCK_M
-    first_col = start_n * BLOCK_N
-    if IS_CAUSAL:
-        # Query i sees key j when i >= j - causal_off. Queries before
-        # first_col - causal_off see none of this block and are skipped; from
-        # the first query that sees the last key of the block onward, every
-        # key is visible and no elementwise mask is needed.
-        lo = (tl.maximum(first_col - causal_off, 0) // BLOCK_M) * BLOCK_M
-        lo = tl.minimum(lo, end)
-        full_start = tl.cdiv(tl.maximum(first_col + BLOCK_N - 1 - causal_off, 0), BLOCK_M) * BLOCK_M
-        full_start = tl.minimum(tl.maximum(full_start, lo), end)
-    else:
-        lo = 0
-        full_start = 0
-
-    # [lo, full_start): diagonal blocks. [full_start, full_rows_end): interior.
-    # [max(full_start, full_rows_end), end): the ragged last query block.
-    dk, dv = _dkdv_inner(
-        dk, dv, k, v, q_base, do_base, lse_base, delta_base,
-        stride_qm, stride_qd, stride_dom, stride_dod,
-        qk_scale, col_idx, offs_d, Nq, causal_off,
-        lo, full_start,
-        BLOCK_M, True, IS_CAUSAL,
+    # stored, so the loops mask only query rows and the window.
+    off = Nk - Nq
+    lo, full_lo, full_hi, hi = scan_range(
+        start_n * BLOCK_N, Nq, -off, right, left,
+        BLOCK_N, BLOCK_M, LIMIT_RIGHT, LIMIT_LEFT,
     )
-    dk, dv = _dkdv_inner(
-        dk, dv, k, v, q_base, do_base, lse_base, delta_base,
-        stride_qm, stride_qd, stride_dom, stride_dod,
-        qk_scale, col_idx, offs_d, Nq, causal_off,
-        full_start, full_rows_end,
-        BLOCK_M, False, IS_CAUSAL,
-    )
-    dk, dv = _dkdv_inner(
-        dk, dv, k, v, q_base, do_base, lse_base, delta_base,
-        stride_qm, stride_qd, stride_dom, stride_dod,
-        qk_scale, col_idx, offs_d, Nq, causal_off,
-        tl.maximum(full_start, full_rows_end), end,
-        BLOCK_M, True, IS_CAUSAL,
-    )
+    for g in range(0, GROUP):
+        off_h = off_hk * GROUP + g
+        q_base = q_ptr + off_b * stride_qb + off_h * stride_qh
+        do_base = do_ptr + off_b * stride_dob + off_h * stride_doh
+        lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh
+        delta_base = delta_ptr + off_b * stride_lb + off_h * stride_lh
+        dk, dv = _dkdv_inner(
+            dk, dv, k, v, q_base, do_base, lse_base, delta_base,
+            stride_qm, stride_qd, stride_dom, stride_dod,
+            qk_scale, col_idx, offs_d, Nq, off, left, right,
+            lo, full_lo,
+            BLOCK_M, True, LIMIT_LEFT, LIMIT_RIGHT,
+        )
+        dk, dv = _dkdv_inner(
+            dk, dv, k, v, q_base, do_base, lse_base, delta_base,
+            stride_qm, stride_qd, stride_dom, stride_dod,
+            qk_scale, col_idx, offs_d, Nq, off, left, right,
+            full_lo, full_hi,
+            BLOCK_M, False, LIMIT_LEFT, LIMIT_RIGHT,
+        )
+        dk, dv = _dkdv_inner(
+            dk, dv, k, v, q_base, do_base, lse_base, delta_base,
+            stride_qm, stride_qd, stride_dom, stride_dod,
+            qk_scale, col_idx, offs_d, Nq, off, left, right,
+            full_hi, hi,
+            BLOCK_M, True, LIMIT_LEFT, LIMIT_RIGHT,
+        )
 
     dk = dk * sm_scale
     tl.store(
-        dk_ptr + off_b * stride_dkb + off_h * stride_dkh
+        dk_ptr + off_b * stride_dkb + off_hk * stride_dkh
         + col_idx[:, None] * stride_dkn + offs_d[None, :] * stride_dkd,
         dk.to(dk_ptr.dtype.element_ty), mask=col_ok[:, None],
     )
     tl.store(
-        dv_ptr + off_b * stride_dvb + off_h * stride_dvh
+        dv_ptr + off_b * stride_dvb + off_hk * stride_dvh
         + col_idx[:, None] * stride_dvn + offs_d[None, :] * stride_dvd,
         dv.to(dv_ptr.dtype.element_ty), mask=col_ok[:, None],
     )
@@ -233,11 +225,12 @@ def _dq_inner(
     dq, q, do, lse, delta,
     k_base, v_base,
     stride_kn, stride_kd, stride_vn, stride_vd,
-    qk_scale, row_idx, offs_d, Nk, causal_off,
+    qk_scale, row_idx, offs_d, Nk, off, left, right,
     lo, hi,
     BLOCK_N: tl.constexpr,
     MASKED: tl.constexpr,
-    IS_CAUSAL: tl.constexpr,
+    LIMIT_LEFT: tl.constexpr,
+    LIMIT_RIGHT: tl.constexpr,
 ):
     for start_n in range(lo, hi, BLOCK_N):
         start_n = tl.multiple_of(start_n, BLOCK_N)
@@ -255,9 +248,10 @@ def _dq_inner(
         qk = tl.dot(q, tl.trans(k)) * qk_scale
         if MASKED:
             # Unlike dK/dV, padded keys here would add to real dQ rows.
-            keep = col_ok[None, :]
-            if IS_CAUSAL:
-                keep = keep & (col_idx[None, :] <= row_idx[:, None] + causal_off)
+            keep = window_mask(
+                col_ok[None, :], row_idx[:, None], col_idx[None, :],
+                off, left, right, LIMIT_LEFT, LIMIT_RIGHT,
+            )
             qk = tl.where(keep, qk, NEG_INF)
         p = tl.math.exp2(qk - lse[:, None])
 
@@ -276,14 +270,15 @@ def _attn_bwd_dq(
     stride_dob, stride_doh, stride_dom, stride_dod,
     stride_dqb, stride_dqh, stride_dqm, stride_dqd,
     stride_lb, stride_lh,
-    H, Nq, Nk, sm_scale,
+    H, GROUP, Nq, Nk, sm_scale, left, right,
     seq_bucket,
     HEAD_DIM: tl.constexpr,
-    IS_CAUSAL: tl.constexpr,
+    LIMIT_LEFT: tl.constexpr,
+    LIMIT_RIGHT: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
-    if IS_CAUSAL:
+    if LIMIT_RIGHT and not LIMIT_LEFT:
         # Same load balancing as the forward: late query blocks are heaviest.
         start_m = tl.num_programs(0) - 1 - tl.program_id(0)
     else:
@@ -291,9 +286,10 @@ def _attn_bwd_dq(
     off_bh = tl.program_id(1)
     off_b = (off_bh // H).to(tl.int64)
     off_h = (off_bh % H).to(tl.int64)
+    off_hk = off_h // GROUP
 
-    k_base = k_ptr + off_b * stride_kb + off_h * stride_kh
-    v_base = v_ptr + off_b * stride_vb + off_h * stride_vh
+    k_base = k_ptr + off_b * stride_kb + off_hk * stride_kh
+    v_base = v_ptr + off_b * stride_vb + off_hk * stride_vh
 
     row_idx = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
     offs_d = tl.arange(0, HEAD_DIM)
@@ -316,30 +312,32 @@ def _attn_bwd_dq(
     dq = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
     qk_scale = sm_scale * 1.4426950408889634
 
-    # Identical block bounds to the forward kernel.
-    causal_off = Nk - Nq
-    first_row = start_m * BLOCK_M
-    if IS_CAUSAL:
-        full_end = tl.maximum(tl.minimum(first_row + causal_off + 1, Nk), 0)
-        hi = tl.maximum(tl.minimum(first_row + BLOCK_M + causal_off, Nk), 0)
-    else:
-        full_end = Nk
-        hi = Nk
-    full_hi = (full_end // BLOCK_N) * BLOCK_N
-
-    dq = _dq_inner(
-        dq, q, do, lse, delta, k_base, v_base,
-        stride_kn, stride_kd, stride_vn, stride_vd,
-        qk_scale, row_idx, offs_d, Nk, causal_off,
-        0, full_hi,
-        BLOCK_N, False, IS_CAUSAL,
+    # Identical tile bounds to the forward kernel.
+    off = Nk - Nq
+    lo, full_lo, full_hi, hi = scan_range(
+        start_m * BLOCK_M, Nk, off, left, right,
+        BLOCK_M, BLOCK_N, LIMIT_LEFT, LIMIT_RIGHT,
     )
     dq = _dq_inner(
         dq, q, do, lse, delta, k_base, v_base,
         stride_kn, stride_kd, stride_vn, stride_vd,
-        qk_scale, row_idx, offs_d, Nk, causal_off,
+        qk_scale, row_idx, offs_d, Nk, off, left, right,
+        lo, full_lo,
+        BLOCK_N, True, LIMIT_LEFT, LIMIT_RIGHT,
+    )
+    dq = _dq_inner(
+        dq, q, do, lse, delta, k_base, v_base,
+        stride_kn, stride_kd, stride_vn, stride_vd,
+        qk_scale, row_idx, offs_d, Nk, off, left, right,
+        full_lo, full_hi,
+        BLOCK_N, False, LIMIT_LEFT, LIMIT_RIGHT,
+    )
+    dq = _dq_inner(
+        dq, q, do, lse, delta, k_base, v_base,
+        stride_kn, stride_kd, stride_vn, stride_vd,
+        qk_scale, row_idx, offs_d, Nk, off, left, right,
         full_hi, hi,
-        BLOCK_N, True, IS_CAUSAL,
+        BLOCK_N, True, LIMIT_LEFT, LIMIT_RIGHT,
     )
 
     dq = dq * sm_scale
@@ -350,15 +348,17 @@ def _attn_bwd_dq(
     )
 
 
+_TUNE_KEY = ["HEAD_DIM", "LIMIT_LEFT", "LIMIT_RIGHT", "seq_bucket"]
+
 _attn_bwd_dkdv_tuned = triton.autotune(
     configs=search_space(),
-    key=["HEAD_DIM", "IS_CAUSAL", "seq_bucket"],
+    key=_TUNE_KEY,
     prune_configs_by={"early_config_prune": prune_dkdv},
 )(_attn_bwd_dkdv)
 
 _attn_bwd_dq_tuned = triton.autotune(
     configs=search_space(),
-    key=["HEAD_DIM", "IS_CAUSAL", "seq_bucket"],
+    key=_TUNE_KEY,
     prune_configs_by={"early_config_prune": prune_dq},
 )(_attn_bwd_dq)
 
@@ -366,16 +366,13 @@ _attn_bwd_dq_tuned = triton.autotune(
 _PREPROCESS_BLOCK_M = 64
 
 
-def _launch(kernel, tuned, config, default, grid_fn, args, head_dim, causal):
+def _launch(kernel, tuned, config, default, grid_fn, args, flags):
     if config is None and autotune_enabled():
-        tuned[lambda meta: grid_fn(meta["BLOCK_M"], meta["BLOCK_N"])](
-            *args, HEAD_DIM=head_dim, IS_CAUSAL=causal
-        )
+        tuned[lambda meta: grid_fn(meta["BLOCK_M"], meta["BLOCK_N"])](*args, **flags)
         return
-    cfg = config or default(head_dim)
+    cfg = config or default(flags["HEAD_DIM"])
     kernel[grid_fn(cfg.block_m, cfg.block_n)](
-        *args,
-        HEAD_DIM=head_dim, IS_CAUSAL=causal,
+        *args, **flags,
         BLOCK_M=cfg.block_m, BLOCK_N=cfg.block_n,
         num_warps=cfg.num_warps, num_stages=cfg.num_stages,
     )
@@ -390,14 +387,16 @@ def attn_backward(
     lse: torch.Tensor,
     causal: bool,
     sm_scale: float | None,
+    window: tuple[int, int] | None = None,
     dkdv_config: KernelConfig | None = None,
     dq_config: KernelConfig | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Gradients (dq, dk, dv) given dO, the forward inputs, O and the base-2 lse."""
     B, H, Nq, D = q.shape
-    Nk = k.shape[2]
+    Hk, Nk = k.shape[1], k.shape[2]
     if sm_scale is None:
         sm_scale = 1.0 / math.sqrt(D)
+    left, right, limit_left, limit_right = window_args(causal, window)
 
     dq = torch.empty(q.shape, device=q.device, dtype=q.dtype)
     dk = torch.empty(k.shape, device=k.device, dtype=k.dtype)
@@ -414,18 +413,20 @@ def attn_backward(
         HEAD_DIM=D, BLOCK_M=_PREPROCESS_BLOCK_M,
     )
 
+    group = H // Hk
     seq_bucket = triton.next_power_of_2(max(Nq, Nk))
     common = (*q.stride(), *k.stride(), *v.stride(), *do.stride())
+    flags = dict(HEAD_DIM=D, LIMIT_LEFT=limit_left, LIMIT_RIGHT=limit_right)
     _launch(
         _attn_bwd_dkdv, _attn_bwd_dkdv_tuned, dkdv_config, default_dkdv_config,
-        lambda bm, bn: (triton.cdiv(Nk, bn), B * H),
+        lambda bm, bn: (triton.cdiv(Nk, bn), B * Hk),
         (
             q, k, v, do, lse, delta, dk, dv,
             *common, *dk.stride(), *dv.stride(),
             lse.stride(0), lse.stride(1),
-            H, Nq, Nk, sm_scale, seq_bucket,
+            Hk, group, Nq, Nk, sm_scale, left, right, seq_bucket,
         ),
-        D, causal,
+        flags,
     )
     _launch(
         _attn_bwd_dq, _attn_bwd_dq_tuned, dq_config, default_dq_config,
@@ -434,8 +435,8 @@ def attn_backward(
             q, k, v, do, lse, delta, dq,
             *common, *dq.stride(),
             lse.stride(0), lse.stride(1),
-            H, Nq, Nk, sm_scale, seq_bucket,
+            H, group, Nq, Nk, sm_scale, left, right, seq_bucket,
         ),
-        D, causal,
+        flags,
     )
     return dq, dk, dv
