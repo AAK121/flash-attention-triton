@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import torch
 
+from ._bwd import attn_backward
 from ._device import bf16_supported, interpreting
 from ._fwd import attn_forward
 
@@ -32,6 +33,24 @@ def _check_inputs(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> None:
         raise ValueError("inputs must be CUDA tensors (or set TRITON_INTERPRET=1 for CPU)")
 
 
+class FlashAttentionFunction(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, q, k, v, causal, sm_scale):
+        o, lse = attn_forward(q, k, v, causal, sm_scale)
+        # Only O and the per-row logsumexp are kept for the backward pass:
+        # O(N) extra memory instead of the O(N^2) attention matrix.
+        ctx.save_for_backward(q, k, v, o, lse)
+        ctx.causal = causal
+        ctx.sm_scale = sm_scale
+        return o
+
+    @staticmethod
+    def backward(ctx, do):
+        q, k, v, o, lse = ctx.saved_tensors
+        dq, dk, dv = attn_backward(do, q, k, v, o, lse, ctx.causal, ctx.sm_scale)
+        return dq, dk, dv, None, None
+
+
 def flash_attention(
     q: torch.Tensor,
     k: torch.Tensor,
@@ -47,10 +66,8 @@ def flash_attention(
         causal: when True, query i attends keys j <= i + (seq_k - seq_q).
         sm_scale: logit scale, defaults to head_dim ** -0.5.
 
-    Inputs may be arbitrarily strided. Output is contiguous with q's shape.
+    Inputs may be arbitrarily strided. The output is contiguous with q's shape
+    and is differentiable with respect to q, k and v.
     """
     _check_inputs(q, k, v)
-    if torch.is_grad_enabled() and any(t.requires_grad for t in (q, k, v)):
-        raise NotImplementedError("the backward pass is not implemented yet")
-    o, _ = attn_forward(q, k, v, causal, sm_scale)
-    return o
+    return FlashAttentionFunction.apply(q, k, v, causal, sm_scale)
