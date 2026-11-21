@@ -1,0 +1,13 @@
+{
+  "id": "alok121/flash-attn-triton-run",
+  "title": "flash-attn-triton-run",
+  "code_file": "run_all.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": ["alok121/flash-attn-triton-code"],
+  "competition_sources": [],
+  "kernel_sources": []
+}
