@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import torch
 
-from ._device import bf16_supported
+from ._device import bf16_supported, interpreting
 from ._fwd import attn_forward
 
 _SUPPORTED_HEAD_DIMS = (16, 32, 64, 128)
@@ -28,6 +28,8 @@ def _check_inputs(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> None:
         raise ValueError("bfloat16 needs compute capability 8.0 or newer")
     if not (q.device == k.device == v.device):
         raise ValueError("q, k, v must be on the same device")
+    if q.device.type != "cuda" and not interpreting():
+        raise ValueError("inputs must be CUDA tensors (or set TRITON_INTERPRET=1 for CPU)")
 
 
 def flash_attention(

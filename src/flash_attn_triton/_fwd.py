@@ -19,7 +19,13 @@ import torch
 import triton
 import triton.language as tl
 
-from ._autotune import forward_configs, prune_forward
+from ._autotune import (
+    KernelConfig,
+    autotune_enabled,
+    default_forward_config,
+    forward_configs,
+    prune_forward,
+)
 
 NEG_INF = float("-inf")
 
@@ -71,11 +77,6 @@ def _fwd_inner(
     return acc, l_i, m_i
 
 
-@triton.autotune(
-    configs=forward_configs(),
-    key=["HEAD_DIM", "IS_CAUSAL", "SEQ_BUCKET"],
-    prune_configs_by={"early_config_prune": prune_forward},
-)
 @triton.jit
 def _attn_fwd(
     q_ptr, k_ptr, v_ptr, o_ptr, lse_ptr,
@@ -85,13 +86,18 @@ def _attn_fwd(
     stride_ob, stride_oh, stride_om, stride_od,
     stride_lb, stride_lh,
     H, Nq, Nk, sm_scale,
-    SEQ_BUCKET: tl.constexpr,
+    seq_bucket,
     HEAD_DIM: tl.constexpr,
     IS_CAUSAL: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
-    start_m = tl.program_id(0)
+    if IS_CAUSAL:
+        # Under a causal mask the last query blocks do the most work. Issuing
+        # them first lets the short blocks fill in the tail of the launch.
+        start_m = tl.num_programs(0) - 1 - tl.program_id(0)
+    else:
+        start_m = tl.program_id(0)
     off_bh = tl.program_id(1)
     off_b = (off_bh // H).to(tl.int64)
     off_h = (off_bh % H).to(tl.int64)
@@ -159,14 +165,29 @@ def _attn_fwd(
     tl.store(lse_base + row_idx, lse, mask=row_ok)
 
 
+# seq_bucket is an ordinary integer argument that only keys the autotune cache,
+# giving one search per power-of-two length range. Being non-constexpr, it does
+# not force a separate compilation per bucket.
+_attn_fwd_tuned = triton.autotune(
+    configs=forward_configs(),
+    key=["HEAD_DIM", "IS_CAUSAL", "seq_bucket"],
+    prune_configs_by={"early_config_prune": prune_forward},
+)(_attn_fwd)
+
+
 def attn_forward(
     q: torch.Tensor,
     k: torch.Tensor,
     v: torch.Tensor,
     causal: bool,
     sm_scale: float | None,
+    config: KernelConfig | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Returns (o, lse2) where lse2 is the row logsumexp in base 2, shape (B, H, Nq)."""
+    """Returns (o, lse2) where lse2 is the row logsumexp in base 2, shape (B, H, Nq).
+
+    `config` pins the block sizes; otherwise they come from the autotuner, or
+    from a fixed default when autotuning is disabled.
+    """
     B, H, Nq, D = q.shape
     Nk = k.shape[2]
     if sm_scale is None:
@@ -174,16 +195,34 @@ def attn_forward(
 
     o = torch.empty((B, H, Nq, D), device=q.device, dtype=q.dtype)
     lse = torch.empty((B, H, Nq), device=q.device, dtype=torch.float32)
-    seq_bucket = triton.next_power_of_2(max(Nq, Nk))
+    if o.numel() == 0:
+        return o, lse
+    if Nk == 0:
+        # Softmax over an empty set: same convention as a fully masked row.
+        o.zero_()
+        lse.fill_(float("-inf"))
+        return o, lse
 
-    def grid(meta):
-        return (triton.cdiv(Nq, meta["BLOCK_M"]), B * H)
-
-    _attn_fwd[grid](
+    args = (
         q, k, v, o, lse,
         *q.stride(), *k.stride(), *v.stride(), *o.stride(),
         lse.stride(0), lse.stride(1),
         H, Nq, Nk, sm_scale,
-        SEQ_BUCKET=seq_bucket, HEAD_DIM=D, IS_CAUSAL=causal,
+        triton.next_power_of_2(max(Nq, Nk)),
+    )
+    if config is None and autotune_enabled():
+        def grid(meta):
+            return (triton.cdiv(Nq, meta["BLOCK_M"]), B * H)
+
+        _attn_fwd_tuned[grid](*args, HEAD_DIM=D, IS_CAUSAL=causal)
+        return o, lse
+
+    cfg = config or default_forward_config(D)
+    grid = (triton.cdiv(Nq, cfg.block_m), B * H)
+    _attn_fwd[grid](
+        *args,
+        HEAD_DIM=D, IS_CAUSAL=causal,
+        BLOCK_M=cfg.block_m, BLOCK_N=cfg.block_n,
+        num_warps=cfg.num_warps, num_stages=cfg.num_stages,
     )
     return o, lse
