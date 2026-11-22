@@ -82,3 +82,22 @@ def window_mask(
     if LIMIT_RIGHT:
         keep = keep & (j <= i + off + right)
     return keep
+
+
+@triton.jit
+def sequence_bounds(cu_q_ptr, cu_k_ptr, off_b, Nq, Nk, VARLEN: tl.constexpr):
+    """(q_start, k_start, Nq, Nk) of batch entry off_b.
+
+    Dense batches index sequences through the batch stride and all have the
+    given lengths. Packed variable-length batches store every sequence back to
+    back along the token axis; cu_seqlens holds the running offsets, so entry b
+    occupies tokens [cu[b], cu[b + 1]) and the batch stride is zero.
+    """
+    if VARLEN:
+        q_start = tl.load(cu_q_ptr + off_b)
+        k_start = tl.load(cu_k_ptr + off_b)
+        Nq = tl.load(cu_q_ptr + off_b + 1) - q_start
+        Nk = tl.load(cu_k_ptr + off_b + 1) - k_start
+        return q_start.to(tl.int64), k_start.to(tl.int64), Nq, Nk
+    else:
+        return off_b * 0, off_b * 0, Nq, Nk

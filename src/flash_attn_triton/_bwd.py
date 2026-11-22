@@ -40,8 +40,8 @@ from ._autotune import (
     prune_dq,
     search_space,
 )
-from ._fwd import window_args
-from ._masking import scan_range, window_mask
+from ._fwd import packed_strides, window_args
+from ._masking import scan_range, sequence_bounds, window_mask
 
 NEG_INF = tl.constexpr(float("-inf"))
 POS_INF = tl.constexpr(float("inf"))
@@ -49,33 +49,37 @@ POS_INF = tl.constexpr(float("inf"))
 
 @triton.jit
 def _bwd_preprocess(
-    o_ptr, do_ptr, delta_ptr,
+    o_ptr, do_ptr, delta_ptr, cu_q_ptr,
     stride_ob, stride_oh, stride_om, stride_od,
     stride_dob, stride_doh, stride_dom, stride_dod,
     stride_lb, stride_lh,
     H, Nq,
     HEAD_DIM: tl.constexpr,
+    VARLEN: tl.constexpr,
     BLOCK_M: tl.constexpr,
 ):
     start_m = tl.program_id(0)
     off_bh = tl.program_id(1)
     off_b = (off_bh // H).to(tl.int64)
     off_h = (off_bh % H).to(tl.int64)
+    q0, _, Nq, _ = sequence_bounds(cu_q_ptr, cu_q_ptr, off_b, Nq, Nq, VARLEN)
+    if start_m * BLOCK_M >= Nq:
+        return
     row_idx = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
     offs_d = tl.arange(0, HEAD_DIM)
     row_ok = row_idx < Nq
     o = tl.load(
         o_ptr + off_b * stride_ob + off_h * stride_oh
-        + row_idx[:, None] * stride_om + offs_d[None, :] * stride_od,
+        + (q0 + row_idx[:, None]) * stride_om + offs_d[None, :] * stride_od,
         mask=row_ok[:, None], other=0.0,
     ).to(tl.float32)
     do = tl.load(
         do_ptr + off_b * stride_dob + off_h * stride_doh
-        + row_idx[:, None] * stride_dom + offs_d[None, :] * stride_dod,
+        + (q0 + row_idx[:, None]) * stride_dom + offs_d[None, :] * stride_dod,
         mask=row_ok[:, None], other=0.0,
     ).to(tl.float32)
     delta = tl.sum(o * do, axis=1)
-    tl.store(delta_ptr + off_b * stride_lb + off_h * stride_lh + row_idx, delta, mask=row_ok)
+    tl.store(delta_ptr + off_b * stride_lb + off_h * stride_lh + q0 + row_idx, delta, mask=row_ok)
 
 
 @triton.jit
@@ -132,7 +136,7 @@ def _dkdv_inner(
 
 @triton.jit
 def _attn_bwd_dkdv(
-    q_ptr, k_ptr, v_ptr, do_ptr, lse_ptr, delta_ptr, dk_ptr, dv_ptr,
+    q_ptr, k_ptr, v_ptr, do_ptr, lse_ptr, delta_ptr, dk_ptr, dv_ptr, cu_q_ptr, cu_k_ptr,
     stride_qb, stride_qh, stride_qm, stride_qd,
     stride_kb, stride_kh, stride_kn, stride_kd,
     stride_vb, stride_vh, stride_vn, stride_vd,
@@ -145,6 +149,7 @@ def _attn_bwd_dkdv(
     HEAD_DIM: tl.constexpr,
     LIMIT_LEFT: tl.constexpr,
     LIMIT_RIGHT: tl.constexpr,
+    VARLEN: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
@@ -154,18 +159,21 @@ def _attn_bwd_dkdv(
     off_bh = tl.program_id(1)
     off_b = (off_bh // Hk).to(tl.int64)
     off_hk = (off_bh % Hk).to(tl.int64)
+    q0, k0, Nq, Nk = sequence_bounds(cu_q_ptr, cu_k_ptr, off_b, Nq, Nk, VARLEN)
+    if start_n * BLOCK_N >= Nk:
+        return
 
     col_idx = start_n * BLOCK_N + tl.arange(0, BLOCK_N)
     offs_d = tl.arange(0, HEAD_DIM)
     col_ok = col_idx < Nk
     k = tl.load(
         k_ptr + off_b * stride_kb + off_hk * stride_kh
-        + col_idx[:, None] * stride_kn + offs_d[None, :] * stride_kd,
+        + (k0 + col_idx[:, None]) * stride_kn + offs_d[None, :] * stride_kd,
         mask=col_ok[:, None], other=0.0,
     )
     v = tl.load(
         v_ptr + off_b * stride_vb + off_hk * stride_vh
-        + col_idx[:, None] * stride_vn + offs_d[None, :] * stride_vd,
+        + (k0 + col_idx[:, None]) * stride_vn + offs_d[None, :] * stride_vd,
         mask=col_ok[:, None], other=0.0,
     )
     dk = tl.zeros([BLOCK_N, HEAD_DIM], dtype=tl.float32)
@@ -181,10 +189,10 @@ def _attn_bwd_dkdv(
     )
     for g in range(0, GROUP):
         off_h = off_hk * GROUP + g
-        q_base = q_ptr + off_b * stride_qb + off_h * stride_qh
-        do_base = do_ptr + off_b * stride_dob + off_h * stride_doh
-        lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh
-        delta_base = delta_ptr + off_b * stride_lb + off_h * stride_lh
+        q_base = q_ptr + off_b * stride_qb + off_h * stride_qh + q0 * stride_qm
+        do_base = do_ptr + off_b * stride_dob + off_h * stride_doh + q0 * stride_dom
+        lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh + q0
+        delta_base = delta_ptr + off_b * stride_lb + off_h * stride_lh + q0
         dk, dv = _dkdv_inner(
             dk, dv, k, v, q_base, do_base, lse_base, delta_base,
             stride_qm, stride_qd, stride_dom, stride_dod,
@@ -210,12 +218,12 @@ def _attn_bwd_dkdv(
     dk = dk * sm_scale
     tl.store(
         dk_ptr + off_b * stride_dkb + off_hk * stride_dkh
-        + col_idx[:, None] * stride_dkn + offs_d[None, :] * stride_dkd,
+        + (k0 + col_idx[:, None]) * stride_dkn + offs_d[None, :] * stride_dkd,
         dk.to(dk_ptr.dtype.element_ty), mask=col_ok[:, None],
     )
     tl.store(
         dv_ptr + off_b * stride_dvb + off_hk * stride_dvh
-        + col_idx[:, None] * stride_dvn + offs_d[None, :] * stride_dvd,
+        + (k0 + col_idx[:, None]) * stride_dvn + offs_d[None, :] * stride_dvd,
         dv.to(dv_ptr.dtype.element_ty), mask=col_ok[:, None],
     )
 
@@ -263,7 +271,7 @@ def _dq_inner(
 
 @triton.jit
 def _attn_bwd_dq(
-    q_ptr, k_ptr, v_ptr, do_ptr, lse_ptr, delta_ptr, dq_ptr,
+    q_ptr, k_ptr, v_ptr, do_ptr, lse_ptr, delta_ptr, dq_ptr, cu_q_ptr, cu_k_ptr,
     stride_qb, stride_qh, stride_qm, stride_qd,
     stride_kb, stride_kh, stride_kn, stride_kd,
     stride_vb, stride_vh, stride_vn, stride_vd,
@@ -275,6 +283,7 @@ def _attn_bwd_dq(
     HEAD_DIM: tl.constexpr,
     LIMIT_LEFT: tl.constexpr,
     LIMIT_RIGHT: tl.constexpr,
+    VARLEN: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
@@ -287,24 +296,27 @@ def _attn_bwd_dq(
     off_b = (off_bh // H).to(tl.int64)
     off_h = (off_bh % H).to(tl.int64)
     off_hk = off_h // GROUP
+    q0, k0, Nq, Nk = sequence_bounds(cu_q_ptr, cu_k_ptr, off_b, Nq, Nk, VARLEN)
+    if start_m * BLOCK_M >= Nq:
+        return
 
-    k_base = k_ptr + off_b * stride_kb + off_hk * stride_kh
-    v_base = v_ptr + off_b * stride_vb + off_hk * stride_vh
+    k_base = k_ptr + off_b * stride_kb + off_hk * stride_kh + k0 * stride_kn
+    v_base = v_ptr + off_b * stride_vb + off_hk * stride_vh + k0 * stride_vn
 
     row_idx = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
     offs_d = tl.arange(0, HEAD_DIM)
     row_ok = row_idx < Nq
     q = tl.load(
         q_ptr + off_b * stride_qb + off_h * stride_qh
-        + row_idx[:, None] * stride_qm + offs_d[None, :] * stride_qd,
+        + (q0 + row_idx[:, None]) * stride_qm + offs_d[None, :] * stride_qd,
         mask=row_ok[:, None], other=0.0,
     )
     do = tl.load(
         do_ptr + off_b * stride_dob + off_h * stride_doh
-        + row_idx[:, None] * stride_dom + offs_d[None, :] * stride_dod,
+        + (q0 + row_idx[:, None]) * stride_dom + offs_d[None, :] * stride_dod,
         mask=row_ok[:, None], other=0.0,
     )
-    stats = off_b * stride_lb + off_h * stride_lh + row_idx
+    stats = off_b * stride_lb + off_h * stride_lh + q0 + row_idx
     lse = tl.load(lse_ptr + stats, mask=row_ok, other=POS_INF)
     lse = tl.where(lse == NEG_INF, POS_INF, lse)
     delta = tl.load(delta_ptr + stats, mask=row_ok, other=0.0)
@@ -343,12 +355,12 @@ def _attn_bwd_dq(
     dq = dq * sm_scale
     tl.store(
         dq_ptr + off_b * stride_dqb + off_h * stride_dqh
-        + row_idx[:, None] * stride_dqm + offs_d[None, :] * stride_dqd,
+        + (q0 + row_idx[:, None]) * stride_dqm + offs_d[None, :] * stride_dqd,
         dq.to(dq_ptr.dtype.element_ty), mask=row_ok[:, None],
     )
 
 
-_TUNE_KEY = ["HEAD_DIM", "LIMIT_LEFT", "LIMIT_RIGHT", "seq_bucket"]
+_TUNE_KEY = ["HEAD_DIM", "LIMIT_LEFT", "LIMIT_RIGHT", "VARLEN", "seq_bucket"]
 
 _attn_bwd_dkdv_tuned = triton.autotune(
     configs=search_space(),
@@ -378,6 +390,49 @@ def _launch(kernel, tuned, config, default, grid_fn, args, flags):
     )
 
 
+def _backward(
+    do, q, k, v, o, lse, dq, dk, dv, strides, lse_strides, B, H, Hk, Nq, Nk, D, cu,
+    causal, sm_scale, window, dkdv_config, dq_config,
+):
+    """Shared launcher. strides maps each tensor name to its (b, h, token, d)
+    strides; cu is (cu_q, cu_k) for packed batches, else None."""
+    left, right, limit_left, limit_right = window_args(causal, window)
+    varlen = cu is not None
+    cu_q, cu_k = cu if varlen else (lse, lse)
+    delta = torch.empty_like(lse)
+    _bwd_preprocess[(triton.cdiv(Nq, _PREPROCESS_BLOCK_M), B * H)](
+        o, do, delta, cu_q,
+        *strides["o"], *strides["do"], *lse_strides,
+        H, Nq,
+        HEAD_DIM=D, VARLEN=varlen, BLOCK_M=_PREPROCESS_BLOCK_M,
+    )
+
+    group = H // Hk
+    seq_bucket = triton.next_power_of_2(max(Nq, Nk))
+    common = (*strides["q"], *strides["k"], *strides["v"], *strides["do"])
+    flags = dict(HEAD_DIM=D, LIMIT_LEFT=limit_left, LIMIT_RIGHT=limit_right, VARLEN=varlen)
+    _launch(
+        _attn_bwd_dkdv, _attn_bwd_dkdv_tuned, dkdv_config, default_dkdv_config,
+        lambda bm, bn: (triton.cdiv(Nk, bn), B * Hk),
+        (
+            q, k, v, do, lse, delta, dk, dv, cu_q, cu_k,
+            *common, *strides["dk"], *strides["dv"], *lse_strides,
+            Hk, group, Nq, Nk, sm_scale, left, right, seq_bucket,
+        ),
+        flags,
+    )
+    _launch(
+        _attn_bwd_dq, _attn_bwd_dq_tuned, dq_config, default_dq_config,
+        lambda bm, bn: (triton.cdiv(Nq, bm), B * H),
+        (
+            q, k, v, do, lse, delta, dq, cu_q, cu_k,
+            *common, *strides["dq"], *lse_strides,
+            H, group, Nq, Nk, sm_scale, left, right, seq_bucket,
+        ),
+        flags,
+    )
+
+
 def attn_backward(
     do: torch.Tensor,
     q: torch.Tensor,
@@ -396,47 +451,53 @@ def attn_backward(
     Hk, Nk = k.shape[1], k.shape[2]
     if sm_scale is None:
         sm_scale = 1.0 / math.sqrt(D)
-    left, right, limit_left, limit_right = window_args(causal, window)
-
     dq = torch.empty(q.shape, device=q.device, dtype=q.dtype)
     dk = torch.empty(k.shape, device=k.device, dtype=k.dtype)
     dv = torch.empty(v.shape, device=v.device, dtype=v.dtype)
     if Nq == 0 or Nk == 0 or B * H == 0:
         return dq.zero_(), dk.zero_(), dv.zero_()
-
-    delta = torch.empty_like(lse)
-    _bwd_preprocess[(triton.cdiv(Nq, _PREPROCESS_BLOCK_M), B * H)](
-        o, do, delta,
-        *o.stride(), *do.stride(),
-        delta.stride(0), delta.stride(1),
-        H, Nq,
-        HEAD_DIM=D, BLOCK_M=_PREPROCESS_BLOCK_M,
+    tensors = dict(q=q, k=k, v=v, o=o, do=do, dq=dq, dk=dk, dv=dv)
+    strides = {name: t.stride() for name, t in tensors.items()}
+    _backward(
+        do, q, k, v, o, lse, dq, dk, dv, strides, (lse.stride(0), lse.stride(1)),
+        B, H, Hk, Nq, Nk, D, None, causal, sm_scale, window, dkdv_config, dq_config,
     )
+    return dq, dk, dv
 
-    group = H // Hk
-    seq_bucket = triton.next_power_of_2(max(Nq, Nk))
-    common = (*q.stride(), *k.stride(), *v.stride(), *do.stride())
-    flags = dict(HEAD_DIM=D, LIMIT_LEFT=limit_left, LIMIT_RIGHT=limit_right)
-    _launch(
-        _attn_bwd_dkdv, _attn_bwd_dkdv_tuned, dkdv_config, default_dkdv_config,
-        lambda bm, bn: (triton.cdiv(Nk, bn), B * Hk),
-        (
-            q, k, v, do, lse, delta, dk, dv,
-            *common, *dk.stride(), *dv.stride(),
-            lse.stride(0), lse.stride(1),
-            Hk, group, Nq, Nk, sm_scale, left, right, seq_bucket,
-        ),
-        flags,
-    )
-    _launch(
-        _attn_bwd_dq, _attn_bwd_dq_tuned, dq_config, default_dq_config,
-        lambda bm, bn: (triton.cdiv(Nq, bm), B * H),
-        (
-            q, k, v, do, lse, delta, dq,
-            *common, *dq.stride(),
-            lse.stride(0), lse.stride(1),
-            H, group, Nq, Nk, sm_scale, left, right, seq_bucket,
-        ),
-        flags,
+
+def attn_backward_varlen(
+    do: torch.Tensor,
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    o: torch.Tensor,
+    lse: torch.Tensor,
+    cu_seqlens_q: torch.Tensor,
+    cu_seqlens_k: torch.Tensor,
+    max_seqlen_q: int,
+    max_seqlen_k: int,
+    causal: bool,
+    sm_scale: float | None,
+    window: tuple[int, int] | None = None,
+    dkdv_config: KernelConfig | None = None,
+    dq_config: KernelConfig | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Packed-batch gradients; tensors are (tokens, heads, dim), lse is (H, total_q)."""
+    total_q, H, D = q.shape
+    Hk = k.shape[1]
+    B = cu_seqlens_q.numel() - 1
+    if sm_scale is None:
+        sm_scale = 1.0 / math.sqrt(D)
+    dq = torch.empty(q.shape, device=q.device, dtype=q.dtype)
+    dk = torch.empty(k.shape, device=k.device, dtype=k.dtype)
+    dv = torch.empty(v.shape, device=v.device, dtype=v.dtype)
+    if total_q == 0 or k.shape[0] == 0 or B == 0:
+        return dq.zero_(), dk.zero_(), dv.zero_()
+    tensors = dict(q=q, k=k, v=v, o=o, do=do, dq=dq, dk=dk, dv=dv)
+    strides = {name: packed_strides(t) for name, t in tensors.items()}
+    _backward(
+        do, q, k, v, o, lse, dq, dk, dv, strides, (0, lse.stride(0)),
+        B, H, Hk, max_seqlen_q, max_seqlen_k, D, (cu_seqlens_q, cu_seqlens_k),
+        causal, sm_scale, window, dkdv_config, dq_config,
     )
     return dq, dk, dv

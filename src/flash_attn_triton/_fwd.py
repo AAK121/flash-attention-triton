@@ -29,7 +29,7 @@ from ._autotune import (
     prune_forward,
     search_space,
 )
-from ._masking import scan_range, window_mask
+from ._masking import scan_range, sequence_bounds, window_mask
 
 # Kernels may only read module globals that are declared constexpr.
 NEG_INF = tl.constexpr(float("-inf"))
@@ -85,7 +85,7 @@ def _fwd_inner(
 
 @triton.jit
 def _attn_fwd(
-    q_ptr, k_ptr, v_ptr, o_ptr, lse_ptr,
+    q_ptr, k_ptr, v_ptr, o_ptr, lse_ptr, cu_q_ptr, cu_k_ptr,
     stride_qb, stride_qh, stride_qm, stride_qd,
     stride_kb, stride_kh, stride_kn, stride_kd,
     stride_vb, stride_vh, stride_vn, stride_vd,
@@ -96,6 +96,7 @@ def _attn_fwd(
     HEAD_DIM: tl.constexpr,
     LIMIT_LEFT: tl.constexpr,
     LIMIT_RIGHT: tl.constexpr,
+    VARLEN: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
@@ -109,12 +110,16 @@ def _attn_fwd(
     off_b = (off_bh // H).to(tl.int64)
     off_h = (off_bh % H).to(tl.int64)
     off_hk = off_h // GROUP
+    q0, k0, Nq, Nk = sequence_bounds(cu_q_ptr, cu_k_ptr, off_b, Nq, Nk, VARLEN)
+    # The grid is sized for the longest sequence of a packed batch.
+    if start_m * BLOCK_M >= Nq:
+        return
 
-    q_base = q_ptr + off_b * stride_qb + off_h * stride_qh
-    k_base = k_ptr + off_b * stride_kb + off_hk * stride_kh
-    v_base = v_ptr + off_b * stride_vb + off_hk * stride_vh
-    o_base = o_ptr + off_b * stride_ob + off_h * stride_oh
-    lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh
+    q_base = q_ptr + off_b * stride_qb + off_h * stride_qh + q0 * stride_qm
+    k_base = k_ptr + off_b * stride_kb + off_hk * stride_kh + k0 * stride_kn
+    v_base = v_ptr + off_b * stride_vb + off_hk * stride_vh + k0 * stride_vn
+    o_base = o_ptr + off_b * stride_ob + off_h * stride_oh + q0 * stride_om
+    lse_base = lse_ptr + off_b * stride_lb + off_h * stride_lh + q0
 
     row_idx = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
     offs_d = tl.arange(0, HEAD_DIM)
@@ -175,7 +180,7 @@ def _attn_fwd(
 # not force a separate compilation per bucket.
 _attn_fwd_tuned = triton.autotune(
     configs=search_space(),
-    key=["HEAD_DIM", "LIMIT_LEFT", "LIMIT_RIGHT", "seq_bucket"],
+    key=["HEAD_DIM", "LIMIT_LEFT", "LIMIT_RIGHT", "VARLEN", "seq_bucket"],
     prune_configs_by={"early_config_prune": prune_forward},
 )(_attn_fwd)
 
@@ -187,6 +192,36 @@ def window_args(causal: bool, window: tuple[int, int] | None) -> tuple[int, int,
         right = 0
     # A negative bound means unbounded; the kernel then ignores the value.
     return max(left, 0), max(right, 0), left >= 0, right >= 0
+
+
+def _forward(
+    q, k, v, o, lse, strides, B, H, Hk, Nq, Nk, D, cu, causal, sm_scale, window, config
+):
+    """Shared launcher. strides holds (q, k, v, o) as 4-tuples (b, h, token, d)
+    plus the (b, h) strides of lse; cu is (cu_q, cu_k) for packed batches."""
+    left, right, limit_left, limit_right = window_args(causal, window)
+    varlen = cu is not None
+    cu_q, cu_k = cu if varlen else (lse, lse)
+    args = (
+        q, k, v, o, lse, cu_q, cu_k,
+        *strides,
+        H, H // Hk, Nq, Nk, sm_scale, left, right,
+        triton.next_power_of_2(max(Nq, Nk)),
+    )
+    flags = dict(HEAD_DIM=D, LIMIT_LEFT=limit_left, LIMIT_RIGHT=limit_right, VARLEN=varlen)
+    if config is None and autotune_enabled():
+        def grid(meta):
+            return (triton.cdiv(Nq, meta["BLOCK_M"]), B * H)
+
+        _attn_fwd_tuned[grid](*args, **flags)
+        return
+
+    cfg = config or default_forward_config(D)
+    _attn_fwd[(triton.cdiv(Nq, cfg.block_m), B * H)](
+        *args, **flags,
+        BLOCK_M=cfg.block_m, BLOCK_N=cfg.block_n,
+        num_warps=cfg.num_warps, num_stages=cfg.num_stages,
+    )
 
 
 def attn_forward(
@@ -207,7 +242,6 @@ def attn_forward(
     Hk, Nk = k.shape[1], k.shape[2]
     if sm_scale is None:
         sm_scale = 1.0 / math.sqrt(D)
-    left, right, limit_left, limit_right = window_args(causal, window)
 
     o = torch.empty((B, H, Nq, D), device=q.device, dtype=q.dtype)
     lse = torch.empty((B, H, Nq), device=q.device, dtype=torch.float32)
@@ -219,25 +253,52 @@ def attn_forward(
         lse.fill_(float("-inf"))
         return o, lse
 
-    args = (
-        q, k, v, o, lse,
-        *q.stride(), *k.stride(), *v.stride(), *o.stride(),
-        lse.stride(0), lse.stride(1),
-        H, H // Hk, Nq, Nk, sm_scale, left, right,
-        triton.next_power_of_2(max(Nq, Nk)),
-    )
-    flags = dict(HEAD_DIM=D, LIMIT_LEFT=limit_left, LIMIT_RIGHT=limit_right)
-    if config is None and autotune_enabled():
-        def grid(meta):
-            return (triton.cdiv(Nq, meta["BLOCK_M"]), B * H)
+    strides = (*q.stride(), *k.stride(), *v.stride(), *o.stride(), lse.stride(0), lse.stride(1))
+    _forward(q, k, v, o, lse, strides, B, H, Hk, Nq, Nk, D, None, causal, sm_scale, window, config)
+    return o, lse
 
-        _attn_fwd_tuned[grid](*args, **flags)
+
+def packed_strides(t: torch.Tensor) -> tuple[int, int, int, int]:
+    """(batch, head, token, dim) strides of a packed (tokens, heads, dim) tensor."""
+    return (0, t.stride(1), t.stride(0), t.stride(2))
+
+
+def attn_forward_varlen(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    cu_seqlens_q: torch.Tensor,
+    cu_seqlens_k: torch.Tensor,
+    max_seqlen_q: int,
+    max_seqlen_k: int,
+    causal: bool,
+    sm_scale: float | None,
+    window: tuple[int, int] | None = None,
+    config: KernelConfig | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Packed batch: q (total_q, H, D), k/v (total_k, Hk, D).
+
+    Returns o (total_q, H, D) and lse2 (H, total_q).
+    """
+    total_q, H, D = q.shape
+    Hk = k.shape[1]
+    B = cu_seqlens_q.numel() - 1
+    if sm_scale is None:
+        sm_scale = 1.0 / math.sqrt(D)
+    o = torch.empty_like(q, memory_format=torch.contiguous_format)
+    lse = torch.empty((H, total_q), device=q.device, dtype=torch.float32)
+    if total_q == 0 or B == 0:
         return o, lse
-
-    cfg = config or default_forward_config(D)
-    _attn_fwd[(triton.cdiv(Nq, cfg.block_m), B * H)](
-        *args, **flags,
-        BLOCK_M=cfg.block_m, BLOCK_N=cfg.block_n,
-        num_warps=cfg.num_warps, num_stages=cfg.num_stages,
+    if max_seqlen_k == 0:
+        o.zero_()
+        lse.fill_(float("-inf"))
+        return o, lse
+    strides = (
+        *packed_strides(q), *packed_strides(k), *packed_strides(v), *packed_strides(o),
+        0, lse.stride(0),
+    )
+    _forward(
+        q, k, v, o, lse, strides, B, H, Hk, max_seqlen_q, max_seqlen_k, D,
+        (cu_seqlens_q, cu_seqlens_k), causal, sm_scale, window, config,
     )
     return o, lse
