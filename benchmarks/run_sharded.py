@@ -17,6 +17,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -47,6 +48,29 @@ def reset_clocks(n: int) -> None:
         subprocess.run(["nvidia-smi", "-i", str(i), "-rgc"], capture_output=True, text=True)
 
 
+def wait_with_progress(procs: list, out_dir: str, tag: str, every_s: float = 120.0) -> list[int]:
+    """Wait for all shards, printing how many rows each has written so far.
+
+    The shards log to files, so without this the job's own log is silent for
+    hours and a hang cannot be told apart from a long sweep.
+    """
+    start = time.time()
+    while True:
+        codes = [p.poll() for p in procs]
+        if all(c is not None for c in codes):
+            return codes
+        time.sleep(every_s)
+        counts = []
+        for i in range(len(procs)):
+            path = os.path.join(out_dir, f"{tag}_shard{i}.csv")
+            try:
+                with open(path) as f:
+                    counts.append(max(sum(1 for _ in f) - 1, 0))
+            except OSError:
+                counts.append(0)
+        print(f"[{time.time() - start:7.0f}s] rows written per shard: {counts}", flush=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-dir", default=os.path.join(HERE, "results"))
@@ -74,7 +98,7 @@ def main() -> None:
                  "--shard", str(i), "--num-shards", str(n), "--max-seq", str(a.max_seq)],
                 env=env, stdout=log, stderr=subprocess.STDOUT,
             ), log))
-        codes = [p.wait() for p, _ in procs]
+        codes = wait_with_progress([p for p, _ in procs], a.out_dir, a.tag)
     finally:
         for _, log in procs:
             log.close()
