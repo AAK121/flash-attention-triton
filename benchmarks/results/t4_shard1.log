@@ -1,0 +1,187 @@
+[shard 1] fwd     d= 64 causal=1 n=  256 naive      ok     32.457 ms   0.53 TFLOP/s (3s)
+[shard 1] fwd     d= 64 causal=1 n=  512 naive      ok     64.001 ms   0.54 TFLOP/s (4s)
+[shard 1] fwd     d= 64 causal=1 n= 1024 naive      ok    127.585 ms   0.54 TFLOP/s (7s)
+[shard 1] fwd     d= 64 causal=1 n= 2048 naive      ok    258.822 ms   0.53 TFLOP/s (12s)
+[shard 1] fwd     d= 64 causal=1 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n=  256 sdpa_math  ok     35.505 ms   0.48 TFLOP/s (3s)
+[shard 1] fwd     d= 64 causal=1 n=  512 sdpa_math  ok     63.294 ms   0.54 TFLOP/s (4s)
+[shard 1] fwd     d= 64 causal=1 n= 1024 sdpa_math  ok    131.817 ms   0.52 TFLOP/s (7s)
+[shard 1] fwd     d= 64 causal=1 n= 2048 sdpa_math  ok    266.118 ms   0.52 TFLOP/s (13s)
+[shard 1] fwd     d= 64 causal=1 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n=  256 sdpa_mem   ok      2.083 ms   8.25 TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n=  512 sdpa_mem   ok      3.369 ms  10.20 TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n= 1024 sdpa_mem   ok      6.025 ms  11.41 TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n= 2048 sdpa_mem   ok     11.319 ms  12.14 TFLOP/s (2s)
+[shard 1] fwd     d= 64 causal=1 n= 4096 sdpa_mem   ok     21.470 ms  12.80 TFLOP/s (3s)
+[shard 1] fwd     d= 64 causal=1 n= 8192 sdpa_mem   ok     42.182 ms  13.03 TFLOP/s (3s)
+[shard 1] fwd     d= 64 causal=1 n=16384 sdpa_mem   ok     83.316 ms  13.20 TFLOP/s (5s)
+Triton autotuning for function _attn_fwd finished after 42.29s; best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n=  256 triton     ok      1.407 ms  12.21 TFLOP/s (44s)
+Triton autotuning for function _attn_fwd finished after 2.67s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n=  512 triton     ok      2.289 ms  15.01 TFLOP/s (5s)
+Triton autotuning for function _attn_fwd finished after 2.91s; best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n= 1024 triton     ok      4.107 ms  16.73 TFLOP/s (5s)
+Triton autotuning for function _attn_fwd finished after 3.38s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n= 2048 triton     ok      6.550 ms  20.98 TFLOP/s (6s)
+Triton autotuning for function _attn_fwd finished after 4.40s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n= 4096 triton     ok     12.222 ms  22.49 TFLOP/s (7s)
+Triton autotuning for function _attn_fwd finished after 6.86s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n= 8192 triton     ok     23.630 ms  23.27 TFLOP/s (10s)
+Triton autotuning for function _attn_fwd finished after 11.95s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d= 64 causal=1 n=16384 triton     ok     45.779 ms  24.02 TFLOP/s (15s)
+/usr/local/lib/python3.13/dist-packages/torch/autograd/graph.py:869: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:335.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[shard 1] bwd     d= 64 causal=1 n=  256 naive      ok     33.161 ms   1.30 TFLOP/s (3s)
+[shard 1] bwd     d= 64 causal=1 n=  512 naive      ok     63.154 ms   1.36 TFLOP/s (4s)
+[shard 1] bwd     d= 64 causal=1 n= 1024 naive      ok    122.288 ms   1.40 TFLOP/s (7s)
+[shard 1] bwd     d= 64 causal=1 n= 2048 naive      ok    239.216 ms   1.44 TFLOP/s (12s)
+[shard 1] bwd     d= 64 causal=1 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] bwd     d= 64 causal=1 n=  256 sdpa_math  ok     38.104 ms   1.13 TFLOP/s (3s)
+[shard 1] bwd     d= 64 causal=1 n=  512 sdpa_math  ok     67.860 ms   1.27 TFLOP/s (4s)
+[shard 1] bwd     d= 64 causal=1 n= 1024 sdpa_math  ok    138.727 ms   1.24 TFLOP/s (7s)
+[shard 1] bwd     d= 64 causal=1 n= 2048 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] bwd     d= 64 causal=1 n=  256 sdpa_mem   ok     11.360 ms   3.78 TFLOP/s (2s)
+[shard 1] bwd     d= 64 causal=1 n=  512 sdpa_mem   ok     16.658 ms   5.16 TFLOP/s (3s)
+[shard 1] bwd     d= 64 causal=1 n= 1024 sdpa_mem   ok     26.763 ms   6.42 TFLOP/s (3s)
+[shard 1] bwd     d= 64 causal=1 n= 2048 sdpa_mem   ok     46.562 ms   7.38 TFLOP/s (4s)
+[shard 1] bwd     d= 64 causal=1 n= 4096 sdpa_mem   ok     86.466 ms   7.95 TFLOP/s (5s)
+[shard 1] bwd     d= 64 causal=1 n= 8192 sdpa_mem   ok    165.458 ms   8.31 TFLOP/s (8s)
+[shard 1] bwd     d= 64 causal=1 n=16384 sdpa_mem   ok    342.938 ms   8.02 TFLOP/s (16s)
+Triton autotuning for function _attn_bwd_dkdv finished after 91.10s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 52.23s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n=  256 triton     ok      5.433 ms   7.91 TFLOP/s (145s)
+Triton autotuning for function _attn_bwd_dkdv finished after 2.89s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 3.57s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n=  512 triton     ok      8.025 ms  10.70 TFLOP/s (9s)
+Triton autotuning for function _attn_bwd_dkdv finished after 3.40s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 4.60s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n= 1024 triton     ok     13.478 ms  12.75 TFLOP/s (10s)
+Triton autotuning for function _attn_bwd_dkdv finished after 4.56s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 6.63s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n= 2048 triton     ok     24.232 ms  14.18 TFLOP/s (14s)
+Triton autotuning for function _attn_bwd_dkdv finished after 7.35s; best config selected: BLOCK_M: 64, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 10.99s; best config selected: BLOCK_M: 128, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n= 4096 triton     ok     44.629 ms  15.40 TFLOP/s (22s)
+Triton autotuning for function _attn_bwd_dkdv finished after 12.58s; best config selected: BLOCK_M: 64, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 19.10s; best config selected: BLOCK_M: 128, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n= 8192 triton     ok     82.160 ms  16.73 TFLOP/s (37s)
+Triton autotuning for function _attn_bwd_dkdv finished after 24.23s; best config selected: BLOCK_M: 64, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 36.99s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d= 64 causal=1 n=16384 triton     ok    161.110 ms  17.06 TFLOP/s (69s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  256 naive      ok     66.618 ms   0.90 TFLOP/s (4s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  512 naive      ok    129.167 ms   0.93 TFLOP/s (7s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 1024 naive      ok    252.109 ms   0.95 TFLOP/s (12s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 2048 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  256 sdpa_math  ok     78.926 ms   0.76 TFLOP/s (5s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  512 sdpa_math  ok    139.578 ms   0.86 TFLOP/s (7s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 1024 sdpa_math  ok    281.649 ms   0.85 TFLOP/s (13s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 2048 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  256 sdpa_mem   ok     14.495 ms   4.15 TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  512 sdpa_mem   ok     21.188 ms   5.68 TFLOP/s (3s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 1024 sdpa_mem   ok     34.779 ms   6.92 TFLOP/s (3s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 2048 sdpa_mem   ok     58.667 ms   8.20 TFLOP/s (4s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 4096 sdpa_mem   ok    108.589 ms   8.86 TFLOP/s (6s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 8192 sdpa_mem   ok    209.818 ms   9.17 TFLOP/s (10s)
+[shard 1] fwd_bwd d= 64 causal=1 n=16384 sdpa_mem   ok    425.148 ms   9.05 TFLOP/s (19s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  256 triton     ok      7.923 ms   7.59 TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n=  512 triton     ok     11.137 ms  10.80 TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 1024 triton     ok     17.552 ms  13.70 TFLOP/s (2s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 2048 triton     ok     30.325 ms  15.86 TFLOP/s (3s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 4096 triton     ok     55.405 ms  17.36 TFLOP/s (4s)
+[shard 1] fwd_bwd d= 64 causal=1 n= 8192 triton     ok    105.845 ms  18.18 TFLOP/s (6s)
+[shard 1] fwd_bwd d= 64 causal=1 n=16384 triton     ok    208.257 ms  18.48 TFLOP/s (10s)
+[shard 1] fwd     d=128 causal=0 n=  256 naive      ok     14.202 ms   2.42 TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n=  512 naive      ok     27.542 ms   2.50 TFLOP/s (3s)
+[shard 1] fwd     d=128 causal=0 n= 1024 naive      ok     54.515 ms   2.52 TFLOP/s (4s)
+[shard 1] fwd     d=128 causal=0 n= 2048 naive      ok    110.690 ms   2.48 TFLOP/s (6s)
+[shard 1] fwd     d=128 causal=0 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n=  256 sdpa_math  ok     23.562 ms   1.46 TFLOP/s (3s)
+[shard 1] fwd     d=128 causal=0 n=  512 sdpa_math  ok     39.620 ms   1.73 TFLOP/s (3s)
+[shard 1] fwd     d=128 causal=0 n= 1024 sdpa_math  ok     78.957 ms   1.74 TFLOP/s (5s)
+[shard 1] fwd     d=128 causal=0 n= 2048 sdpa_math  ok    150.293 ms   1.83 TFLOP/s (8s)
+[shard 1] fwd     d=128 causal=0 n= 4096 sdpa_math  ok    315.034 ms   1.75 TFLOP/s (15s)
+[shard 1] fwd     d=128 causal=0 n= 8192 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n=  256 sdpa_mem   ok      3.437 ms  10.00 TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n=  512 sdpa_mem   ok      6.343 ms  10.83 TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n= 1024 sdpa_mem   ok     11.878 ms  11.57 TFLOP/s (2s)
+[shard 1] fwd     d=128 causal=0 n= 2048 sdpa_mem   ok     23.255 ms  11.82 TFLOP/s (3s)
+[shard 1] fwd     d=128 causal=0 n= 4096 sdpa_mem   ok     45.898 ms  11.98 TFLOP/s (4s)
+[shard 1] fwd     d=128 causal=0 n= 8192 sdpa_mem   ok     92.459 ms  11.89 TFLOP/s (5s)
+[shard 1] fwd     d=128 causal=0 n=16384 sdpa_mem   ok    187.014 ms  11.76 TFLOP/s (9s)
+Triton autotuning for function _attn_fwd finished after 29.74s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n=  256 triton     ok      1.934 ms  17.76 TFLOP/s (32s)
+Triton autotuning for function _attn_fwd finished after 2.84s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n=  512 triton     ok      3.484 ms  19.72 TFLOP/s (5s)
+Triton autotuning for function _attn_fwd finished after 4.16s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n= 1024 triton     ok      6.562 ms  20.95 TFLOP/s (6s)
+Triton autotuning for function _attn_fwd finished after 6.92s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n= 2048 triton     ok     12.747 ms  21.56 TFLOP/s (9s)
+Triton autotuning for function _attn_fwd finished after 12.71s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n= 4096 triton     ok     25.276 ms  21.75 TFLOP/s (15s)
+Triton autotuning for function _attn_fwd finished after 24.56s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n= 8192 triton     ok     51.527 ms  21.34 TFLOP/s (28s)
+Triton autotuning for function _attn_fwd finished after 49.26s; best config selected: BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] fwd     d=128 causal=0 n=16384 triton     ok    102.976 ms  21.35 TFLOP/s (55s)
+[shard 1] bwd     d=128 causal=0 n=  256 naive      ok     16.673 ms   5.15 TFLOP/s (3s)
+[shard 1] bwd     d=128 causal=0 n=  512 naive      ok     30.115 ms   5.70 TFLOP/s (3s)
+[shard 1] bwd     d=128 causal=0 n= 1024 naive      ok     56.404 ms   6.09 TFLOP/s (4s)
+[shard 1] bwd     d=128 causal=0 n= 2048 naive      ok    108.689 ms   6.32 TFLOP/s (6s)
+[shard 1] bwd     d=128 causal=0 n= 4096 naive      ok    221.333 ms   6.21 TFLOP/s (11s)
+[shard 1] bwd     d=128 causal=0 n= 8192 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] bwd     d=128 causal=0 n=  256 sdpa_math  ok     37.914 ms   2.27 TFLOP/s (3s)
+[shard 1] bwd     d=128 causal=0 n=  512 sdpa_math  ok     61.358 ms   2.80 TFLOP/s (4s)
+[shard 1] bwd     d=128 causal=0 n= 1024 sdpa_math  ok    118.453 ms   2.90 TFLOP/s (7s)
+[shard 1] bwd     d=128 causal=0 n= 2048 sdpa_math  ok    234.208 ms   2.93 TFLOP/s (11s)
+[shard 1] bwd     d=128 causal=0 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] bwd     d=128 causal=0 n=  256 sdpa_mem   ok     14.396 ms   5.97 TFLOP/s (2s)
+[shard 1] bwd     d=128 causal=0 n=  512 sdpa_mem   ok     22.925 ms   7.49 TFLOP/s (3s)
+[shard 1] bwd     d=128 causal=0 n= 1024 sdpa_mem   ok     42.751 ms   8.04 TFLOP/s (3s)
+[shard 1] bwd     d=128 causal=0 n= 2048 sdpa_mem   ok     83.374 ms   8.24 TFLOP/s (5s)
+[shard 1] bwd     d=128 causal=0 n= 4096 sdpa_mem   ok    155.515 ms   8.84 TFLOP/s (8s)
+[shard 1] bwd     d=128 causal=0 n= 8192 sdpa_mem   ok    311.173 ms   8.83 TFLOP/s (15s)
+[shard 1] bwd     d=128 causal=0 n=16384 sdpa_mem   ok    622.776 ms   8.83 TFLOP/s (28s)
+Triton autotuning for function _attn_bwd_dkdv finished after 68.42s; best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 43.22s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n=  256 triton     ok      9.724 ms   8.83 TFLOP/s (114s)
+Triton autotuning for function _attn_bwd_dkdv finished after 0.87s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 1.01s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n=  512 triton     ok     14.242 ms  12.06 TFLOP/s (4s)
+Triton autotuning for function _attn_bwd_dkdv finished after 1.21s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 1.20s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n= 1024 triton     ok     26.432 ms  13.00 TFLOP/s (5s)
+Triton autotuning for function _attn_bwd_dkdv finished after 2.09s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 1.73s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n= 2048 triton     ok     52.158 ms  13.18 TFLOP/s (7s)
+Triton autotuning for function _attn_bwd_dkdv finished after 3.90s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 2.78s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n= 4096 triton     ok    105.101 ms  13.08 TFLOP/s (12s)
+Triton autotuning for function _attn_bwd_dkdv finished after 8.02s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 5.57s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n= 8192 triton     ok    218.350 ms  12.59 TFLOP/s (24s)
+Triton autotuning for function _attn_bwd_dkdv finished after 16.51s; best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+Triton autotuning for function _attn_bwd_dq finished after 11.14s; best config selected: BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, num_buffers_warp_spec: 0, num_consumer_groups: 0, reg_dec_producer: 0, reg_inc_consumer: 0, maxnreg: None;
+[shard 1] bwd     d=128 causal=0 n=16384 triton     ok    411.464 ms  13.36 TFLOP/s (46s)
+[shard 1] fwd_bwd d=128 causal=0 n=  256 naive      ok     30.686 ms   3.92 TFLOP/s (3s)
+[shard 1] fwd_bwd d=128 causal=0 n=  512 naive      ok     57.377 ms   4.19 TFLOP/s (4s)
+[shard 1] fwd_bwd d=128 causal=0 n= 1024 naive      ok    110.303 ms   4.36 TFLOP/s (6s)
+[shard 1] fwd_bwd d=128 causal=0 n= 2048 naive      ok    220.322 ms   4.37 TFLOP/s (11s)
+[shard 1] fwd_bwd d=128 causal=0 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd_bwd d=128 causal=0 n=  256 sdpa_math  ok     58.268 ms   2.06 TFLOP/s (4s)
+[shard 1] fwd_bwd d=128 causal=0 n=  512 sdpa_math  ok    105.024 ms   2.29 TFLOP/s (6s)
+[shard 1] fwd_bwd d=128 causal=0 n= 1024 sdpa_math  ok    198.469 ms   2.42 TFLOP/s (10s)
+[shard 1] fwd_bwd d=128 causal=0 n= 2048 sdpa_math  ok    409.252 ms   2.35 TFLOP/s (18s)
+[shard 1] fwd_bwd d=128 causal=0 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 1] fwd_bwd d=128 causal=0 n=  256 sdpa_mem   ok     18.562 ms   6.48 TFLOP/s (2s)
+[shard 1] fwd_bwd d=128 causal=0 n=  512 sdpa_mem   ok     29.929 ms   8.04 TFLOP/s (3s)
+[shard 1] fwd_bwd d=128 causal=0 n= 1024 sdpa_mem   ok     55.792 ms   8.62 TFLOP/s (4s)
+[shard 1] fwd_bwd d=128 causal=0 n= 2048 sdpa_mem   ok    107.343 ms   8.96 TFLOP/s (6s)
+[shard 1] fwd_bwd d=128 causal=0 n= 4096 sdpa_mem   ok    198.370 ms   9.70 TFLOP/s (10s)
+[shard 1] fwd_bwd d=128 causal=0 n= 8192 sdpa_mem   ok    394.192 ms   9.76 TFLOP/s (18s)
+[shard 1] fwd_bwd d=128 causal=0 n=16384 sdpa_mem   ok    815.143 ms   9.44 TFLOP/s (36s)
+[shard 1] fwd_bwd d=128 causal=0 n=  256 triton     ok     12.658 ms   9.50 TFLOP/s (2s)
+[shard 1] fwd_bwd d=128 causal=0 n=  512 triton     ok     19.461 ms  12.36 TFLOP/s (3s)
+[shard 1] fwd_bwd d=128 causal=0 n= 1024 triton     ok     35.038 ms  13.73 TFLOP/s (3s)
+[shard 1] fwd_bwd d=128 causal=0 n= 2048 triton     ok     68.391 ms  14.07 TFLOP/s (4s)
+[shard 1] fwd_bwd d=128 causal=0 n= 4096 triton     ok    133.920 ms  14.37 TFLOP/s (7s)
+[shard 1] fwd_bwd d=128 causal=0 n= 8192 triton     ok    265.208 ms  14.51 TFLOP/s (13s)
+[shard 1] fwd_bwd d=128 causal=0 n=16384 triton     ok    527.512 ms  14.59 TFLOP/s (24s)

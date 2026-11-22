@@ -1,0 +1,24 @@
+device Tesla T4 cc (7, 5) triton 3.2.0 torch 2.11.0+cu130
+torch.mm 2048^3: 18.09 TFLOP/s
+triton matmul BM=64 BN=64 BK=32 w=4: 9.43 TFLOP/s
+triton matmul BM=128 BN=128 BK=32 w=8: 15.44 TFLOP/s
+triton matmul BM=128 BN=64 BK=32 w=4: 21.35 TFLOP/s
+
+d=64 sdpa_mem fwd: 10.98 ms 12.52 TFLOP/s
+d=64 triton fwd BM=64 BN=32 w=4: 7.99 ms 17.19 TFLOP/s
+d=64 triton fwd BM=64 BN=64 w=4: 7.48 ms 18.37 TFLOP/s
+d=64 triton fwd BM=128 BN=32 w=8: 7.01 ms 19.60 TFLOP/s
+d=64 triton fwd BM=128 BN=64 w=8: 6.87 ms 20.00 TFLOP/s
+d=64 triton fwd BM=32 BN=32 w=2: 11.07 ms 12.41 TFLOP/s
+d=64 triton bwd (default configs): 25.86 ms 13.29 TFLOP/s
+
+d=128 sdpa_mem fwd: 10.94 ms 12.57 TFLOP/s
+d=128 triton fwd BM=64 BN=32 w=4: 9.73 ms 14.12 TFLOP/s
+d=128 triton fwd BM=64 BN=64 w=4: 11.86 ms 11.59 TFLOP/s
+d=128 triton fwd BM=128 BN=32 w=8: 7.28 ms 18.87 TFLOP/s
+d=128 triton fwd BM=128 BN=64 w=8: 6.34 ms 21.68 TFLOP/s
+d=128 triton fwd BM=32 BN=32 w=2: 10.60 ms 12.96 TFLOP/s
+d=128 triton bwd (default configs): 32.42 ms 10.60 TFLOP/s
+
+compiled forward variants:
+compiled backward variants:

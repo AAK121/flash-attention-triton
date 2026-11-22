@@ -1,0 +1,111 @@
+Unsupported conversion from f16 to f16
+LLVM ERROR: Unsupported rounding mode for conversion.
+#blocked = #ttg.blocked<{sizePerThread = [4, 4], threadsPerWarp = [2, 16], warpsPerCTA = [4, 1], order = [1, 0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [1, 8], threadsPerWarp = [8, 4], warpsPerCTA = [4, 1], order = [1, 0]}>
+#blocked2 = #ttg.blocked<{sizePerThread = [1, 8], threadsPerWarp = [4, 8], warpsPerCTA = [4, 1], order = [1, 0]}>
+#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [1, 0]}>
+#smem = #ttg.shared_memory
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:75", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @_matmul(%arg0: !tt.ptr<f16> {tt.divisibility = 16 : i32}, %arg1: !tt.ptr<f16> {tt.divisibility = 16 : i32}, %arg2: !tt.ptr<f16> {tt.divisibility = 16 : i32}, %arg3: i32 {tt.divisibility = 16 : i32}, %arg4: i32 {tt.divisibility = 16 : i32}, %arg5: i32 {tt.divisibility = 16 : i32}) attributes {noinline = false} {
+    %c64_i32 = arith.constant 64 : i32
+    %c0_i32 = arith.constant 0 : i32
+    %c32_i32 = arith.constant 32 : i32
+    %cst = arith.constant dense<0.000000e+00> : tensor<64x64xf32, #blocked>
+    %0 = tt.get_program_id x : i32
+    %1 = tt.get_program_id y : i32
+    %2 = arith.muli %0, %c64_i32 : i32
+    %3 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked1}>>
+    %4 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+    %5 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #ttg.slice<{dim = 0, parent = #blocked2}>>
+    %6 = tt.splat %2 : i32 -> tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked1}>>
+    %7 = tt.splat %2 : i32 -> tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+    %8 = arith.addi %6, %3 : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked1}>>
+    %9 = arith.addi %7, %4 : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+    %10 = arith.muli %1, %c64_i32 : i32
+    %11 = tt.splat %10 : i32 -> tensor<64xi32, #ttg.slice<{dim = 0, parent = #blocked2}>>
+    %12 = arith.addi %11, %5 : tensor<64xi32, #ttg.slice<{dim = 0, parent = #blocked2}>>
+    %13 = tt.make_range {end = 32 : i32, start = 0 : i32} : tensor<32xi32, #ttg.slice<{dim = 0, parent = #blocked1}>>
+    %14 = tt.make_range {end = 32 : i32, start = 0 : i32} : tensor<32xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+    %15 = tt.expand_dims %8 {axis = 1 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked1}>> -> tensor<64x1xi32, #blocked1>
+    %16 = tt.splat %arg5 : i32 -> tensor<64x1xi32, #blocked1>
+    %17 = arith.muli %15, %16 : tensor<64x1xi32, #blocked1>
+    %18 = tt.splat %arg0 : !tt.ptr<f16> -> tensor<64x1x!tt.ptr<f16>, #blocked1>
+    %19 = tt.addptr %18, %17 : tensor<64x1x!tt.ptr<f16>, #blocked1>, tensor<64x1xi32, #blocked1>
+    %20 = tt.broadcast %19 : tensor<64x1x!tt.ptr<f16>, #blocked1> -> tensor<64x32x!tt.ptr<f16>, #blocked1>
+    %21 = tt.splat %arg4 : i32 -> tensor<32x1xi32, #blocked2>
+    %22 = tt.splat %arg1 : !tt.ptr<f16> -> tensor<32x1x!tt.ptr<f16>, #blocked2>
+    %23 = tt.expand_dims %12 {axis = 0 : i32} : tensor<64xi32, #ttg.slice<{dim = 0, parent = #blocked2}>> -> tensor<1x64xi32, #blocked2>
+    %24 = tt.broadcast %23 : tensor<1x64xi32, #blocked2> -> tensor<32x64xi32, #blocked2>
+    %25 = scf.for %arg6 = %c0_i32 to %arg5 step %c32_i32 iter_args(%arg7 = %cst) -> (tensor<64x64xf32, #blocked>)  : i32 {
+      %36 = tt.splat %arg6 : i32 -> tensor<32xi32, #ttg.slice<{dim = 0, parent = #blocked1}>>
+      %37 = tt.splat %arg6 : i32 -> tensor<32xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+      %38 = arith.addi %36, %13 : tensor<32xi32, #ttg.slice<{dim = 0, parent = #blocked1}>>
+      %39 = arith.addi %37, %14 : tensor<32xi32, #ttg.slice<{dim = 1, parent = #blocked2}>>
+      %40 = tt.expand_dims %38 {axis = 0 : i32} : tensor<32xi32, #ttg.slice<{dim = 0, parent = #blocked1}>> -> tensor<1x32xi32, #blocked1>
+      %41 = tt.broadcast %40 : tensor<1x32xi32, #blocked1> -> tensor<64x32xi32, #blocked1>
+      %42 = tt.addptr %20, %41 : tensor<64x32x!tt.ptr<f16>, #blocked1>, tensor<64x32xi32, #blocked1>
+      %43 = tt.load %42 : tensor<64x32x!tt.ptr<f16>, #blocked1>
+      %44 = tt.expand_dims %39 {axis = 1 : i32} : tensor<32xi32, #ttg.slice<{dim = 1, parent = #blocked2}>> -> tensor<32x1xi32, #blocked2>
+      %45 = arith.muli %44, %21 : tensor<32x1xi32, #blocked2>
+      %46 = tt.addptr %22, %45 : tensor<32x1x!tt.ptr<f16>, #blocked2>, tensor<32x1xi32, #blocked2>
+      %47 = tt.broadcast %46 : tensor<32x1x!tt.ptr<f16>, #blocked2> -> tensor<32x64x!tt.ptr<f16>, #blocked2>
+      %48 = tt.addptr %47, %24 : tensor<32x64x!tt.ptr<f16>, #blocked2>, tensor<32x64xi32, #blocked2>
+      %49 = tt.load %48 : tensor<32x64x!tt.ptr<f16>, #blocked2>
+      %50 = tt.fp_to_fp %43 : tensor<64x32xf16, #blocked1> -> tensor<64x32xf32, #blocked1>
+      %51 = ttg.local_alloc %50 : (tensor<64x32xf32, #blocked1>) -> !ttg.memdesc<64x32xf32, #shared, #smem>
+      %52 = ttg.local_load %51 : !ttg.memdesc<64x32xf32, #shared, #smem> -> tensor<64x32xf32, #ttg.dot_op<{opIdx = 0, parent = #blocked}>>
+      %53 = tt.fp_to_fp %49 : tensor<32x64xf16, #blocked2> -> tensor<32x64xf32, #blocked2>
+      %54 = ttg.local_alloc %53 : (tensor<32x64xf32, #blocked2>) -> !ttg.memdesc<32x64xf32, #shared, #smem>
+      %55 = ttg.local_load %54 : !ttg.memdesc<32x64xf32, #shared, #smem> -> tensor<32x64xf32, #ttg.dot_op<{opIdx = 1, parent = #blocked}>>
+      %56 = tt.dot %52, %55, %arg7, inputPrecision = tf32 : tensor<64x32xf32, #ttg.dot_op<{opIdx = 0, parent = #blocked}>> * tensor<32x64xf32, #ttg.dot_op<{opIdx = 1, parent = #blocked}>> -> tensor<64x64xf32, #blocked>
+      scf.yield %56 : tensor<64x64xf32, #blocked>
+    }
+    %26 = tt.expand_dims %9 {axis = 1 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked2}>> -> tensor<64x1xi32, #blocked2>
+    %27 = tt.splat %arg4 : i32 -> tensor<64x1xi32, #blocked2>
+    %28 = arith.muli %26, %27 : tensor<64x1xi32, #blocked2>
+    %29 = tt.splat %arg2 : !tt.ptr<f16> -> tensor<64x1x!tt.ptr<f16>, #blocked2>
+    %30 = tt.addptr %29, %28 : tensor<64x1x!tt.ptr<f16>, #blocked2>, tensor<64x1xi32, #blocked2>
+    %31 = tt.broadcast %30 : tensor<64x1x!tt.ptr<f16>, #blocked2> -> tensor<64x64x!tt.ptr<f16>, #blocked2>
+    %32 = tt.broadcast %23 : tensor<1x64xi32, #blocked2> -> tensor<64x64xi32, #blocked2>
+    %33 = tt.addptr %31, %32 : tensor<64x64x!tt.ptr<f16>, #blocked2>, tensor<64x64xi32, #blocked2>
+    %34 = arith.truncf %25 : tensor<64x64xf32, #blocked> to tensor<64x64xf16, #blocked>
+    %35 = ttg.convert_layout %34 : tensor<64x64xf16, #blocked> -> tensor<64x64xf16, #blocked2>
+    tt.store %33, %35 : tensor<64x64x!tt.ptr<f16>, #blocked2>
+    tt.return
+  }
+}
+
+{-#
+  external_resources: {
+    mlir_reproducer: {
+      pipeline: "builtin.module(triton-nvidia-mma-lowering, tritongpu-combine-tensor-select-and-if, tritongpu-allocate-warp-groups, convert-scf-to-cf, allocate-shared-memory, triton-tensor-memory-allocation, tritongpu-global-scratch-memory-allocation, convert-triton-gpu-to-llvm{compute-capability=75 ptx-version=84}, canonicalize{  max-iterations=10 max-num-rewrites=-1 region-simplify=normal test-convergence=false top-down=true}, cse, convert-nv-gpu-to-llvm, convert-warp-specialize-to-llvm, canonicalize{  max-iterations=10 max-num-rewrites=-1 region-simplify=normal test-convergence=false top-down=true}, cse, symbol-dce, enable-line-info)",
+      disable_threading: false,
+      verify_each: true
+    }
+  }
+#-}
+/tmp/flash-attn-triton/benchmarks/inspect_kernels.py:29:0: error: Failures have been detected while processing an MLIR pass pipeline
+/tmp/flash-attn-triton/benchmarks/inspect_kernels.py:29:0: note: Pipeline failed while executing [`ConvertTritonGPUToLLVM` on 'builtin.module' operation]: reproducer generated at `std::errs, please share the reproducer above with Triton project.`
+device Tesla T4 cc (7, 5) triton 3.3.1 torch 2.11.0+cu130
+torch.mm 2048^3: 23.47 TFLOP/s
+Traceback (most recent call last):
+  File "/tmp/flash-attn-triton/benchmarks/inspect_kernels.py", line 123, in <module>
+    main()
+    ~~~~^^
+  File "/tmp/flash-attn-triton/benchmarks/inspect_kernels.py", line 81, in main
+    _matmul[grid](a, b, c, n, n, n, BM=bm, BN=bn, BK=bk, num_warps=w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/triton-3.3.1/triton/runtime/jit.py", line 347, in <lambda>
+    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)
+                                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/triton-3.3.1/triton/runtime/jit.py", line 569, in run
+    kernel = self.compile(src, target=target, options=options.__dict__)
+  File "/tmp/triton-3.3.1/triton/compiler/compiler.py", line 284, in compile
+    next_module = compile_ir(module, metadata)
+  File "/tmp/triton-3.3.1/triton/backends/nvidia/compiler.py", line 450, in <lambda>
+    stages["llir"] = lambda src, metadata: self.make_llir(src, metadata, options, capability)
+                                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/triton-3.3.1/triton/backends/nvidia/compiler.py", line 341, in make_llir
+    pm.run(mod)
+    ~~~~~~^^^^^
+RuntimeError: PassManager::run failed

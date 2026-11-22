@@ -1,0 +1,41 @@
+device Tesla T4 cc (7, 5) triton 3.2.0 torch 2.11.0+cu130
+torch.mm 2048^3: 18.54 TFLOP/s
+triton matmul BM=64 BN=64 BK=32 w=4: 9.91 TFLOP/s
+triton matmul BM=128 BN=128 BK=32 w=8: 12.87 TFLOP/s
+triton matmul BM=128 BN=64 BK=32 w=4: 15.74 TFLOP/s
+  matmul variant: regs=72 spills=0 ptx: mma.sync=32 fma=0 local_ld_st=0
+  matmul variant: regs=136 spills=0 ptx: mma.sync=64 fma=0 local_ld_st=0
+  matmul variant: regs=144 spills=0 ptx: mma.sync=64 fma=0 local_ld_st=0
+
+d=64 sdpa_mem fwd: 15.21 ms 9.04 TFLOP/s
+d=64 triton fwd BM=64 BN=32 w=4: 7.17 ms 19.16 TFLOP/s
+d=64 triton fwd BM=64 BN=64 w=4: 7.09 ms 19.39 TFLOP/s
+d=64 triton fwd BM=128 BN=32 w=8: 6.64 ms 20.71 TFLOP/s
+d=64 triton fwd BM=128 BN=64 w=8: 6.86 ms 20.02 TFLOP/s
+d=64 triton fwd BM=32 BN=32 w=2: 10.81 ms 12.71 TFLOP/s
+d=64 triton bwd (default configs): 31.53 ms 10.90 TFLOP/s
+
+d=128 sdpa_mem fwd: 10.62 ms 12.94 TFLOP/s
+d=128 triton fwd BM=64 BN=32 w=4: 9.39 ms 14.64 TFLOP/s
+d=128 triton fwd BM=64 BN=64 w=4: 17.64 ms 7.79 TFLOP/s
+d=128 triton fwd BM=128 BN=32 w=8: 6.82 ms 20.14 TFLOP/s
+d=128 triton fwd BM=128 BN=64 w=8: 6.35 ms 21.63 TFLOP/s
+d=128 triton fwd BM=32 BN=32 w=2: 10.13 ms 13.56 TFLOP/s
+d=128 triton bwd (default configs): 31.45 ms 10.92 TFLOP/s
+
+compiled forward variants:
+  regs=128 spills=0 ptx: mma.sync=128 fma=20 local_ld_st=0
+  regs=164 spills=0 ptx: mma.sync=256 fma=36 local_ld_st=0
+  regs=128 spills=0 ptx: mma.sync=128 fma=20 local_ld_st=0
+  regs=163 spills=0 ptx: mma.sync=256 fma=36 local_ld_st=0
+  regs=128 spills=0 ptx: mma.sync=128 fma=24 local_ld_st=0
+  regs=209 spills=0 ptx: mma.sync=256 fma=32 local_ld_st=0
+  regs=255 spills=0 ptx: mma.sync=512 fma=48 local_ld_st=0
+  regs=189 spills=0 ptx: mma.sync=256 fma=20 local_ld_st=0
+  regs=198 spills=0 ptx: mma.sync=512 fma=36 local_ld_st=0
+  regs=251 spills=0 ptx: mma.sync=256 fma=24 local_ld_st=0
+compiled backward variants:
+  _attn_bwd_dkdv: regs=204 spills=0 ptx: mma.sync=256 fma=16 local_ld_st=0
+  _attn_bwd_dkdv: regs=255 spills=0 ptx: mma.sync=512 fma=16 local_ld_st=0
+  _attn_bwd_dq: regs=166 spills=0 ptx: mma.sync=192 fma=16 local_ld_st=0
+  _attn_bwd_dq: regs=221 spills=0 ptx: mma.sync=384 fma=16 local_ld_st=0
