@@ -71,19 +71,29 @@ def search_space() -> list[triton.Config]:
 # shared memory and are counted too.
 
 
+# These are lower bounds on the shared memory a config needs: the streamed
+# operand tiles (once per pipeline stage) plus one fp16 tile for the layout
+# conversion of P or dS before the second matmul. Anything above the device
+# limit is certainly infeasible and is pruned before compiling. Whether a
+# config near the limit fits depends on the compiler release (Triton 3.2 keeps
+# the resident operand in registers on sm75, 3.6 stages it through shared
+# memory as well), so those cases are left to the compiler; the autotuner
+# drops a config that fails with OutOfResources.
+
+
 def smem_forward(bm: int, bn: int, d: int, stages: int) -> int:
-    # Q resident; K, V streamed; P converted.
-    return bm * d + 2 * bn * d * stages + bm * bn
+    # K and V streamed; P converted.
+    return 2 * bn * d * stages + bm * bn
 
 
 def smem_dkdv(bm: int, bn: int, d: int, stages: int) -> int:
-    # K, V resident; Q, dO streamed; P^T and dS^T converted.
-    return 2 * bn * d + 2 * bm * d * stages + 2 * bm * bn
+    # Q and dO streamed; dS^T converted.
+    return 2 * bm * d * stages + bm * bn
 
 
 def smem_dq(bm: int, bn: int, d: int, stages: int) -> int:
-    # Q, dO resident; K, V streamed; P and dS converted.
-    return 2 * bm * d + 2 * bn * d * stages + 2 * bm * bn
+    # K and V streamed; dS converted.
+    return 2 * bn * d * stages + bm * bn
 
 
 def make_pruner(smem_elems: Callable[[int, int, int, int], int], rows_key: str, tensor_arg: str):
