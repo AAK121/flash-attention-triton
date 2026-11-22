@@ -1,0 +1,2 @@
+torch 2.11.0+cu130 triton 3.6.0 cuda 13.0
+['Tesla T4', 'Tesla T4']

@@ -1,0 +1,1066 @@
+[{"stream_name":"stdout","time":3.08476798,"data":"stages: ['inspect', 'tests', 'bench', 'train']\n"}
+,{"stream_name":"stdout","time":3.084821941,"data":"\n"}
+,{"stream_name":"stdout","time":3.084826929,"data":"$ nvidia-smi\n"}
+,{"stream_name":"stdout","time":3.117202805,"data":"Sun Nov 22 17:24:29 2026       \n"}
+,{"stream_name":"stdout","time":3.117223248,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.11724609,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":3.117250344,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.117253926,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":3.117257774,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":3.117261655,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":3.117265168,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":3.172954987,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":3.172983269,"data":"| N/A   53C    P8              9W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":3.172988606,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":3.17299334,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.172997378,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":3.173001142,"data":"| N/A   56C    P8             11W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":3.173004486,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":3.173019547,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.17352159,"data":"\n"}
+,{"stream_name":"stdout","time":3.173530367,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.173535174,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":3.173540542,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":3.173545906,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":3.173551208,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":3.174905337,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":3.175038043,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.501517829,"data":"\n"}
+,{"stream_name":"stdout","time":3.501547366,"data":"$ /usr/bin/python3 -m pip install --no-deps -q -e /tmp/flash-attn-triton\n"}
+,{"stream_name":"stdout","time":10.542434907,"data":"\n"}
+,{"stream_name":"stdout","time":10.54247188,"data":"$ /usr/bin/python3 -m pip install -q pytest\n"}
+,{"stream_name":"stdout","time":12.293938506,"data":"\n"}
+,{"stream_name":"stdout","time":12.293971638,"data":"$ /usr/bin/python3 -c \"import torch, triton; print('torch', torch.__version__, 'triton', triton.__version__, 'cuda', torch.version.cuda); print([torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])\"\n"}
+,{"stream_name":"stdout","time":21.24569084,"data":"torch 2.11.0+cu130 triton 3.6.0 cuda 13.0\n"}
+,{"stream_name":"stdout","time":21.245738837,"data":"['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":26.936178859,"data":"\n"}
+,{"stream_name":"stdout","time":26.936222662,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.2.0 triton==3.2.0\n"}
+,{"stream_name":"stdout","time":35.609589206,"data":"\n"}
+,{"stream_name":"stdout","time":35.609637725,"data":"$ /usr/bin/python3 -c \"import triton; print('triton in use', triton.__version__, triton.__file__)\"\n"}
+,{"stream_name":"stdout","time":35.982634849,"data":"triton in use 3.2.0 /tmp/triton-3.2.0/triton/__init__.py\n"}
+,{"stream_name":"stdout","time":36.017648318,"data":"\n"}
+,{"stream_name":"stdout","time":36.017675772,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 /usr/bin/python3 benchmarks/inspect_kernels.py\n"}
+,{"stream_name":"stdout","time":69.238101612,"data":"device Tesla T4 cc (7, 5) triton 3.2.0 torch 2.11.0+cu130\n"}
+,{"stream_name":"stdout","time":69.238141815,"data":"torch.mm 2048^3: 18.54 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238147151,"data":"triton matmul BM=64 BN=64 BK=32 w=4: 9.91 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238151899,"data":"triton matmul BM=128 BN=128 BK=32 w=8: 12.87 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238156329,"data":"triton matmul BM=128 BN=64 BK=32 w=4: 15.74 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238160949,"data":"  matmul variant: regs=72 spills=0 ptx: mma.sync=32 fma=0 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238165868,"data":"  matmul variant: regs=136 spills=0 ptx: mma.sync=64 fma=0 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.23817044,"data":"  matmul variant: regs=144 spills=0 ptx: mma.sync=64 fma=0 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238175374,"data":"\n"}
+,{"stream_name":"stdout","time":69.238179782,"data":"d=64 sdpa_mem fwd: 15.21 ms 9.04 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238184081,"data":"d=64 triton fwd BM=64 BN=32 w=4: 7.17 ms 19.16 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.23818863,"data":"d=64 triton fwd BM=64 BN=64 w=4: 7.09 ms 19.39 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238192946,"data":"d=64 triton fwd BM=128 BN=32 w=8: 6.64 ms 20.71 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238197334,"data":"d=64 triton fwd BM=128 BN=64 w=8: 6.86 ms 20.02 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238201737,"data":"d=64 triton fwd BM=32 BN=32 w=2: 10.81 ms 12.71 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238216856,"data":"d=64 triton bwd (default configs): 31.53 ms 10.90 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238221127,"data":"\n"}
+,{"stream_name":"stdout","time":69.238225122,"data":"d=128 sdpa_mem fwd: 10.62 ms 12.94 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238229569,"data":"d=128 triton fwd BM=64 BN=32 w=4: 9.39 ms 14.64 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238233669,"data":"d=128 triton fwd BM=64 BN=64 w=4: 17.64 ms 7.79 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238238064,"data":"d=128 triton fwd BM=128 BN=32 w=8: 6.82 ms 20.14 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238256548,"data":"d=128 triton fwd BM=128 BN=64 w=8: 6.35 ms 21.63 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238259914,"data":"d=128 triton fwd BM=32 BN=32 w=2: 10.13 ms 13.56 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238263557,"data":"d=128 triton bwd (default configs): 31.45 ms 10.92 TFLOP/s\n"}
+,{"stream_name":"stdout","time":69.238266757,"data":"\n"}
+,{"stream_name":"stdout","time":69.23827036,"data":"compiled forward variants:\n"}
+,{"stream_name":"stdout","time":69.238273789,"data":"  regs=128 spills=0 ptx: mma.sync=128 fma=20 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238276797,"data":"  regs=164 spills=0 ptx: mma.sync=256 fma=36 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238280166,"data":"  regs=128 spills=0 ptx: mma.sync=128 fma=20 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238283505,"data":"  regs=163 spills=0 ptx: mma.sync=256 fma=36 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238286702,"data":"  regs=128 spills=0 ptx: mma.sync=128 fma=24 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238289729,"data":"  regs=209 spills=0 ptx: mma.sync=256 fma=32 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238292992,"data":"  regs=255 spills=0 ptx: mma.sync=512 fma=48 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238296317,"data":"  regs=189 spills=0 ptx: mma.sync=256 fma=20 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238299459,"data":"  regs=198 spills=0 ptx: mma.sync=512 fma=36 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238302469,"data":"  regs=251 spills=0 ptx: mma.sync=256 fma=24 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238305667,"data":"compiled backward variants:\n"}
+,{"stream_name":"stdout","time":69.238309118,"data":"  _attn_bwd_dkdv: regs=204 spills=0 ptx: mma.sync=256 fma=16 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238312412,"data":"  _attn_bwd_dkdv: regs=255 spills=0 ptx: mma.sync=512 fma=16 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.238316564,"data":"  _attn_bwd_dq: regs=166 spills=0 ptx: mma.sync=192 fma=16 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.23831992,"data":"  _attn_bwd_dq: regs=221 spills=0 ptx: mma.sync=384 fma=16 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":69.894567804,"data":"\n"}
+,{"stream_name":"stdout","time":69.894599892,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 /usr/bin/python3 -m pytest tests -v -rs --durations=10\n"}
+,{"stream_name":"stdout","time":73.87056022,"data":"============================= test session starts ==============================\n"}
+,{"stream_name":"stdout","time":73.870611264,"data":"platform linux -- Python 3.13.16, pytest-8.4.2, pluggy-1.7.0 -- /usr/bin/python3\n"}
+,{"stream_name":"stdout","time":73.870616824,"data":"cachedir: .pytest_cache\n"}
+,{"stream_name":"stdout","time":73.870620301,"data":"rootdir: /tmp/flash-attn-triton\n"}
+,{"stream_name":"stdout","time":73.870623709,"data":"configfile: pyproject.toml\n"}
+,{"stream_name":"stdout","time":73.870627082,"data":"plugins: anyio-4.15.1, langsmith-0.14.12, platformdirs-4.13.5, typeguard-4.6.0\n"}
+,{"stream_name":"stdout","time":73.959937962,"data":"collecting ... collected 809 items\n"}
+,{"stream_name":"stdout","time":73.959962898,"data":"\n"}
+,{"stream_name":"stdout","time":78.854224873,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-32-False-dtype0] PASSED [  0%]\n"}
+,{"stream_name":"stdout","time":78.855889876,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-32-False-dtype1] SKIPPED [  0%]\n"}
+,{"stream_name":"stdout","time":80.711533352,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-32-True-dtype0] PASSED [  0%]\n"}
+,{"stream_name":"stdout","time":80.713143682,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-32-True-dtype1] SKIPPED [  0%]\n"}
+,{"stream_name":"stdout","time":82.348108209,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-64-False-dtype0] PASSED [  0%]\n"}
+,{"stream_name":"stdout","time":82.349593553,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-64-False-dtype1] SKIPPED [  0%]\n"}
+,{"stream_name":"stdout","time":84.830236133,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-64-True-dtype0] PASSED [  0%]\n"}
+,{"stream_name":"stdout","time":84.831915337,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-64-True-dtype1] SKIPPED [  0%]\n"}
+,{"stream_name":"stdout","time":87.269610283,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-128-False-dtype0] PASSED [  1%]\n"}
+,{"stream_name":"stdout","time":87.27126173,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-128-False-dtype1] SKIPPED [  1%]\n"}
+,{"stream_name":"stdout","time":91.642021387,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-128-True-dtype0] PASSED [  1%]\n"}
+,{"stream_name":"stdout","time":91.643553715,"data":"tests/test_backward.py::test_gradients_match_reference[1-1-1-128-True-dtype1] SKIPPED [  1%]\n"}
+,{"stream_name":"stdout","time":94.172463494,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-32-False-dtype0] PASSED [  1%]\n"}
+,{"stream_name":"stdout","time":94.173957885,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-32-False-dtype1] SKIPPED [  1%]\n"}
+,{"stream_name":"stdout","time":96.04865883,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-32-True-dtype0] PASSED [  1%]\n"}
+,{"stream_name":"stdout","time":96.050185394,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-32-True-dtype1] SKIPPED [  1%]\n"}
+,{"stream_name":"stdout","time":97.729617199,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-64-False-dtype0] PASSED [  2%]\n"}
+,{"stream_name":"stdout","time":97.73128738,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-64-False-dtype1] SKIPPED [  2%]\n"}
+,{"stream_name":"stdout","time":100.427937747,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-64-True-dtype0] PASSED [  2%]\n"}
+,{"stream_name":"stdout","time":100.429432551,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-64-True-dtype1] SKIPPED [  2%]\n"}
+,{"stream_name":"stdout","time":103.035909701,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-128-False-dtype0] PASSED [  2%]\n"}
+,{"stream_name":"stdout","time":103.037410397,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-128-False-dtype1] SKIPPED [  2%]\n"}
+,{"stream_name":"stdout","time":107.301580019,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-128-True-dtype0] PASSED [  2%]\n"}
+,{"stream_name":"stdout","time":107.303240488,"data":"tests/test_backward.py::test_gradients_match_reference[1-2-3-128-True-dtype1] SKIPPED [  2%]\n"}
+,{"stream_name":"stdout","time":110.642852134,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-32-False-dtype0] PASSED [  3%]\n"}
+,{"stream_name":"stdout","time":110.644440413,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-32-False-dtype1] SKIPPED [  3%]\n"}
+,{"stream_name":"stdout","time":113.025520158,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-32-True-dtype0] PASSED [  3%]\n"}
+,{"stream_name":"stdout","time":113.027126059,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-32-True-dtype1] SKIPPED [  3%]\n"}
+,{"stream_name":"stdout","time":116.293481716,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-64-False-dtype0] PASSED [  3%]\n"}
+,{"stream_name":"stdout","time":116.295084858,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-64-False-dtype1] SKIPPED [  3%]\n"}
+,{"stream_name":"stdout","time":119.473737751,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-64-True-dtype0] PASSED [  3%]\n"}
+,{"stream_name":"stdout","time":119.47520423,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-64-True-dtype1] SKIPPED [  3%]\n"}
+,{"stream_name":"stdout","time":124.487110775,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-128-False-dtype0] PASSED [  4%]\n"}
+,{"stream_name":"stdout","time":124.488716476,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-128-False-dtype1] SKIPPED [  4%]\n"}
+,{"stream_name":"stdout","time":129.942502084,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-128-True-dtype0] PASSED [  4%]\n"}
+,{"stream_name":"stdout","time":129.94404798,"data":"tests/test_backward.py::test_gradients_match_reference[17-1-1-128-True-dtype1] SKIPPED [  4%]\n"}
+,{"stream_name":"stdout","time":132.285064256,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-32-False-dtype0] PASSED [  4%]\n"}
+,{"stream_name":"stdout","time":132.286515169,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-32-False-dtype1] SKIPPED [  4%]\n"}
+,{"stream_name":"stdout","time":134.581570313,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-32-True-dtype0] PASSED [  4%]\n"}
+,{"stream_name":"stdout","time":134.58311817,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-32-True-dtype1] SKIPPED [  4%]\n"}
+,{"stream_name":"stdout","time":137.687499144,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-64-False-dtype0] PASSED [  5%]\n"}
+,{"stream_name":"stdout","time":137.689042474,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-64-False-dtype1] SKIPPED [  5%]\n"}
+,{"stream_name":"stdout","time":140.983676097,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-64-True-dtype0] PASSED [  5%]\n"}
+,{"stream_name":"stdout","time":140.985145449,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-64-True-dtype1] SKIPPED [  5%]\n"}
+,{"stream_name":"stdout","time":146.420517093,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-128-False-dtype0] PASSED [  5%]\n"}
+,{"stream_name":"stdout","time":146.422140452,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-128-False-dtype1] SKIPPED [  5%]\n"}
+,{"stream_name":"stdout","time":151.894442507,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-128-True-dtype0] PASSED [  5%]\n"}
+,{"stream_name":"stdout","time":151.895950988,"data":"tests/test_backward.py::test_gradients_match_reference[17-2-3-128-True-dtype1] SKIPPED [  5%]\n"}
+,{"stream_name":"stdout","time":151.903669075,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-32-False-dtype0] PASSED [  6%]\n"}
+,{"stream_name":"stdout","time":151.905104658,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-32-False-dtype1] SKIPPED [  6%]\n"}
+,{"stream_name":"stdout","time":151.912104566,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-32-True-dtype0] PASSED [  6%]\n"}
+,{"stream_name":"stdout","time":151.913427114,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-32-True-dtype1] SKIPPED [  6%]\n"}
+,{"stream_name":"stdout","time":151.952940205,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-64-False-dtype0] PASSED [  6%]\n"}
+,{"stream_name":"stdout","time":151.954333224,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-64-False-dtype1] SKIPPED [  6%]\n"}
+,{"stream_name":"stdout","time":151.96140497,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-64-True-dtype0] PASSED [  6%]\n"}
+,{"stream_name":"stdout","time":151.962734315,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-64-True-dtype1] SKIPPED [  6%]\n"}
+,{"stream_name":"stdout","time":151.970419294,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-128-False-dtype0] PASSED [  7%]\n"}
+,{"stream_name":"stdout","time":151.971889431,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-128-False-dtype1] SKIPPED [  7%]\n"}
+,{"stream_name":"stdout","time":151.979113221,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-128-True-dtype0] PASSED [  7%]\n"}
+,{"stream_name":"stdout","time":151.980417542,"data":"tests/test_backward.py::test_gradients_match_reference[200-1-1-128-True-dtype1] SKIPPED [  7%]\n"}
+,{"stream_name":"stdout","time":151.991414024,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-32-False-dtype0] PASSED [  7%]\n"}
+,{"stream_name":"stdout","time":151.992872985,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-32-False-dtype1] SKIPPED [  7%]\n"}
+,{"stream_name":"stdout","time":152.000641104,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-32-True-dtype0] PASSED [  7%]\n"}
+,{"stream_name":"stdout","time":152.002195989,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-32-True-dtype1] SKIPPED [  7%]\n"}
+,{"stream_name":"stdout","time":152.011674281,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-64-False-dtype0] PASSED [  8%]\n"}
+,{"stream_name":"stdout","time":152.01312316,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-64-False-dtype1] SKIPPED [  8%]\n"}
+,{"stream_name":"stdout","time":152.022355935,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-64-True-dtype0] PASSED [  8%]\n"}
+,{"stream_name":"stdout","time":152.023876702,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-64-True-dtype1] SKIPPED [  8%]\n"}
+,{"stream_name":"stdout","time":152.034851793,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-128-False-dtype0] PASSED [  8%]\n"}
+,{"stream_name":"stdout","time":152.036280259,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-128-False-dtype1] SKIPPED [  8%]\n"}
+,{"stream_name":"stdout","time":152.048150823,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-128-True-dtype0] PASSED [  8%]\n"}
+,{"stream_name":"stdout","time":152.049636343,"data":"tests/test_backward.py::test_gradients_match_reference[200-2-3-128-True-dtype1] SKIPPED [  8%]\n"}
+,{"stream_name":"stdout","time":152.069996322,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-32-False-dtype0] PASSED [  9%]\n"}
+,{"stream_name":"stdout","time":152.071560321,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-32-False-dtype1] SKIPPED [  9%]\n"}
+,{"stream_name":"stdout","time":152.079337738,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-32-True-dtype0] PASSED [  9%]\n"}
+,{"stream_name":"stdout","time":152.080695788,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-32-True-dtype1] SKIPPED [  9%]\n"}
+,{"stream_name":"stdout","time":152.090190721,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-64-False-dtype0] PASSED [  9%]\n"}
+,{"stream_name":"stdout","time":152.091777802,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-64-False-dtype1] SKIPPED [  9%]\n"}
+,{"stream_name":"stdout","time":152.100735041,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-64-True-dtype0] PASSED [  9%]\n"}
+,{"stream_name":"stdout","time":152.102206142,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-64-True-dtype1] SKIPPED [  9%]\n"}
+,{"stream_name":"stdout","time":152.113294598,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-128-False-dtype0] PASSED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.114761463,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-128-False-dtype1] SKIPPED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.125834235,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-128-True-dtype0] PASSED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.12735084,"data":"tests/test_backward.py::test_gradients_match_reference[1000-1-1-128-True-dtype1] SKIPPED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.145388617,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-32-False-dtype0] PASSED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.146870539,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-32-False-dtype1] SKIPPED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.166266779,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-32-True-dtype0] PASSED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.167736651,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-32-True-dtype1] SKIPPED [ 10%]\n"}
+,{"stream_name":"stdout","time":152.191320041,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-64-False-dtype0] PASSED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.192818886,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-64-False-dtype1] SKIPPED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.217388685,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-64-True-dtype0] PASSED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.219284628,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-64-True-dtype1] SKIPPED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.256043045,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-128-False-dtype0] PASSED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.257570426,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-128-False-dtype1] SKIPPED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.294526657,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-128-True-dtype0] PASSED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.296062575,"data":"tests/test_backward.py::test_gradients_match_reference[1000-2-3-128-True-dtype1] SKIPPED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.304994909,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-32-False-dtype0] PASSED [ 11%]\n"}
+,{"stream_name":"stdout","time":152.306427279,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-32-False-dtype1] SKIPPED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.314099696,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-32-True-dtype0] PASSED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.315598488,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-32-True-dtype1] SKIPPED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.326630537,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-64-False-dtype0] PASSED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.328254039,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-64-False-dtype1] SKIPPED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.337523094,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-64-True-dtype0] PASSED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.338988855,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-64-True-dtype1] SKIPPED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.35022253,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-128-False-dtype0] PASSED [ 12%]\n"}
+,{"stream_name":"stdout","time":152.351653725,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-128-False-dtype1] SKIPPED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.362265906,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-128-True-dtype0] PASSED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.363683949,"data":"tests/test_backward.py::test_gradients_match_reference[1023-1-1-128-True-dtype1] SKIPPED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.383285448,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-32-False-dtype0] PASSED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.384795402,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-32-False-dtype1] SKIPPED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.406152598,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-32-True-dtype0] PASSED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.407675897,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-32-True-dtype1] SKIPPED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.433120715,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-64-False-dtype0] PASSED [ 13%]\n"}
+,{"stream_name":"stdout","time":152.434723296,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-64-False-dtype1] SKIPPED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.461687899,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-64-True-dtype0] PASSED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.463194054,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-64-True-dtype1] SKIPPED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.503193705,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-128-False-dtype0] PASSED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.504568287,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-128-False-dtype1] SKIPPED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.545460168,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-128-True-dtype0] PASSED [ 14%]\n"}
+,{"stream_name":"stdout","time":152.546966847,"data":"tests/test_backward.py::test_gradients_match_reference[1023-2-3-128-True-dtype1] SKIPPED [ 14%]\n"}
+,{"stream_name":"stdout","time":154.847329074,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-32-False-dtype0] PASSED [ 14%]\n"}
+,{"stream_name":"stdout","time":154.848943559,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-32-False-dtype1] SKIPPED [ 15%]\n"}
+,{"stream_name":"stdout","time":157.256115857,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-32-True-dtype0] PASSED [ 15%]\n"}
+,{"stream_name":"stdout","time":157.257785464,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-32-True-dtype1] SKIPPED [ 15%]\n"}
+,{"stream_name":"stdout","time":160.472533044,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-64-False-dtype0] PASSED [ 15%]\n"}
+,{"stream_name":"stdout","time":160.473989147,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-64-False-dtype1] SKIPPED [ 15%]\n"}
+,{"stream_name":"stdout","time":163.754981117,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-64-True-dtype0] PASSED [ 15%]\n"}
+,{"stream_name":"stdout","time":163.756525354,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-64-True-dtype1] SKIPPED [ 15%]\n"}
+,{"stream_name":"stdout","time":169.050533605,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-128-False-dtype0] PASSED [ 15%]\n"}
+,{"stream_name":"stdout","time":169.052108363,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-128-False-dtype1] SKIPPED [ 16%]\n"}
+,{"stream_name":"stdout","time":174.725633679,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-128-True-dtype0] PASSED [ 16%]\n"}
+,{"stream_name":"stdout","time":174.727148407,"data":"tests/test_backward.py::test_gradients_match_reference[1024-1-1-128-True-dtype1] SKIPPED [ 16%]\n"}
+,{"stream_name":"stdout","time":177.08667977,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-32-False-dtype0] PASSED [ 16%]\n"}
+,{"stream_name":"stdout","time":177.088252247,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-32-False-dtype1] SKIPPED [ 16%]\n"}
+,{"stream_name":"stdout","time":179.457018985,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-32-True-dtype0] PASSED [ 16%]\n"}
+,{"stream_name":"stdout","time":179.45850927,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-32-True-dtype1] SKIPPED [ 16%]\n"}
+,{"stream_name":"stdout","time":182.810976717,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-64-False-dtype0] PASSED [ 16%]\n"}
+,{"stream_name":"stdout","time":182.812563424,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-64-False-dtype1] SKIPPED [ 17%]\n"}
+,{"stream_name":"stdout","time":186.330491597,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-64-True-dtype0] PASSED [ 17%]\n"}
+,{"stream_name":"stdout","time":186.332240942,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-64-True-dtype1] SKIPPED [ 17%]\n"}
+,{"stream_name":"stdout","time":191.819022836,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-128-False-dtype0] PASSED [ 17%]\n"}
+,{"stream_name":"stdout","time":191.820526391,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-128-False-dtype1] SKIPPED [ 17%]\n"}
+,{"stream_name":"stdout","time":197.451787367,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-128-True-dtype0] PASSED [ 17%]\n"}
+,{"stream_name":"stdout","time":197.454054095,"data":"tests/test_backward.py::test_gradients_match_reference[1024-2-3-128-True-dtype1] SKIPPED [ 17%]\n"}
+,{"stream_name":"stdout","time":197.481990176,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-32-False-dtype0] PASSED [ 17%]\n"}
+,{"stream_name":"stdout","time":197.483460699,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-32-False-dtype1] SKIPPED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.516025548,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-32-True-dtype0] PASSED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.517459336,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-32-True-dtype1] SKIPPED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.551258718,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-64-False-dtype0] PASSED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.552693776,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-64-False-dtype1] SKIPPED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.590725733,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-64-True-dtype0] PASSED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.592250538,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-64-True-dtype1] SKIPPED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.641140629,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-128-False-dtype0] PASSED [ 18%]\n"}
+,{"stream_name":"stdout","time":197.642545569,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-128-False-dtype1] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.694411774,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-128-True-dtype0] PASSED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.69580658,"data":"tests/test_backward.py::test_gradients_match_reference[4096-1-1-128-True-dtype1] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.697175355,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-32-False-dtype0] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.698582029,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-32-False-dtype1] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.699940427,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-32-True-dtype0] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.701411261,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-32-True-dtype1] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.702779633,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-64-False-dtype0] SKIPPED [ 19%]\n"}
+,{"stream_name":"stdout","time":197.704229646,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-64-False-dtype1] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.706156447,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-64-True-dtype0] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.707562112,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-64-True-dtype1] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.70898966,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-128-False-dtype0] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.710417817,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-128-False-dtype1] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.711773141,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-128-True-dtype0] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":197.713176096,"data":"tests/test_backward.py::test_gradients_match_reference[4096-2-3-128-True-dtype1] SKIPPED [ 20%]\n"}
+,{"stream_name":"stdout","time":201.192738103,"data":"tests/test_backward.py::test_gradients_unequal_lengths[1-200-False] PASSED [ 20%]\n"}
+,{"stream_name":"stdout","time":204.355057611,"data":"tests/test_backward.py::test_gradients_unequal_lengths[1-200-True] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":204.3657824,"data":"tests/test_backward.py::test_gradients_unequal_lengths[17-1000-False] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":204.37650536,"data":"tests/test_backward.py::test_gradients_unequal_lengths[17-1000-True] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":207.616586445,"data":"tests/test_backward.py::test_gradients_unequal_lengths[200-17-False] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":210.906620052,"data":"tests/test_backward.py::test_gradients_unequal_lengths[200-17-True] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":210.917667671,"data":"tests/test_backward.py::test_gradients_unequal_lengths[64-1024-False] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":210.92833558,"data":"tests/test_backward.py::test_gradients_unequal_lengths[64-1024-True] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":210.948985732,"data":"tests/test_backward.py::test_gradients_unequal_lengths[1000-1023-False] PASSED [ 21%]\n"}
+,{"stream_name":"stdout","time":210.968553731,"data":"tests/test_backward.py::test_gradients_unequal_lengths[1000-1023-True] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":214.076666714,"data":"tests/test_backward.py::test_gradients_unequal_lengths[5-3-False] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":217.396024503,"data":"tests/test_backward.py::test_gradients_unequal_lengths[5-3-True] PASSED  [ 22%]\n"}
+,{"stream_name":"stdout","time":217.402936125,"data":"tests/test_backward.py::test_gradients_unequal_lengths[40-8-False] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":217.409623661,"data":"tests/test_backward.py::test_gradients_unequal_lengths[40-8-True] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":218.104032057,"data":"tests/test_backward.py::test_backward_block_configs[1-1-False-16x16] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":218.804281239,"data":"tests/test_backward.py::test_backward_block_configs[1-1-False-16x64] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":219.936113281,"data":"tests/test_backward.py::test_backward_block_configs[1-1-False-64x16] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":221.001800189,"data":"tests/test_backward.py::test_backward_block_configs[1-1-False-32x128] PASSED [ 22%]\n"}
+,{"stream_name":"stdout","time":222.596019454,"data":"tests/test_backward.py::test_backward_block_configs[1-1-False-128x32] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":223.655478596,"data":"tests/test_backward.py::test_backward_block_configs[1-1-True-16x16] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":224.722503547,"data":"tests/test_backward.py::test_backward_block_configs[1-1-True-16x64] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":226.703628123,"data":"tests/test_backward.py::test_backward_block_configs[1-1-True-64x16] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":228.369268422,"data":"tests/test_backward.py::test_backward_block_configs[1-1-True-32x128] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":231.357367392,"data":"tests/test_backward.py::test_backward_block_configs[1-1-True-128x32] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":232.550698764,"data":"tests/test_backward.py::test_backward_block_configs[37-37-False-16x16] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":233.686886897,"data":"tests/test_backward.py::test_backward_block_configs[37-37-False-16x64] PASSED [ 23%]\n"}
+,{"stream_name":"stdout","time":235.913714285,"data":"tests/test_backward.py::test_backward_block_configs[37-37-False-64x16] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":237.834148625,"data":"tests/test_backward.py::test_backward_block_configs[37-37-False-32x128] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":241.1667293,"data":"tests/test_backward.py::test_backward_block_configs[37-37-False-128x32] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":242.544220823,"data":"tests/test_backward.py::test_backward_block_configs[37-37-True-16x16] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":243.877232731,"data":"tests/test_backward.py::test_backward_block_configs[37-37-True-16x64] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":246.594044613,"data":"tests/test_backward.py::test_backward_block_configs[37-37-True-64x16] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":248.827755916,"data":"tests/test_backward.py::test_backward_block_configs[37-37-True-32x128] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":252.995430016,"data":"tests/test_backward.py::test_backward_block_configs[37-37-True-128x32] PASSED [ 24%]\n"}
+,{"stream_name":"stdout","time":253.003466756,"data":"tests/test_backward.py::test_backward_block_configs[130-130-False-16x16] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.009377855,"data":"tests/test_backward.py::test_backward_block_configs[130-130-False-16x64] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.015071216,"data":"tests/test_backward.py::test_backward_block_configs[130-130-False-64x16] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.021230307,"data":"tests/test_backward.py::test_backward_block_configs[130-130-False-32x128] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.026950756,"data":"tests/test_backward.py::test_backward_block_configs[130-130-False-128x32] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.033913987,"data":"tests/test_backward.py::test_backward_block_configs[130-130-True-16x16] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.040699187,"data":"tests/test_backward.py::test_backward_block_configs[130-130-True-16x64] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.047232507,"data":"tests/test_backward.py::test_backward_block_configs[130-130-True-64x16] PASSED [ 25%]\n"}
+,{"stream_name":"stdout","time":253.053915002,"data":"tests/test_backward.py::test_backward_block_configs[130-130-True-32x128] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.060673017,"data":"tests/test_backward.py::test_backward_block_configs[130-130-True-128x32] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.067653642,"data":"tests/test_backward.py::test_backward_block_configs[20-150-False-16x16] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.073612405,"data":"tests/test_backward.py::test_backward_block_configs[20-150-False-16x64] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.080508195,"data":"tests/test_backward.py::test_backward_block_configs[20-150-False-64x16] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.086642637,"data":"tests/test_backward.py::test_backward_block_configs[20-150-False-32x128] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.093207773,"data":"tests/test_backward.py::test_backward_block_configs[20-150-False-128x32] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.100417089,"data":"tests/test_backward.py::test_backward_block_configs[20-150-True-16x16] PASSED [ 26%]\n"}
+,{"stream_name":"stdout","time":253.107181416,"data":"tests/test_backward.py::test_backward_block_configs[20-150-True-16x64] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.114218137,"data":"tests/test_backward.py::test_backward_block_configs[20-150-True-64x16] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.121154486,"data":"tests/test_backward.py::test_backward_block_configs[20-150-True-32x128] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.12799474,"data":"tests/test_backward.py::test_backward_block_configs[20-150-True-128x32] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.134733832,"data":"tests/test_backward.py::test_backward_block_configs[150-20-False-16x16] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.140944698,"data":"tests/test_backward.py::test_backward_block_configs[150-20-False-16x64] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.14745715,"data":"tests/test_backward.py::test_backward_block_configs[150-20-False-64x16] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.154018713,"data":"tests/test_backward.py::test_backward_block_configs[150-20-False-32x128] PASSED [ 27%]\n"}
+,{"stream_name":"stdout","time":253.160286177,"data":"tests/test_backward.py::test_backward_block_configs[150-20-False-128x32] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":253.167334691,"data":"tests/test_backward.py::test_backward_block_configs[150-20-True-16x16] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":253.174128199,"data":"tests/test_backward.py::test_backward_block_configs[150-20-True-16x64] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":253.180672077,"data":"tests/test_backward.py::test_backward_block_configs[150-20-True-64x16] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":253.186700077,"data":"tests/test_backward.py::test_backward_block_configs[150-20-True-32x128] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":253.192765997,"data":"tests/test_backward.py::test_backward_block_configs[150-20-True-128x32] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":255.170065638,"data":"tests/test_backward.py::test_backward_block_configs[31-48-False-16x16] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":256.398279792,"data":"tests/test_backward.py::test_backward_block_configs[31-48-False-16x64] PASSED [ 28%]\n"}
+,{"stream_name":"stdout","time":258.773755869,"data":"tests/test_backward.py::test_backward_block_configs[31-48-False-64x16] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":260.74591033,"data":"tests/test_backward.py::test_backward_block_configs[31-48-False-32x128] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":264.134420042,"data":"tests/test_backward.py::test_backward_block_configs[31-48-False-128x32] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":266.133671732,"data":"tests/test_backward.py::test_backward_block_configs[31-48-True-16x16] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":267.495691727,"data":"tests/test_backward.py::test_backward_block_configs[31-48-True-16x64] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":270.26563849,"data":"tests/test_backward.py::test_backward_block_configs[31-48-True-64x16] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":272.587591259,"data":"tests/test_backward.py::test_backward_block_configs[31-48-True-32x128] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":276.738927336,"data":"tests/test_backward.py::test_backward_block_configs[31-48-True-128x32] PASSED [ 29%]\n"}
+,{"stream_name":"stdout","time":278.605762994,"data":"tests/test_backward.py::test_backward_block_configs[64-129-False-16x16] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":279.766989436,"data":"tests/test_backward.py::test_backward_block_configs[64-129-False-16x64] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":282.157714065,"data":"tests/test_backward.py::test_backward_block_configs[64-129-False-64x16] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":284.177547561,"data":"tests/test_backward.py::test_backward_block_configs[64-129-False-32x128] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":287.583901347,"data":"tests/test_backward.py::test_backward_block_configs[64-129-False-128x32] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":289.611114939,"data":"tests/test_backward.py::test_backward_block_configs[64-129-True-16x16] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":290.873529154,"data":"tests/test_backward.py::test_backward_block_configs[64-129-True-16x64] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":293.689723104,"data":"tests/test_backward.py::test_backward_block_configs[64-129-True-64x16] PASSED [ 30%]\n"}
+,{"stream_name":"stdout","time":296.013947336,"data":"tests/test_backward.py::test_backward_block_configs[64-129-True-32x128] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.321904803,"data":"tests/test_backward.py::test_backward_block_configs[64-129-True-128x32] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.328684697,"data":"tests/test_backward.py::test_backward_block_configs[130-128-False-16x16] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.334387667,"data":"tests/test_backward.py::test_backward_block_configs[130-128-False-16x64] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.340185155,"data":"tests/test_backward.py::test_backward_block_configs[130-128-False-64x16] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.346138928,"data":"tests/test_backward.py::test_backward_block_configs[130-128-False-32x128] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.351956231,"data":"tests/test_backward.py::test_backward_block_configs[130-128-False-128x32] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.358236419,"data":"tests/test_backward.py::test_backward_block_configs[130-128-True-16x16] PASSED [ 31%]\n"}
+,{"stream_name":"stdout","time":300.364461668,"data":"tests/test_backward.py::test_backward_block_configs[130-128-True-16x64] PASSED [ 32%]\n"}
+,{"stream_name":"stdout","time":300.370602558,"data":"tests/test_backward.py::test_backward_block_configs[130-128-True-64x16] PASSED [ 32%]\n"}
+,{"stream_name":"stdout","time":300.376707562,"data":"tests/test_backward.py::test_backward_block_configs[130-128-True-32x128] PASSED [ 32%]\n"}
+,{"stream_name":"stdout","time":300.382883976,"data":"tests/test_backward.py::test_backward_block_configs[130-128-True-128x32] PASSED [ 32%]\n"}
+,{"stream_name":"stdout","time":300.406692616,"data":"tests/test_backward.py::test_gradients_non_contiguous[False] PASSED      [ 32%]\n"}
+,{"stream_name":"stdout","time":300.414128108,"data":"tests/test_backward.py::test_gradients_non_contiguous[True] PASSED       [ 32%]\n"}
+,{"stream_name":"stdout","time":300.420917401,"data":"tests/test_backward.py::test_gradients_custom_sm_scale PASSED            [ 32%]\n"}
+,{"stream_name":"stdout","time":300.427026872,"data":"tests/test_backward.py::test_gradients_large_logits[False] PASSED        [ 32%]\n"}
+,{"stream_name":"stdout","time":300.433496354,"data":"tests/test_backward.py::test_gradients_large_logits[True] PASSED         [ 33%]\n"}
+,{"stream_name":"stdout","time":300.441777138,"data":"tests/test_backward.py::test_backward_deterministic PASSED               [ 33%]\n"}
+,{"stream_name":"stdout","time":303.284032283,"data":"tests/test_backward.py::test_partial_requires_grad PASSED                [ 33%]\n"}
+,{"stream_name":"stdout","time":469.39126521,"data":"tests/test_backward.py::test_autotuned_backward PASSED                   [ 33%]\n"}
+,{"stream_name":"stdout","time":469.394286127,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-32-False-dtype0] PASSED [ 33%]\n"}
+,{"stream_name":"stdout","time":469.395892237,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-32-False-dtype1] SKIPPED [ 33%]\n"}
+,{"stream_name":"stdout","time":469.399167649,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-32-True-dtype0] PASSED [ 33%]\n"}
+,{"stream_name":"stdout","time":469.400719446,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-32-True-dtype1] SKIPPED [ 33%]\n"}
+,{"stream_name":"stdout","time":469.403457331,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-64-False-dtype0] PASSED [ 33%]\n"}
+,{"stream_name":"stdout","time":469.404927316,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-64-False-dtype1] SKIPPED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.40854618,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-64-True-dtype0] PASSED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.410155845,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-64-True-dtype1] SKIPPED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.41293357,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-128-False-dtype0] PASSED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.414410757,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-128-False-dtype1] SKIPPED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.41782883,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-128-True-dtype0] PASSED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.419264861,"data":"tests/test_forward.py::test_forward_matches_reference[1-1-1-128-True-dtype1] SKIPPED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.422053562,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-32-False-dtype0] PASSED [ 34%]\n"}
+,{"stream_name":"stdout","time":469.423419294,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-32-False-dtype1] SKIPPED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.426453441,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-32-True-dtype0] PASSED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.427919031,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-32-True-dtype1] SKIPPED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.430599702,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-64-False-dtype0] PASSED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.432088415,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-64-False-dtype1] SKIPPED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.435284453,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-64-True-dtype0] PASSED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.436796819,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-64-True-dtype1] SKIPPED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.439645795,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-128-False-dtype0] PASSED [ 35%]\n"}
+,{"stream_name":"stdout","time":469.441348103,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-128-False-dtype1] SKIPPED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.444768416,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-128-True-dtype0] PASSED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.446350737,"data":"tests/test_forward.py::test_forward_matches_reference[1-2-3-128-True-dtype1] SKIPPED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.450118328,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-32-False-dtype0] PASSED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.451696116,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-32-False-dtype1] SKIPPED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.45485611,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-32-True-dtype0] PASSED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.456266225,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-32-True-dtype1] SKIPPED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.459160091,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-64-False-dtype0] PASSED [ 36%]\n"}
+,{"stream_name":"stdout","time":469.460540441,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-64-False-dtype1] SKIPPED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.463719767,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-64-True-dtype0] PASSED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.465055522,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-64-True-dtype1] SKIPPED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.468109933,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-128-False-dtype0] PASSED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.4695035,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-128-False-dtype1] SKIPPED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.472826303,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-128-True-dtype0] PASSED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.474203537,"data":"tests/test_forward.py::test_forward_matches_reference[17-1-1-128-True-dtype1] SKIPPED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.477257154,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-32-False-dtype0] PASSED [ 37%]\n"}
+,{"stream_name":"stdout","time":469.47864136,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-32-False-dtype1] SKIPPED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.482018608,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-32-True-dtype0] PASSED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.483448062,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-32-True-dtype1] SKIPPED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.486516756,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-64-False-dtype0] PASSED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.487895673,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-64-False-dtype1] SKIPPED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.491215583,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-64-True-dtype0] PASSED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.492605101,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-64-True-dtype1] SKIPPED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.495782239,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-128-False-dtype0] PASSED [ 38%]\n"}
+,{"stream_name":"stdout","time":469.49714891,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-128-False-dtype1] SKIPPED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.500717837,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-128-True-dtype0] PASSED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.50207667,"data":"tests/test_forward.py::test_forward_matches_reference[17-2-3-128-True-dtype1] SKIPPED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.505092163,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-32-False-dtype0] PASSED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.506821729,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-32-False-dtype1] SKIPPED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.510709974,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-32-True-dtype0] PASSED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.512037301,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-32-True-dtype1] SKIPPED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.515170123,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-64-False-dtype0] PASSED [ 39%]\n"}
+,{"stream_name":"stdout","time":469.516542613,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-64-False-dtype1] SKIPPED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.520004752,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-64-True-dtype0] PASSED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.521468438,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-64-True-dtype1] SKIPPED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.525104112,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-128-False-dtype0] PASSED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.526603905,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-128-False-dtype1] SKIPPED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.530420691,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-128-True-dtype0] PASSED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.532059919,"data":"tests/test_forward.py::test_forward_matches_reference[200-1-1-128-True-dtype1] SKIPPED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.535791024,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-32-False-dtype0] PASSED [ 40%]\n"}
+,{"stream_name":"stdout","time":469.537124254,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-32-False-dtype1] SKIPPED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.540988578,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-32-True-dtype0] PASSED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.542374762,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-32-True-dtype1] SKIPPED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.546922443,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-64-False-dtype0] PASSED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.54828446,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-64-False-dtype1] SKIPPED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.552947808,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-64-True-dtype0] PASSED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.55429837,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-64-True-dtype1] SKIPPED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.560017443,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-128-False-dtype0] PASSED [ 41%]\n"}
+,{"stream_name":"stdout","time":469.561401857,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-128-False-dtype1] SKIPPED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.567443288,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-128-True-dtype0] PASSED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.56881463,"data":"tests/test_forward.py::test_forward_matches_reference[200-2-3-128-True-dtype1] SKIPPED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.572507486,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-32-False-dtype0] PASSED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.574016937,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-32-False-dtype1] SKIPPED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.578142874,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-32-True-dtype0] PASSED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.579909892,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-32-True-dtype1] SKIPPED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.584274165,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-64-False-dtype0] PASSED [ 42%]\n"}
+,{"stream_name":"stdout","time":469.585640198,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-64-False-dtype1] SKIPPED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.590310102,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-64-True-dtype0] PASSED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.591645647,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-64-True-dtype1] SKIPPED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.597429694,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-128-False-dtype0] PASSED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.598814436,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-128-False-dtype1] SKIPPED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.604945502,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-128-True-dtype0] PASSED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.606321,"data":"tests/test_forward.py::test_forward_matches_reference[1000-1-1-128-True-dtype1] SKIPPED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.615644105,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-32-False-dtype0] PASSED [ 43%]\n"}
+,{"stream_name":"stdout","time":469.616997178,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-32-False-dtype1] SKIPPED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.627285348,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-32-True-dtype0] PASSED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.628648044,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-32-True-dtype1] SKIPPED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.641936523,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-64-False-dtype0] PASSED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.64334823,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-64-False-dtype1] SKIPPED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.65789999,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-64-True-dtype0] PASSED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.659267605,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-64-True-dtype1] SKIPPED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.680910938,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-128-False-dtype0] PASSED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.682338231,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-128-False-dtype1] SKIPPED [ 44%]\n"}
+,{"stream_name":"stdout","time":469.703767983,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-128-True-dtype0] PASSED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.705124292,"data":"tests/test_forward.py::test_forward_matches_reference[1000-2-3-128-True-dtype1] SKIPPED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.708780992,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-32-False-dtype0] PASSED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.710154651,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-32-False-dtype1] SKIPPED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.714094258,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-32-True-dtype0] PASSED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.715496353,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-32-True-dtype1] SKIPPED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.719962391,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-64-False-dtype0] PASSED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.721851625,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-64-False-dtype1] SKIPPED [ 45%]\n"}
+,{"stream_name":"stdout","time":469.726706955,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-64-True-dtype0] PASSED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.728157578,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-64-True-dtype1] SKIPPED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.73419073,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-128-False-dtype0] PASSED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.7357391,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-128-False-dtype1] SKIPPED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.741997401,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-128-True-dtype0] PASSED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.743442799,"data":"tests/test_forward.py::test_forward_matches_reference[1023-1-1-128-True-dtype1] SKIPPED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.753520251,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-32-False-dtype0] PASSED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.754941126,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-32-False-dtype1] SKIPPED [ 46%]\n"}
+,{"stream_name":"stdout","time":469.765792444,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-32-True-dtype0] PASSED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.767185779,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-32-True-dtype1] SKIPPED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.781214387,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-64-False-dtype0] PASSED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.782555139,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-64-False-dtype1] SKIPPED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.797296078,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-64-True-dtype0] PASSED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.798650041,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-64-True-dtype1] SKIPPED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.822613778,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-128-False-dtype0] PASSED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.824062676,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-128-False-dtype1] SKIPPED [ 47%]\n"}
+,{"stream_name":"stdout","time":469.84755598,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-128-True-dtype0] PASSED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.848956255,"data":"tests/test_forward.py::test_forward_matches_reference[1023-2-3-128-True-dtype1] SKIPPED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.852586575,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-32-False-dtype0] PASSED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.853928026,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-32-False-dtype1] SKIPPED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.858283939,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-32-True-dtype0] PASSED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.859707295,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-32-True-dtype1] SKIPPED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.863943309,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-64-False-dtype0] PASSED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.865311701,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-64-False-dtype1] SKIPPED [ 48%]\n"}
+,{"stream_name":"stdout","time":469.869944469,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-64-True-dtype0] PASSED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.8869176,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-64-True-dtype1] SKIPPED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.89390739,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-128-False-dtype0] PASSED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.895375032,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-128-False-dtype1] SKIPPED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.903343425,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-128-True-dtype0] PASSED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.904835399,"data":"tests/test_forward.py::test_forward_matches_reference[1024-1-1-128-True-dtype1] SKIPPED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.917351099,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-32-False-dtype0] PASSED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.918906365,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-32-False-dtype1] SKIPPED [ 49%]\n"}
+,{"stream_name":"stdout","time":469.929893349,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-32-True-dtype0] PASSED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.931333806,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-32-True-dtype1] SKIPPED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.945574675,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-64-False-dtype0] PASSED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.947072699,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-64-False-dtype1] SKIPPED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.963214616,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-64-True-dtype0] PASSED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.964708103,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-64-True-dtype1] SKIPPED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.987898471,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-False-dtype0] PASSED [ 50%]\n"}
+,{"stream_name":"stdout","time":469.989648051,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-False-dtype1] SKIPPED [ 50%]\n"}
+,{"stream_name":"stdout","time":470.013729759,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-True-dtype0] PASSED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.015460803,"data":"tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-True-dtype1] SKIPPED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.030511113,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-32-False-dtype0] PASSED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.032083518,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-32-False-dtype1] SKIPPED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.050458195,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-32-True-dtype0] PASSED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.052205271,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-32-True-dtype1] SKIPPED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.07067867,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-64-False-dtype0] PASSED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.072190961,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-64-False-dtype1] SKIPPED [ 51%]\n"}
+,{"stream_name":"stdout","time":470.09378294,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-64-True-dtype0] PASSED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.095383462,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-64-True-dtype1] SKIPPED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.122059942,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-128-False-dtype0] PASSED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.123724158,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-128-False-dtype1] SKIPPED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.152530638,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-128-True-dtype0] PASSED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.153990912,"data":"tests/test_forward.py::test_forward_matches_reference[4096-1-1-128-True-dtype1] SKIPPED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.155397786,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-32-False-dtype0] SKIPPED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.156902093,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-32-False-dtype1] SKIPPED [ 52%]\n"}
+,{"stream_name":"stdout","time":470.158329527,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-32-True-dtype0] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.159748128,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-32-True-dtype1] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.161204695,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-64-False-dtype0] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.162618255,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-64-False-dtype1] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.164075701,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-64-True-dtype0] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.165491345,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-64-True-dtype1] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.166894293,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-128-False-dtype0] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.168378583,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-128-False-dtype1] SKIPPED [ 53%]\n"}
+,{"stream_name":"stdout","time":470.16975503,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-128-True-dtype0] SKIPPED [ 54%]\n"}
+,{"stream_name":"stdout","time":470.171223673,"data":"tests/test_forward.py::test_forward_matches_reference[4096-2-3-128-True-dtype1] SKIPPED [ 54%]\n"}
+,{"stream_name":"stdout","time":470.175949248,"data":"tests/test_forward.py::test_unequal_lengths[1-200-False-dtype0] PASSED   [ 54%]\n"}
+,{"stream_name":"stdout","time":470.1801811,"data":"tests/test_forward.py::test_unequal_lengths[1-200-True-dtype0] PASSED    [ 54%]\n"}
+,{"stream_name":"stdout","time":470.186664462,"data":"tests/test_forward.py::test_unequal_lengths[17-1000-False-dtype0] PASSED [ 54%]\n"}
+,{"stream_name":"stdout","time":470.193364508,"data":"tests/test_forward.py::test_unequal_lengths[17-1000-True-dtype0] PASSED  [ 54%]\n"}
+,{"stream_name":"stdout","time":470.196674789,"data":"tests/test_forward.py::test_unequal_lengths[200-17-False-dtype0] PASSED  [ 54%]\n"}
+,{"stream_name":"stdout","time":470.200362939,"data":"tests/test_forward.py::test_unequal_lengths[200-17-True-dtype0] PASSED   [ 54%]\n"}
+,{"stream_name":"stdout","time":470.206660697,"data":"tests/test_forward.py::test_unequal_lengths[64-1024-False-dtype0] PASSED [ 55%]\n"}
+,{"stream_name":"stdout","time":470.213477541,"data":"tests/test_forward.py::test_unequal_lengths[64-1024-True-dtype0] PASSED  [ 55%]\n"}
+,{"stream_name":"stdout","time":470.22375347,"data":"tests/test_forward.py::test_unequal_lengths[1000-1023-False-dtype0] PASSED [ 55%]\n"}
+,{"stream_name":"stdout","time":470.236096453,"data":"tests/test_forward.py::test_unequal_lengths[1000-1023-True-dtype0] PASSED [ 55%]\n"}
+,{"stream_name":"stdout","time":470.239332351,"data":"tests/test_forward.py::test_unequal_lengths[5-3-False-dtype0] PASSED     [ 55%]\n"}
+,{"stream_name":"stdout","time":470.242652841,"data":"tests/test_forward.py::test_unequal_lengths[5-3-True-dtype0] PASSED      [ 55%]\n"}
+,{"stream_name":"stdout","time":470.245765047,"data":"tests/test_forward.py::test_logsumexp[False] PASSED                      [ 55%]\n"}
+,{"stream_name":"stdout","time":470.248728367,"data":"tests/test_forward.py::test_logsumexp[True] PASSED                       [ 55%]\n"}
+,{"stream_name":"stdout","time":470.251512733,"data":"tests/test_forward.py::test_rows_without_visible_keys_are_zero PASSED    [ 55%]\n"}
+,{"stream_name":"stdout","time":471.739622205,"data":"tests/test_forward.py::test_non_contiguous_inputs[False] PASSED          [ 56%]\n"}
+,{"stream_name":"stdout","time":472.97599231,"data":"tests/test_forward.py::test_non_contiguous_inputs[True] PASSED           [ 56%]\n"}
+,{"stream_name":"stdout","time":473.38313439,"data":"tests/test_forward.py::test_block_configs[1-1-False-16x16] PASSED        [ 56%]\n"}
+,{"stream_name":"stdout","time":473.841033613,"data":"tests/test_forward.py::test_block_configs[1-1-False-16x64] PASSED        [ 56%]\n"}
+,{"stream_name":"stdout","time":474.188603912,"data":"tests/test_forward.py::test_block_configs[1-1-False-64x16] PASSED        [ 56%]\n"}
+,{"stream_name":"stdout","time":474.729357384,"data":"tests/test_forward.py::test_block_configs[1-1-False-32x128] PASSED       [ 56%]\n"}
+,{"stream_name":"stdout","time":475.121596278,"data":"tests/test_forward.py::test_block_configs[1-1-False-128x32] PASSED       [ 56%]\n"}
+,{"stream_name":"stdout","time":475.125819313,"data":"tests/test_forward.py::test_block_configs[1-1-False-64x64] PASSED        [ 56%]\n"}
+,{"stream_name":"stdout","time":475.635226042,"data":"tests/test_forward.py::test_block_configs[1-1-True-16x16] PASSED         [ 57%]\n"}
+,{"stream_name":"stdout","time":476.387591574,"data":"tests/test_forward.py::test_block_configs[1-1-True-16x64] PASSED         [ 57%]\n"}
+,{"stream_name":"stdout","time":476.908897591,"data":"tests/test_forward.py::test_block_configs[1-1-True-64x16] PASSED         [ 57%]\n"}
+,{"stream_name":"stdout","time":477.844578177,"data":"tests/test_forward.py::test_block_configs[1-1-True-32x128] PASSED        [ 57%]\n"}
+,{"stream_name":"stdout","time":478.379841372,"data":"tests/test_forward.py::test_block_configs[1-1-True-128x32] PASSED        [ 57%]\n"}
+,{"stream_name":"stdout","time":478.383765659,"data":"tests/test_forward.py::test_block_configs[1-1-True-64x64] PASSED         [ 57%]\n"}
+,{"stream_name":"stdout","time":478.898174461,"data":"tests/test_forward.py::test_block_configs[37-37-False-16x16] PASSED      [ 57%]\n"}
+,{"stream_name":"stdout","time":479.785527233,"data":"tests/test_forward.py::test_block_configs[37-37-False-16x64] PASSED      [ 57%]\n"}
+,{"stream_name":"stdout","time":480.311843779,"data":"tests/test_forward.py::test_block_configs[37-37-False-64x16] PASSED      [ 58%]\n"}
+,{"stream_name":"stdout","time":481.534800194,"data":"tests/test_forward.py::test_block_configs[37-37-False-32x128] PASSED     [ 58%]\n"}
+,{"stream_name":"stdout","time":482.140196991,"data":"tests/test_forward.py::test_block_configs[37-37-False-128x32] PASSED     [ 58%]\n"}
+,{"stream_name":"stdout","time":482.143888022,"data":"tests/test_forward.py::test_block_configs[37-37-False-64x64] PASSED      [ 58%]\n"}
+,{"stream_name":"stdout","time":482.681985948,"data":"tests/test_forward.py::test_block_configs[37-37-True-16x16] PASSED       [ 58%]\n"}
+,{"stream_name":"stdout","time":483.557579528,"data":"tests/test_forward.py::test_block_configs[37-37-True-16x64] PASSED       [ 58%]\n"}
+,{"stream_name":"stdout","time":484.063491913,"data":"tests/test_forward.py::test_block_configs[37-37-True-64x16] PASSED       [ 58%]\n"}
+,{"stream_name":"stdout","time":485.314661047,"data":"tests/test_forward.py::test_block_configs[37-37-True-32x128] PASSED      [ 58%]\n"}
+,{"stream_name":"stdout","time":485.949993159,"data":"tests/test_forward.py::test_block_configs[37-37-True-128x32] PASSED      [ 59%]\n"}
+,{"stream_name":"stdout","time":485.954043837,"data":"tests/test_forward.py::test_block_configs[37-37-True-64x64] PASSED       [ 59%]\n"}
+,{"stream_name":"stdout","time":485.957425347,"data":"tests/test_forward.py::test_block_configs[130-130-False-16x16] PASSED    [ 59%]\n"}
+,{"stream_name":"stdout","time":485.960741581,"data":"tests/test_forward.py::test_block_configs[130-130-False-16x64] PASSED    [ 59%]\n"}
+,{"stream_name":"stdout","time":485.964114937,"data":"tests/test_forward.py::test_block_configs[130-130-False-64x16] PASSED    [ 59%]\n"}
+,{"stream_name":"stdout","time":485.96762989,"data":"tests/test_forward.py::test_block_configs[130-130-False-32x128] PASSED   [ 59%]\n"}
+,{"stream_name":"stdout","time":485.971226355,"data":"tests/test_forward.py::test_block_configs[130-130-False-128x32] PASSED   [ 59%]\n"}
+,{"stream_name":"stdout","time":485.974577098,"data":"tests/test_forward.py::test_block_configs[130-130-False-64x64] PASSED    [ 59%]\n"}
+,{"stream_name":"stdout","time":485.978386021,"data":"tests/test_forward.py::test_block_configs[130-130-True-16x16] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":485.982003896,"data":"tests/test_forward.py::test_block_configs[130-130-True-16x64] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":485.985878352,"data":"tests/test_forward.py::test_block_configs[130-130-True-64x16] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":485.989602804,"data":"tests/test_forward.py::test_block_configs[130-130-True-32x128] PASSED    [ 60%]\n"}
+,{"stream_name":"stdout","time":485.993243875,"data":"tests/test_forward.py::test_block_configs[130-130-True-128x32] PASSED    [ 60%]\n"}
+,{"stream_name":"stdout","time":485.996902724,"data":"tests/test_forward.py::test_block_configs[130-130-True-64x64] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":486.000287995,"data":"tests/test_forward.py::test_block_configs[20-150-False-16x16] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":486.003692225,"data":"tests/test_forward.py::test_block_configs[20-150-False-16x64] PASSED     [ 60%]\n"}
+,{"stream_name":"stdout","time":486.006851586,"data":"tests/test_forward.py::test_block_configs[20-150-False-64x16] PASSED     [ 61%]\n"}
+,{"stream_name":"stdout","time":486.010061511,"data":"tests/test_forward.py::test_block_configs[20-150-False-32x128] PASSED    [ 61%]\n"}
+,{"stream_name":"stdout","time":486.013370357,"data":"tests/test_forward.py::test_block_configs[20-150-False-128x32] PASSED    [ 61%]\n"}
+,{"stream_name":"stdout","time":486.016660388,"data":"tests/test_forward.py::test_block_configs[20-150-False-64x64] PASSED     [ 61%]\n"}
+,{"stream_name":"stdout","time":486.020265215,"data":"tests/test_forward.py::test_block_configs[20-150-True-16x16] PASSED      [ 61%]\n"}
+,{"stream_name":"stdout","time":486.023902087,"data":"tests/test_forward.py::test_block_configs[20-150-True-16x64] PASSED      [ 61%]\n"}
+,{"stream_name":"stdout","time":486.0274414,"data":"tests/test_forward.py::test_block_configs[20-150-True-64x16] PASSED      [ 61%]\n"}
+,{"stream_name":"stdout","time":486.031024093,"data":"tests/test_forward.py::test_block_configs[20-150-True-32x128] PASSED     [ 61%]\n"}
+,{"stream_name":"stdout","time":486.034653858,"data":"tests/test_forward.py::test_block_configs[20-150-True-128x32] PASSED     [ 62%]\n"}
+,{"stream_name":"stdout","time":486.038310874,"data":"tests/test_forward.py::test_block_configs[20-150-True-64x64] PASSED      [ 62%]\n"}
+,{"stream_name":"stdout","time":486.04144606,"data":"tests/test_forward.py::test_block_configs[150-20-False-16x16] PASSED     [ 62%]\n"}
+,{"stream_name":"stdout","time":486.044607249,"data":"tests/test_forward.py::test_block_configs[150-20-False-16x64] PASSED     [ 62%]\n"}
+,{"stream_name":"stdout","time":486.047799881,"data":"tests/test_forward.py::test_block_configs[150-20-False-64x16] PASSED     [ 62%]\n"}
+,{"stream_name":"stdout","time":486.050961251,"data":"tests/test_forward.py::test_block_configs[150-20-False-32x128] PASSED    [ 62%]\n"}
+,{"stream_name":"stdout","time":486.054146231,"data":"tests/test_forward.py::test_block_configs[150-20-False-128x32] PASSED    [ 62%]\n"}
+,{"stream_name":"stdout","time":486.057279657,"data":"tests/test_forward.py::test_block_configs[150-20-False-64x64] PASSED     [ 62%]\n"}
+,{"stream_name":"stdout","time":486.060873589,"data":"tests/test_forward.py::test_block_configs[150-20-True-16x16] PASSED      [ 63%]\n"}
+,{"stream_name":"stdout","time":486.064522069,"data":"tests/test_forward.py::test_block_configs[150-20-True-16x64] PASSED      [ 63%]\n"}
+,{"stream_name":"stdout","time":486.068092784,"data":"tests/test_forward.py::test_block_configs[150-20-True-64x16] PASSED      [ 63%]\n"}
+,{"stream_name":"stdout","time":486.071637348,"data":"tests/test_forward.py::test_block_configs[150-20-True-32x128] PASSED     [ 63%]\n"}
+,{"stream_name":"stdout","time":486.075199429,"data":"tests/test_forward.py::test_block_configs[150-20-True-128x32] PASSED     [ 63%]\n"}
+,{"stream_name":"stdout","time":486.078752012,"data":"tests/test_forward.py::test_block_configs[150-20-True-64x64] PASSED      [ 63%]\n"}
+,{"stream_name":"stdout","time":486.082168295,"data":"tests/test_forward.py::test_block_configs[127-129-False-16x16] PASSED    [ 63%]\n"}
+,{"stream_name":"stdout","time":486.085706113,"data":"tests/test_forward.py::test_block_configs[127-129-False-16x64] PASSED    [ 63%]\n"}
+,{"stream_name":"stdout","time":486.088986199,"data":"tests/test_forward.py::test_block_configs[127-129-False-64x16] PASSED    [ 64%]\n"}
+,{"stream_name":"stdout","time":486.092289443,"data":"tests/test_forward.py::test_block_configs[127-129-False-32x128] PASSED   [ 64%]\n"}
+,{"stream_name":"stdout","time":486.095571904,"data":"tests/test_forward.py::test_block_configs[127-129-False-128x32] PASSED   [ 64%]\n"}
+,{"stream_name":"stdout","time":486.098811307,"data":"tests/test_forward.py::test_block_configs[127-129-False-64x64] PASSED    [ 64%]\n"}
+,{"stream_name":"stdout","time":486.102488519,"data":"tests/test_forward.py::test_block_configs[127-129-True-16x16] PASSED     [ 64%]\n"}
+,{"stream_name":"stdout","time":486.106100653,"data":"tests/test_forward.py::test_block_configs[127-129-True-16x64] PASSED     [ 64%]\n"}
+,{"stream_name":"stdout","time":486.109794863,"data":"tests/test_forward.py::test_block_configs[127-129-True-64x16] PASSED     [ 64%]\n"}
+,{"stream_name":"stdout","time":486.113460548,"data":"tests/test_forward.py::test_block_configs[127-129-True-32x128] PASSED    [ 64%]\n"}
+,{"stream_name":"stdout","time":486.117089205,"data":"tests/test_forward.py::test_block_configs[127-129-True-128x32] PASSED    [ 65%]\n"}
+,{"stream_name":"stdout","time":486.120948252,"data":"tests/test_forward.py::test_block_configs[127-129-True-64x64] PASSED     [ 65%]\n"}
+,{"stream_name":"stdout","time":486.633518105,"data":"tests/test_forward.py::test_block_configs[31-48-False-16x16] PASSED      [ 65%]\n"}
+,{"stream_name":"stdout","time":487.53321785,"data":"tests/test_forward.py::test_block_configs[31-48-False-16x64] PASSED      [ 65%]\n"}
+,{"stream_name":"stdout","time":488.038792752,"data":"tests/test_forward.py::test_block_configs[31-48-False-64x16] PASSED      [ 65%]\n"}
+,{"stream_name":"stdout","time":489.257621877,"data":"tests/test_forward.py::test_block_configs[31-48-False-32x128] PASSED     [ 65%]\n"}
+,{"stream_name":"stdout","time":489.846024797,"data":"tests/test_forward.py::test_block_configs[31-48-False-128x32] PASSED     [ 65%]\n"}
+,{"stream_name":"stdout","time":489.849307102,"data":"tests/test_forward.py::test_block_configs[31-48-False-64x64] PASSED      [ 65%]\n"}
+,{"stream_name":"stdout","time":490.39274982,"data":"tests/test_forward.py::test_block_configs[31-48-True-16x16] PASSED       [ 66%]\n"}
+,{"stream_name":"stdout","time":491.287396426,"data":"tests/test_forward.py::test_block_configs[31-48-True-16x64] PASSED       [ 66%]\n"}
+,{"stream_name":"stdout","time":491.833277032,"data":"tests/test_forward.py::test_block_configs[31-48-True-64x16] PASSED       [ 66%]\n"}
+,{"stream_name":"stdout","time":493.103775541,"data":"tests/test_forward.py::test_block_configs[31-48-True-32x128] PASSED      [ 66%]\n"}
+,{"stream_name":"stdout","time":493.688316176,"data":"tests/test_forward.py::test_block_configs[31-48-True-128x32] PASSED      [ 66%]\n"}
+,{"stream_name":"stdout","time":493.692022421,"data":"tests/test_forward.py::test_block_configs[31-48-True-64x64] PASSED       [ 66%]\n"}
+,{"stream_name":"stdout","time":494.18944199,"data":"tests/test_forward.py::test_block_configs[64-129-False-16x16] PASSED     [ 66%]\n"}
+,{"stream_name":"stdout","time":495.143757545,"data":"tests/test_forward.py::test_block_configs[64-129-False-16x64] PASSED     [ 66%]\n"}
+,{"stream_name":"stdout","time":495.653666373,"data":"tests/test_forward.py::test_block_configs[64-129-False-64x16] PASSED     [ 66%]\n"}
+,{"stream_name":"stdout","time":496.907529915,"data":"tests/test_forward.py::test_block_configs[64-129-False-32x128] PASSED    [ 67%]\n"}
+,{"stream_name":"stdout","time":497.487412536,"data":"tests/test_forward.py::test_block_configs[64-129-False-128x32] PASSED    [ 67%]\n"}
+,{"stream_name":"stdout","time":497.491113753,"data":"tests/test_forward.py::test_block_configs[64-129-False-64x64] PASSED     [ 67%]\n"}
+,{"stream_name":"stdout","time":498.039177372,"data":"tests/test_forward.py::test_block_configs[64-129-True-16x16] PASSED      [ 67%]\n"}
+,{"stream_name":"stdout","time":498.974910857,"data":"tests/test_forward.py::test_block_configs[64-129-True-16x64] PASSED      [ 67%]\n"}
+,{"stream_name":"stdout","time":499.524292359,"data":"tests/test_forward.py::test_block_configs[64-129-True-64x16] PASSED      [ 67%]\n"}
+,{"stream_name":"stdout","time":500.842797332,"data":"tests/test_forward.py::test_block_configs[64-129-True-32x128] PASSED     [ 67%]\n"}
+,{"stream_name":"stdout","time":501.467012044,"data":"tests/test_forward.py::test_block_configs[64-129-True-128x32] PASSED     [ 67%]\n"}
+,{"stream_name":"stdout","time":501.470978638,"data":"tests/test_forward.py::test_block_configs[64-129-True-64x64] PASSED      [ 68%]\n"}
+,{"stream_name":"stdout","time":501.474274586,"data":"tests/test_forward.py::test_block_configs[130-128-False-16x16] PASSED    [ 68%]\n"}
+,{"stream_name":"stdout","time":501.477523791,"data":"tests/test_forward.py::test_block_configs[130-128-False-16x64] PASSED    [ 68%]\n"}
+,{"stream_name":"stdout","time":501.480737689,"data":"tests/test_forward.py::test_block_configs[130-128-False-64x16] PASSED    [ 68%]\n"}
+,{"stream_name":"stdout","time":501.48395813,"data":"tests/test_forward.py::test_block_configs[130-128-False-32x128] PASSED   [ 68%]\n"}
+,{"stream_name":"stdout","time":501.487154841,"data":"tests/test_forward.py::test_block_configs[130-128-False-128x32] PASSED   [ 68%]\n"}
+,{"stream_name":"stdout","time":501.490422168,"data":"tests/test_forward.py::test_block_configs[130-128-False-64x64] PASSED    [ 68%]\n"}
+,{"stream_name":"stdout","time":501.494039683,"data":"tests/test_forward.py::test_block_configs[130-128-True-16x16] PASSED     [ 68%]\n"}
+,{"stream_name":"stdout","time":501.497719238,"data":"tests/test_forward.py::test_block_configs[130-128-True-16x64] PASSED     [ 69%]\n"}
+,{"stream_name":"stdout","time":501.501344214,"data":"tests/test_forward.py::test_block_configs[130-128-True-64x16] PASSED     [ 69%]\n"}
+,{"stream_name":"stdout","time":501.504927577,"data":"tests/test_forward.py::test_block_configs[130-128-True-32x128] PASSED    [ 69%]\n"}
+,{"stream_name":"stdout","time":501.508644531,"data":"tests/test_forward.py::test_block_configs[130-128-True-128x32] PASSED    [ 69%]\n"}
+,{"stream_name":"stdout","time":501.512331411,"data":"tests/test_forward.py::test_block_configs[130-128-True-64x64] PASSED     [ 69%]\n"}
+,{"stream_name":"stdout","time":502.031177457,"data":"tests/test_forward.py::test_block_configs[40-54-False-16x16] PASSED      [ 69%]\n"}
+,{"stream_name":"stdout","time":502.90779437,"data":"tests/test_forward.py::test_block_configs[40-54-False-16x64] PASSED      [ 69%]\n"}
+,{"stream_name":"stdout","time":503.418222025,"data":"tests/test_forward.py::test_block_configs[40-54-False-64x16] PASSED      [ 69%]\n"}
+,{"stream_name":"stdout","time":504.741994489,"data":"tests/test_forward.py::test_block_configs[40-54-False-32x128] PASSED     [ 70%]\n"}
+,{"stream_name":"stdout","time":505.581237007,"data":"tests/test_forward.py::test_block_configs[40-54-False-128x32] PASSED     [ 70%]\n"}
+,{"stream_name":"stdout","time":506.448062641,"data":"tests/test_forward.py::test_block_configs[40-54-False-64x64] PASSED      [ 70%]\n"}
+,{"stream_name":"stdout","time":507.04159222,"data":"tests/test_forward.py::test_block_configs[40-54-True-16x16] PASSED       [ 70%]\n"}
+,{"stream_name":"stdout","time":508.067770616,"data":"tests/test_forward.py::test_block_configs[40-54-True-16x64] PASSED       [ 70%]\n"}
+,{"stream_name":"stdout","time":508.652943088,"data":"tests/test_forward.py::test_block_configs[40-54-True-64x16] PASSED       [ 70%]\n"}
+,{"stream_name":"stdout","time":510.033247639,"data":"tests/test_forward.py::test_block_configs[40-54-True-32x128] PASSED      [ 70%]\n"}
+,{"stream_name":"stdout","time":510.679639581,"data":"tests/test_forward.py::test_block_configs[40-54-True-128x32] PASSED      [ 70%]\n"}
+,{"stream_name":"stdout","time":511.528403777,"data":"tests/test_forward.py::test_block_configs[40-54-True-64x64] PASSED       [ 71%]\n"}
+,{"stream_name":"stdout","time":511.560305181,"data":"tests/test_forward.py::test_autotuned_path[128-True] PASSED              [ 71%]\n"}
+,{"stream_name":"stdout","time":511.562294188,"data":"tests/test_forward.py::test_empty_sequences PASSED                       [ 71%]\n"}
+,{"stream_name":"stdout","time":511.565553919,"data":"tests/test_forward.py::test_custom_sm_scale PASSED                       [ 71%]\n"}
+,{"stream_name":"stdout","time":511.568623713,"data":"tests/test_forward.py::test_large_logits_are_finite[False] PASSED        [ 71%]\n"}
+,{"stream_name":"stdout","time":511.572220378,"data":"tests/test_forward.py::test_large_logits_are_finite[True] PASSED         [ 71%]\n"}
+,{"stream_name":"stdout","time":511.575359115,"data":"tests/test_forward.py::test_deterministic PASSED                         [ 71%]\n"}
+,{"stream_name":"stdout","time":511.577050045,"data":"tests/test_forward.py::test_input_validation PASSED                      [ 71%]\n"}
+,{"stream_name":"stdout","time":511.578550806,"data":"tests/test_forward.py::test_rejects_cpu_tensors PASSED                   [ 72%]\n"}
+,{"stream_name":"stdout","time":515.842330263,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-False-4-2] PASSED     [ 72%]\n"}
+,{"stream_name":"stdout","time":517.426423848,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-False-6-1] PASSED     [ 72%]\n"}
+,{"stream_name":"stdout","time":517.434824321,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-False-8-2] PASSED     [ 72%]\n"}
+,{"stream_name":"stdout","time":521.140976055,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-True-4-2] PASSED      [ 72%]\n"}
+,{"stream_name":"stdout","time":522.768785448,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-True-6-1] PASSED      [ 72%]\n"}
+,{"stream_name":"stdout","time":522.777812068,"data":"tests/test_gqa_window.py::test_grouped_query[17-17-True-8-2] PASSED      [ 72%]\n"}
+,{"stream_name":"stdout","time":526.005333363,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-False-4-2] PASSED   [ 72%]\n"}
+,{"stream_name":"stdout","time":527.235890007,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-False-6-1] PASSED   [ 73%]\n"}
+,{"stream_name":"stdout","time":527.248140829,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-False-8-2] PASSED   [ 73%]\n"}
+,{"stream_name":"stdout","time":530.82307566,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-True-4-2] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.414038798,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-True-6-1] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.427363711,"data":"tests/test_gqa_window.py::test_grouped_query[200-200-True-8-2] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.436258691,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-False-4-2] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.44496704,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-False-6-1] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.453670395,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-False-8-2] PASSED    [ 73%]\n"}
+,{"stream_name":"stdout","time":532.462752399,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-True-4-2] PASSED     [ 74%]\n"}
+,{"stream_name":"stdout","time":532.471703739,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-True-6-1] PASSED     [ 74%]\n"}
+,{"stream_name":"stdout","time":532.480976143,"data":"tests/test_gqa_window.py::test_grouped_query[20-150-True-8-2] PASSED     [ 74%]\n"}
+,{"stream_name":"stdout","time":532.490116215,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-False-4-2] PASSED    [ 74%]\n"}
+,{"stream_name":"stdout","time":532.499808444,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-False-6-1] PASSED    [ 74%]\n"}
+,{"stream_name":"stdout","time":532.510345128,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-False-8-2] PASSED    [ 74%]\n"}
+,{"stream_name":"stdout","time":532.519913858,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-True-4-2] PASSED     [ 74%]\n"}
+,{"stream_name":"stdout","time":532.530609004,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-True-6-1] PASSED     [ 74%]\n"}
+,{"stream_name":"stdout","time":532.54174948,"data":"tests/test_gqa_window.py::test_grouped_query[150-20-True-8-2] PASSED     [ 75%]\n"}
+,{"stream_name":"stdout","time":532.57288752,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-False-4-2] PASSED [ 75%]\n"}
+,{"stream_name":"stdout","time":532.613612859,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-False-6-1] PASSED [ 75%]\n"}
+,{"stream_name":"stdout","time":532.667295584,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-False-8-2] PASSED [ 75%]\n"}
+,{"stream_name":"stdout","time":532.701027903,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-True-4-2] PASSED  [ 75%]\n"}
+,{"stream_name":"stdout","time":532.745765802,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-True-6-1] PASSED  [ 75%]\n"}
+,{"stream_name":"stdout","time":532.804167807,"data":"tests/test_gqa_window.py::test_grouped_query[1000-1000-True-8-2] PASSED  [ 75%]\n"}
+,{"stream_name":"stdout","time":535.31260321,"data":"tests/test_gqa_window.py::test_grouped_query_matches_expanded_heads PASSED [ 75%]\n"}
+,{"stream_name":"stdout","time":538.330344101,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(0, 0)] PASSED   [ 76%]\n"}
+,{"stream_name":"stdout","time":541.310008212,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(8, 8)] PASSED   [ 76%]\n"}
+,{"stream_name":"stdout","time":544.411230524,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(5, 0)] PASSED   [ 76%]\n"}
+,{"stream_name":"stdout","time":547.384672452,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(33, -1)] PASSED [ 76%]\n"}
+,{"stream_name":"stdout","time":547.392755522,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(-1, 16)] PASSED [ 76%]\n"}
+,{"stream_name":"stdout","time":550.397919939,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-False-(64, 3)] PASSED  [ 76%]\n"}
+,{"stream_name":"stdout","time":550.405599248,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(0, 0)] PASSED    [ 76%]\n"}
+,{"stream_name":"stdout","time":550.413222285,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(8, 8)] PASSED    [ 76%]\n"}
+,{"stream_name":"stdout","time":550.420769676,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(5, 0)] PASSED    [ 77%]\n"}
+,{"stream_name":"stdout","time":550.427959059,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(33, -1)] PASSED  [ 77%]\n"}
+,{"stream_name":"stdout","time":550.435204267,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(-1, 16)] PASSED  [ 77%]\n"}
+,{"stream_name":"stdout","time":550.442626324,"data":"tests/test_gqa_window.py::test_sliding_window[1-1-True-(64, 3)] PASSED   [ 77%]\n"}
+,{"stream_name":"stdout","time":554.256651488,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(0, 0)] PASSED [ 77%]\n"}
+,{"stream_name":"stdout","time":558.013564662,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(8, 8)] PASSED [ 77%]\n"}
+,{"stream_name":"stdout","time":561.893304201,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(5, 0)] PASSED [ 77%]\n"}
+,{"stream_name":"stdout","time":565.374899467,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(33, -1)] PASSED [ 77%]\n"}
+,{"stream_name":"stdout","time":565.383613128,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(-1, 16)] PASSED [ 77%]\n"}
+,{"stream_name":"stdout","time":569.169419887,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-False-(64, 3)] PASSED [ 78%]\n"}
+,{"stream_name":"stdout","time":569.177820401,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(0, 0)] PASSED  [ 78%]\n"}
+,{"stream_name":"stdout","time":569.18631152,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(8, 8)] PASSED  [ 78%]\n"}
+,{"stream_name":"stdout","time":569.194472561,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(5, 0)] PASSED  [ 78%]\n"}
+,{"stream_name":"stdout","time":569.202567918,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(33, -1)] PASSED [ 78%]\n"}
+,{"stream_name":"stdout","time":569.210409597,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(-1, 16)] PASSED [ 78%]\n"}
+,{"stream_name":"stdout","time":569.218335297,"data":"tests/test_gqa_window.py::test_sliding_window[37-37-True-(64, 3)] PASSED [ 78%]\n"}
+,{"stream_name":"stdout","time":573.124180519,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(0, 0)] PASSED [ 78%]\n"}
+,{"stream_name":"stdout","time":577.204429893,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(8, 8)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":581.021634262,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(5, 0)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":584.542844035,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(33, -1)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":584.551379711,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(-1, 16)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":588.36985596,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-False-(64, 3)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":588.378848944,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(0, 0)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":588.38752894,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(8, 8)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":588.396290849,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(5, 0)] PASSED [ 79%]\n"}
+,{"stream_name":"stdout","time":588.404607052,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(33, -1)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.412634669,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(-1, 16)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.420837139,"data":"tests/test_gqa_window.py::test_sliding_window[200-200-True-(64, 3)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.429056807,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(0, 0)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.436801982,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(8, 8)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.444600784,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(5, 0)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.452245717,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(33, -1)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.459843043,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(-1, 16)] PASSED [ 80%]\n"}
+,{"stream_name":"stdout","time":588.467486101,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-False-(64, 3)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.475259799,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(0, 0)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.483003568,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(8, 8)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.490668532,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(5, 0)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.498387146,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(33, -1)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.505912204,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(-1, 16)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.513780724,"data":"tests/test_gqa_window.py::test_sliding_window[20-150-True-(64, 3)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.521933967,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(0, 0)] PASSED [ 81%]\n"}
+,{"stream_name":"stdout","time":588.529854658,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(8, 8)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.53751699,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(5, 0)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.545297348,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(33, -1)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.552974082,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(-1, 16)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.56070971,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-False-(64, 3)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.570061229,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(0, 0)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.578327753,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(8, 8)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.58632237,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(5, 0)] PASSED [ 82%]\n"}
+,{"stream_name":"stdout","time":588.594246513,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(33, -1)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.602209182,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(-1, 16)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.610220428,"data":"tests/test_gqa_window.py::test_sliding_window[150-20-True-(64, 3)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.626526164,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(0, 0)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.641331636,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(8, 8)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.656282481,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(5, 0)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.670964051,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(33, -1)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.687134212,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(-1, 16)] PASSED [ 83%]\n"}
+,{"stream_name":"stdout","time":588.701993892,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-False-(64, 3)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.716852037,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(0, 0)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.731960393,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(8, 8)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.746823615,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(5, 0)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.761597102,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(33, -1)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.776345144,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(-1, 16)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":588.790966609,"data":"tests/test_gqa_window.py::test_sliding_window[1023-1023-True-(64, 3)] PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":589.762966495,"data":"tests/test_gqa_window.py::test_window_wider_than_sequence_is_full_attention PASSED [ 84%]\n"}
+,{"stream_name":"stdout","time":590.754350996,"data":"tests/test_gqa_window.py::test_causal_window_equals_causal_with_left_limit PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":592.794763352,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-16x16] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":596.917620158,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-16x64] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":601.308983593,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-64x16] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":607.775262257,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-32x128] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":614.64638423,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-128x32] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":616.64152148,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-16x16] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":620.716843375,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-16x64] PASSED [ 85%]\n"}
+,{"stream_name":"stdout","time":625.271446399,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-64x16] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":631.57788984,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-32x128] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.258557685,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-128x32] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.267341138,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(40, 40)-16x16] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.275865755,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(40, 40)-16x64] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.284545959,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(40, 40)-64x16] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.292842564,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(40, 40)-32x128] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":638.301344439,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(40, 40)-128x32] PASSED [ 86%]\n"}
+,{"stream_name":"stdout","time":640.279605437,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(0, 31)-16x16] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":644.552764399,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(0, 31)-16x64] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":649.100623872,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(0, 31)-64x16] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":655.436761402,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(0, 31)-32x128] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":662.027779705,"data":"tests/test_gqa_window.py::test_window_block_configs[37-37-(0, 31)-128x32] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":662.036990537,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(3, 7)-16x16] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":662.045890298,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(3, 7)-16x64] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":662.054447027,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(3, 7)-64x16] PASSED [ 87%]\n"}
+,{"stream_name":"stdout","time":662.062799043,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(3, 7)-32x128] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.071216691,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(3, 7)-128x32] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.079761619,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(17, 0)-16x16] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.088147289,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(17, 0)-16x64] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.096499853,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(17, 0)-64x16] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.104897704,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(17, 0)-32x128] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.113455462,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(17, 0)-128x32] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.121912985,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(40, 40)-16x16] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.130653428,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(40, 40)-16x64] PASSED [ 88%]\n"}
+,{"stream_name":"stdout","time":662.139239259,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(40, 40)-64x16] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.148061387,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(40, 40)-32x128] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.156677989,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(40, 40)-128x32] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.165214787,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(0, 31)-16x16] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.17377338,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(0, 31)-16x64] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.182518753,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(0, 31)-64x16] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.191282611,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(0, 31)-32x128] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":662.199714369,"data":"tests/test_gqa_window.py::test_window_block_configs[130-130-(0, 31)-128x32] PASSED [ 89%]\n"}
+,{"stream_name":"stdout","time":664.337257289,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-16x16] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":668.720762559,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-16x64] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":673.418097809,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-64x16] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":679.929065986,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-32x128] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":687.008012359,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-128x32] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":689.140500894,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-16x16] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":693.559093561,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-16x64] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":698.18879034,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-64x16] PASSED [ 90%]\n"}
+,{"stream_name":"stdout","time":704.986969995,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-32x128] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.949780459,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-128x32] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.95859794,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(40, 40)-16x16] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.966686465,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(40, 40)-16x64] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.974874349,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(40, 40)-64x16] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.983095402,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(40, 40)-32x128] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":711.991093279,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(40, 40)-128x32] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":714.104091602,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-16x16] PASSED [ 91%]\n"}
+,{"stream_name":"stdout","time":718.261651613,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-16x64] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":722.852220076,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-64x16] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":729.230808806,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-32x128] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.058888985,"data":"tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-128x32] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.06839941,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(3, 7)-16x16] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.077189061,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(3, 7)-16x64] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.085738616,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(3, 7)-64x16] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.094316087,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(3, 7)-32x128] PASSED [ 92%]\n"}
+,{"stream_name":"stdout","time":736.103368484,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(3, 7)-128x32] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.112349207,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(17, 0)-16x16] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.121278319,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(17, 0)-16x64] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.130191273,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(17, 0)-64x16] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.13944051,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(17, 0)-32x128] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.148162214,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(17, 0)-128x32] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.157116586,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(40, 40)-16x16] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.165671478,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(40, 40)-16x64] PASSED [ 93%]\n"}
+,{"stream_name":"stdout","time":736.174337975,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(40, 40)-64x16] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.18330092,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(40, 40)-32x128] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.192206836,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(40, 40)-128x32] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.200725474,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(0, 31)-16x16] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.209243931,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(0, 31)-16x64] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.217537949,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(0, 31)-64x16] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.226055386,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(0, 31)-32x128] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":736.234498766,"data":"tests/test_gqa_window.py::test_window_block_configs[130-128-(0, 31)-128x32] PASSED [ 94%]\n"}
+,{"stream_name":"stdout","time":738.434457858,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-16x16] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":742.766637626,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-16x64] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":747.385566844,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-64x16] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":753.863748619,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-32x128] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":760.575601801,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-128x32] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":762.688183977,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-16x16] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":766.923962679,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-16x64] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":771.48958297,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-64x16] PASSED [ 95%]\n"}
+,{"stream_name":"stdout","time":777.936859515,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-32x128] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.03735709,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-128x32] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.04649782,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(40, 40)-16x16] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.055366024,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(40, 40)-16x64] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.063911833,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(40, 40)-64x16] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.072378677,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(40, 40)-32x128] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":785.080650482,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(40, 40)-128x32] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":787.130928052,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-16x16] PASSED [ 96%]\n"}
+,{"stream_name":"stdout","time":791.384192366,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-16x64] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":795.995999912,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-64x16] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":802.540873807,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-32x128] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":809.302956671,"data":"tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-128x32] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":809.30496336,"data":"tests/test_gqa_window.py::test_rejects_bad_head_counts_and_windows PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":811.757779776,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-None-lens_q0-lens_k0] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":813.957783125,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-None-lens_q1-lens_k1] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":813.979706532,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-None-lens_q2-lens_k2] PASSED [ 97%]\n"}
+,{"stream_name":"stdout","time":816.529117303,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-True-None-lens_q0-lens_k0] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":819.005353773,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-True-None-lens_q1-lens_k1] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":819.021914321,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-True-None-lens_q2-lens_k2] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":821.845792267,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-window2-lens_q0-lens_k0] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":824.670076284,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-window2-lens_q1-lens_k1] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":824.687303887,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-4-False-window2-lens_q2-lens_k2] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":826.940671418,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-None-lens_q0-lens_k0] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":829.159643237,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-None-lens_q1-lens_k1] PASSED [ 98%]\n"}
+,{"stream_name":"stdout","time":829.175734945,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-None-lens_q2-lens_k2] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":831.833787939,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-True-None-lens_q0-lens_k0] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":834.55405463,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-True-None-lens_q1-lens_k1] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":834.573849286,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-True-None-lens_q2-lens_k2] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":837.433332729,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-window2-lens_q0-lens_k0] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":840.243790714,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-window2-lens_q1-lens_k1] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":840.261665429,"data":"tests/test_varlen.py::test_varlen_matches_each_sequence[4-2-False-window2-lens_q2-lens_k2] PASSED [ 99%]\n"}
+,{"stream_name":"stdout","time":841.396533174,"data":"tests/test_varlen.py::test_varlen_equal_lengths_matches_dense PASSED     [ 99%]\n"}
+,{"stream_name":"stdout","time":842.124102456,"data":"tests/test_varlen.py::test_varlen_rejects_bad_offsets PASSED             [100%]\n"}
+,{"stream_name":"stdout","time":842.124136724,"data":"\n"}
+,{"stream_name":"stdout","time":842.124140174,"data":"============================= slowest 10 durations =============================\n"}
+,{"stream_name":"stdout","time":842.12414259,"data":"166.11s call     tests/test_backward.py::test_autotuned_backward\n"}
+,{"stream_name":"stdout","time":842.124145207,"data":"7.10s call     tests/test_gqa_window.py::test_window_block_configs[20-150-(17, 0)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124147555,"data":"7.08s call     tests/test_gqa_window.py::test_window_block_configs[31-48-(3, 7)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124149842,"data":"6.96s call     tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124152116,"data":"6.87s call     tests/test_gqa_window.py::test_window_block_configs[37-37-(3, 7)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124154431,"data":"6.83s call     tests/test_gqa_window.py::test_window_block_configs[31-48-(0, 31)-128x32]\n"}
+,{"stream_name":"stdout","time":842.12415668,"data":"6.80s call     tests/test_gqa_window.py::test_window_block_configs[31-48-(17, 0)-32x128]\n"}
+,{"stream_name":"stdout","time":842.124158922,"data":"6.76s call     tests/test_gqa_window.py::test_window_block_configs[20-150-(0, 31)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124161171,"data":"6.71s call     tests/test_gqa_window.py::test_window_block_configs[20-150-(3, 7)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124163502,"data":"6.68s call     tests/test_gqa_window.py::test_window_block_configs[37-37-(17, 0)-128x32]\n"}
+,{"stream_name":"stdout","time":842.124165767,"data":"=========================== short test summary info ============================\n"}
+,{"stream_name":"stdout","time":842.124168013,"data":"SKIPPED [168] tests/conftest.py:40: bfloat16 needs sm80 or newer\n"}
+,{"stream_name":"stdout","time":842.124170248,"data":"SKIPPED [6] tests/test_backward.py:29: covered by the single-head case\n"}
+,{"stream_name":"stdout","time":842.12417255,"data":"SKIPPED [6] tests/test_forward.py:27: covered by the single-head case\n"}
+,{"stream_name":"stdout","time":842.124174783,"data":"================= 629 passed, 180 skipped in 767.55s (0:12:47) =================\n"}
+,{"stream_name":"stdout","time":843.13574535,"data":"\n"}
+,{"stream_name":"stdout","time":843.135781636,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 /usr/bin/python3 benchmarks/run_sharded.py --out-dir /kaggle/working/results --tag t4\n"}
+,{"stream_name":"stdout","time":843.407273507,"data":"gpu0: lock 1590 MHz -\u003e rc=4 The current user does not have permission to change clocks for GPU 00000000:00:04.0.\n"}
+,{"stream_name":"stdout","time":843.407314393,"data":"Terminating early due to previous errors.\n"}
+,{"stream_name":"stdout","time":843.407319942,"data":"gpu1: lock 1590 MHz -\u003e rc=4 The current user does not have permission to change clocks for GPU 00000000:00:05.0.\n"}
+,{"stream_name":"stdout","time":843.407324167,"data":"Terminating early due to previous errors.\n"}
+,{"stream_name":"stdout","time":963.40889079,"data":"[    120s] rows written per shard: [22, 21]\n"}
+,{"stream_name":"stdout","time":1083.409278355,"data":"[    240s] rows written per shard: [38, 48]\n"}
+,{"stream_name":"stdout","time":1203.409893564,"data":"[    360s] rows written per shard: [49, 49]\n"}
+,{"stream_name":"stdout","time":1323.410209261,"data":"[    480s] rows written per shard: [53, 54]\n"}
+,{"stream_name":"stdout","time":1443.410771745,"data":"[    600s] rows written per shard: [55, 65]\n"}
+,{"stream_name":"stdout","time":1563.41145791,"data":"[    720s] rows written per shard: [63, 94]\n"}
+,{"stream_name":"stdout","time":1683.411775474,"data":"[    840s] rows written per shard: [82, 110]\n"}
+,{"stream_name":"stdout","time":1803.412289835,"data":"[    960s] rows written per shard: [105, 121]\n"}
+,{"stream_name":"stdout","time":1923.412726471,"data":"[   1080s] rows written per shard: [116, 133]\n"}
+,{"stream_name":"stdout","time":2043.413430666,"data":"[   1200s] rows written per shard: [133, 138]\n"}
+,{"stream_name":"stdout","time":2163.414132866,"data":"[   1320s] rows written per shard: [139, 151]\n"}
+,{"stream_name":"stdout","time":2283.414547997,"data":"[   1440s] rows written per shard: [160, 167]\n"}
+,{"stream_name":"stdout","time":2403.415247259,"data":"[   1560s] rows written per shard: [168, 168]\n"}
+,{"stream_name":"stdout","time":2403.488172784,"data":"shard 0 exit code 0\n"}
+,{"stream_name":"stdout","time":2403.488200796,"data":"shard 1 exit code 0\n"}
+,{"stream_name":"stdout","time":2403.493249872,"data":"merged 336 rows into /kaggle/working/results/t4.csv\n"}
+,{"stream_name":"stdout","time":2403.512284077,"data":"\n"}
+,{"stream_name":"stdout","time":2403.512303337,"data":"$ /usr/bin/python3 /tmp/flash-attn-triton/benchmarks/plot_results.py /kaggle/working/results/t4.csv --out-dir /kaggle/working/plots\n"}
+,{"stream_name":"stdout","time":2410.542837386,"data":"/kaggle/working/plots/tflops_bwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.542895153,"data":"/kaggle/working/plots/tflops_bwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.542903965,"data":"/kaggle/working/plots/tflops_fwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.542909472,"data":"/kaggle/working/plots/tflops_fwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.542914417,"data":"/kaggle/working/plots/tflops_fwd_bwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.542919726,"data":"/kaggle/working/plots/tflops_fwd_bwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.542924984,"data":"/kaggle/working/plots/peak_mem_mb_bwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.54292991,"data":"/kaggle/working/plots/peak_mem_mb_bwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.542935061,"data":"/kaggle/working/plots/peak_mem_mb_fwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.542940187,"data":"/kaggle/working/plots/peak_mem_mb_fwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.542945141,"data":"/kaggle/working/plots/peak_mem_mb_fwd_bwd_d64.png\n"}
+,{"stream_name":"stdout","time":2410.542950419,"data":"/kaggle/working/plots/peak_mem_mb_fwd_bwd_d128.png\n"}
+,{"stream_name":"stdout","time":2410.798457533,"data":"\n"}
+,{"stream_name":"stdout","time":2410.798492269,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 bash examples/run_train_demo.sh /kaggle/working/train\n"}
+,{"stream_name":"stdout","time":2414.605658394,"data":"W1122 18:04:40.644000 3572 torch/distributed/run.py:851] \n"}
+,{"stream_name":"stdout","time":2414.605686634,"data":"W1122 18:04:40.644000 3572 torch/distributed/run.py:851] *****************************************\n"}
+,{"stream_name":"stdout","time":2414.605694164,"data":"W1122 18:04:40.644000 3572 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n"}
+,{"stream_name":"stdout","time":2414.605772664,"data":"W1122 18:04:40.644000 3572 torch/distributed/run.py:851] *****************************************\n"}
+,{"stream_name":"stdout","time":2417.362438153,"data":"/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.\n"}
+,{"stream_name":"stdout","time":2417.362467016,"data":"  return func(*args, **kwargs)\n"}
+,{"stream_name":"stdout","time":2417.362905055,"data":"[rank0]:[W1122 18:04:43.437813854 ProcessGroupNCCL.cpp:5188] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()\n"}
+,{"stream_name":"stdout","time":2421.104027754,"data":"/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.\n"}
+,{"stream_name":"stdout","time":2421.104056276,"data":"  return func(*args, **kwargs)\n"}
+,{"stream_name":"stdout","time":2421.139372162,"data":"attn=triton params=19.45M world=2 tokens/step=16384\n"}
+,{"stream_name":"stdout","time":2611.353542663,"data":"{\"step\": 100, \"train_loss\": 2.496239185333252, \"lr\": 0.001, \"step_ms\": 100.09507499989923}\n"}
+,{"stream_name":"stdout","time":2621.522858757,"data":"{\"step\": 200, \"train_loss\": 2.4123594760894775, \"lr\": 0.0009939844482079717, \"step_ms\": 99.60455999998885}\n"}
+,{"stream_name":"stdout","time":2627.121883112,"data":"{\"step\": 250, \"train_loss\": 2.4078798294067383, \"lr\": 0.000986412179550874, \"step_ms\": 106.83784599996216, \"val_loss\": 2.4611454010009766}\n"}
+,{"stream_name":"stdout","time":2632.733560162,"data":"{\"step\": 300, \"train_loss\": 2.3683204650878906, \"lr\": 0.0009758587731913156, \"step_ms\": 109.75123200023518}\n"}
+,{"stream_name":"stdout","time":2643.818713857,"data":"{\"step\": 400, \"train_loss\": 1.9688727855682373, \"lr\": 0.0009461167809729686, \"step_ms\": 108.13943799985282}\n"}
+,{"stream_name":"stdout","time":2654.647051688,"data":"{\"step\": 500, \"train_loss\": 1.702357530593872, \"lr\": 0.0009055697555690607, \"step_ms\": 101.90092699986053, \"val_loss\": 1.8584389686584473}\n"}
+,{"stream_name":"stdout","time":2665.049879216,"data":"{\"step\": 600, \"train_loss\": 1.5375064611434937, \"lr\": 0.0008553237141344035, \"step_ms\": 101.06499899984556}\n"}
+,{"stream_name":"stdout","time":2675.13806535,"data":"{\"step\": 700, \"train_loss\": 1.413456678390503, \"lr\": 0.0007967492376976802, \"step_ms\": 99.2118180001853}\n"}
+,{"stream_name":"stdout","time":2680.436477659,"data":"{\"step\": 750, \"train_loss\": 1.321771264076233, \"lr\": 0.0007648304162799347, \"step_ms\": 99.19896900009917, \"val_loss\": 1.5957404375076294}\n"}
+,{"stream_name":"stdout","time":2685.719030193,"data":"{\"step\": 800, \"train_loss\": 1.3307969570159912, \"lr\": 0.0007314440852838206, \"step_ms\": 99.3503839999903}\n"}
+,{"stream_name":"stdout","time":2695.817716652,"data":"{\"step\": 900, \"train_loss\": 1.279889464378357, \"lr\": 0.0006611896112128479, \"step_ms\": 101.83919600012814}\n"}
+,{"stream_name":"stdout","time":2706.258711611,"data":"{\"step\": 1000, \"train_loss\": 1.2114017009735107, \"lr\": 0.0005879021743976725, \"step_ms\": 101.32285600002433, \"val_loss\": 1.5256839990615845}\n"}
+,{"stream_name":"stdout","time":2716.671841627,"data":"{\"step\": 1100, \"train_loss\": 1.1128973960876465, \"lr\": 0.0005135808650685232, \"step_ms\": 99.76889500012476}\n"}
+,{"stream_name":"stdout","time":2726.909708604,"data":"{\"step\": 1200, \"train_loss\": 1.0798864364624023, \"lr\": 0.0004402529748027052, \"step_ms\": 100.80601899971953}\n"}
+,{"stream_name":"stdout","time":2732.294267623,"data":"{\"step\": 1250, \"train_loss\": 1.070967435836792, \"lr\": 0.0004045891843912986, \"step_ms\": 101.76849399977073, \"val_loss\": 1.5551766157150269}\n"}
+,{"stream_name":"stdout","time":2737.605057209,"data":"{\"step\": 1300, \"train_loss\": 1.0255773067474365, \"lr\": 0.0003699186972951266, \"step_ms\": 100.12922199985042}\n"}
+,{"stream_name":"stdout","time":2747.745388689,"data":"{\"step\": 1400, \"train_loss\": 0.937584400177002, \"lr\": 0.0003044965682884168, \"step_ms\": 100.01810099993236}\n"}
+,{"stream_name":"stdout","time":2758.176665411,"data":"{\"step\": 1500, \"train_loss\": 0.858707070350647, \"lr\": 0.00024577113291911624, \"step_ms\": 100.36075099969821, \"val_loss\": 1.6539015769958496}\n"}
+,{"stream_name":"stdout","time":2768.556634543,"data":"{\"step\": 1600, \"train_loss\": 0.7977354526519775, \"lr\": 0.00019534426797831518, \"step_ms\": 100.57776400026341}\n"}
+,{"stream_name":"stdout","time":2778.69437101,"data":"{\"step\": 1700, \"train_loss\": 0.7566118240356445, \"lr\": 0.00015459148688857239, \"step_ms\": 100.82591499985938}\n"}
+,{"stream_name":"stdout","time":2784.074564963,"data":"{\"step\": 1750, \"train_loss\": 0.7241296768188477, \"lr\": 0.00013820145226638113, \"step_ms\": 100.37085400017531, \"val_loss\": 1.8274106979370117}\n"}
+,{"stream_name":"stdout","time":2789.417911632,"data":"{\"step\": 1800, \"train_loss\": 0.6933742761611938, \"lr\": 0.00012462441928344452, \"step_ms\": 99.24376599974494}\n"}
+,{"stream_name":"stdout","time":2799.594779732,"data":"{\"step\": 1900, \"train_loss\": 0.661777913570404, \"lr\": 0.00010626048864888435, \"step_ms\": 101.02103300005183}\n"}
+,{"stream_name":"stdout","time":2810.039622699,"data":"{\"step\": 2000, \"train_loss\": 0.6157607436180115, \"lr\": 0.00010000061514140841, \"step_ms\": 100.51177100012865, \"val_loss\": 2.007744789123535}\n"}
+,{"stream_name":"stdout","time":2810.300169821,"data":"{\"attn\": \"triton\", \"attn_backend\": \"flash_attn_triton\", \"params_m\": 19.445248, \"world_size\": 2, \"steps\": 2000, \"resumed_from\": 0, \"tokens_per_sec\": 161476.6855173291, \"timed_steps\": 1980, \"peak_mem_mb_per_gpu\": [1392.3, 1392.3], \"gpu\": \"Tesla T4\", \"torch\": \"2.11.0+cu130\", \"args\": {\"attn\": \"triton\", \"out\": \"/kaggle/working/train/triton\", \"data_dir\": \"/kaggle/working/train/data\", \"steps\": 2000, \"batch\": 8, \"ctx\": 1024, \"layers\": 6, \"width\": 512, \"heads\": 8, \"lr\": 0.001, \"warmup\": 100, \"eval_every\": 250, \"eval_batches\": 10, \"ckpt_every\": 250, \"log_every\": 10, \"timing_skip\": 20, \"seed\": 1234, \"resume_dir\": null}}\n"}
+,{"stream_name":"stdout","time":2813.966710424,"data":"W1122 18:11:20.005000 4044 torch/distributed/run.py:851] \n"}
+,{"stream_name":"stdout","time":2813.966738254,"data":"W1122 18:11:20.005000 4044 torch/distributed/run.py:851] *****************************************\n"}
+,{"stream_name":"stdout","time":2813.966743952,"data":"W1122 18:11:20.005000 4044 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n"}
+,{"stream_name":"stdout","time":2813.966749871,"data":"W1122 18:11:20.005000 4044 torch/distributed/run.py:851] *****************************************\n"}
+,{"stream_name":"stdout","time":2816.476757475,"data":"/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.\n"}
+,{"stream_name":"stdout","time":2816.476790492,"data":"  return func(*args, **kwargs)\n"}
+,{"stream_name":"stdout","time":2816.477190368,"data":"[rank0]:[W1122 18:11:22.552144930 ProcessGroupNCCL.cpp:5188] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()\n"}
+,{"stream_name":"stdout","time":2818.079090524,"data":"/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.\n"}
+,{"stream_name":"stdout","time":2818.079119554,"data":"  return func(*args, **kwargs)\n"}
+,{"stream_name":"stdout","time":2818.097435283,"data":"attn=sdpa params=19.45M world=2 tokens/step=16384\n"}
+,{"stream_name":"stdout","time":2829.049557066,"data":"{\"step\": 100, \"train_loss\": 2.496352434158325, \"lr\": 0.001, \"step_ms\": 106.85675400009131}\n"}
+,{"stream_name":"stdout","time":2839.979302831,"data":"{\"step\": 200, \"train_loss\": 2.4126169681549072, \"lr\": 0.0009939844482079717, \"step_ms\": 111.30978400024105}\n"}
+,{"stream_name":"stdout","time":2845.946082779,"data":"{\"step\": 250, \"train_loss\": 2.3967525959014893, \"lr\": 0.000986412179550874, \"step_ms\": 112.56725800012646, \"val_loss\": 2.4607768058776855}\n"}
+,{"stream_name":"stdout","time":2851.735742956,"data":"{\"step\": 300, \"train_loss\": 2.359039783477783, \"lr\": 0.0009758587731913156, \"step_ms\": 110.40026099999523}\n"}
+,{"stream_name":"stdout","time":2862.777754319,"data":"{\"step\": 400, \"train_loss\": 1.9228346347808838, \"lr\": 0.0009461167809729686, \"step_ms\": 108.60057700028847}\n"}
+,{"stream_name":"stdout","time":2873.938572858,"data":"{\"step\": 500, \"train_loss\": 1.6868606805801392, \"lr\": 0.0009055697555690607, \"step_ms\": 106.80716300021231, \"val_loss\": 1.8526480197906494}\n"}
+,{"stream_name":"stdout","time":2884.841117385,"data":"{\"step\": 600, \"train_loss\": 1.5232291221618652, \"lr\": 0.0008553237141344035, \"step_ms\": 105.40628199987623}\n"}
+,{"stream_name":"stdout","time":2895.387720807,"data":"{\"step\": 700, \"train_loss\": 1.3993947505950928, \"lr\": 0.0007967492376976802, \"step_ms\": 104.96126799989725}\n"}
+,{"stream_name":"stdout","time":2900.959836939,"data":"{\"step\": 750, \"train_loss\": 1.3157055377960205, \"lr\": 0.0007648304162799347, \"step_ms\": 105.89246700010335, \"val_loss\": 1.5845345258712769}\n"}
+,{"stream_name":"stdout","time":2906.508899637,"data":"{\"step\": 800, \"train_loss\": 1.30842924118042, \"lr\": 0.0007314440852838206, \"step_ms\": 104.15054499981125}\n"}
+,{"stream_name":"stdout","time":2917.169105213,"data":"{\"step\": 900, \"train_loss\": 1.2604968547821045, \"lr\": 0.0006611896112128479, \"step_ms\": 107.3807850002595}\n"}
+,{"stream_name":"stdout","time":2928.309990521,"data":"{\"step\": 1000, \"train_loss\": 1.1773629188537598, \"lr\": 0.0005879021743976725, \"step_ms\": 107.317379000051, \"val_loss\": 1.5312614440917969}\n"}
+,{"stream_name":"stdout","time":2939.476970414,"data":"{\"step\": 1100, \"train_loss\": 1.0929373502731323, \"lr\": 0.0005135808650685232, \"step_ms\": 107.89771999998266}\n"}
+,{"stream_name":"stdout","time":2950.414706398,"data":"{\"step\": 1200, \"train_loss\": 1.0557050704956055, \"lr\": 0.0004402529748027052, \"step_ms\": 108.1127130000823}\n"}
+,{"stream_name":"stdout","time":2956.187409404,"data":"{\"step\": 1250, \"train_loss\": 1.037778377532959, \"lr\": 0.0004045891843912986, \"step_ms\": 108.15805499987619, \"val_loss\": 1.5692555904388428}\n"}
+,{"stream_name":"stdout","time":2961.89539293,"data":"{\"step\": 1300, \"train_loss\": 0.9767590761184692, \"lr\": 0.0003699186972951266, \"step_ms\": 107.10525800004689}\n"}
+,{"stream_name":"stdout","time":2972.712446992,"data":"{\"step\": 1400, \"train_loss\": 0.888274610042572, \"lr\": 0.0003044965682884168, \"step_ms\": 102.60659499999747}\n"}
+,{"stream_name":"stdout","time":2983.726244844,"data":"{\"step\": 1500, \"train_loss\": 0.8151892423629761, \"lr\": 0.00024577113291911624, \"step_ms\": 106.16595900000902, \"val_loss\": 1.7040913105010986}\n"}
+,{"stream_name":"stdout","time":2994.647328646,"data":"{\"step\": 1600, \"train_loss\": 0.744195818901062, \"lr\": 0.00019534426797831518, \"step_ms\": 104.10514900013368}\n"}
+,{"stream_name":"stdout","time":3005.357545735,"data":"{\"step\": 1700, \"train_loss\": 0.6864507794380188, \"lr\": 0.00015459148688857239, \"step_ms\": 106.30659300022671}\n"}
+,{"stream_name":"stdout","time":3011.037573621,"data":"{\"step\": 1750, \"train_loss\": 0.6551440954208374, \"lr\": 0.00013820145226638113, \"step_ms\": 108.41698500007624, \"val_loss\": 1.9019113779067993}\n"}
+,{"stream_name":"stdout","time":3016.684346451,"data":"{\"step\": 1800, \"train_loss\": 0.633743405342102, \"lr\": 0.00012462441928344452, \"step_ms\": 105.46436000004178}\n"}
+,{"stream_name":"stdout","time":3027.481195979,"data":"{\"step\": 1900, \"train_loss\": 0.5852026343345642, \"lr\": 0.00010626048864888435, \"step_ms\": 107.97972699992897}\n"}
+,{"stream_name":"stdout","time":3038.609697395,"data":"{\"step\": 2000, \"train_loss\": 0.53434157371521, \"lr\": 0.00010000061514140841, \"step_ms\": 107.55233800000497, \"val_loss\": 2.1234397888183594}\n"}
+,{"stream_name":"stdout","time":3038.87585087,"data":"{\"attn\": \"sdpa\", \"attn_backend\": \"torch SDPA EFFICIENT_ATTENTION\", \"params_m\": 19.445248, \"world_size\": 2, \"steps\": 2000, \"resumed_from\": 0, \"tokens_per_sec\": 152861.4557571856, \"timed_steps\": 1980, \"peak_mem_mb_per_gpu\": [1346.2, 1346.2], \"gpu\": \"Tesla T4\", \"torch\": \"2.11.0+cu130\", \"args\": {\"attn\": \"sdpa\", \"out\": \"/kaggle/working/train/sdpa\", \"data_dir\": \"/kaggle/working/train/data\", \"steps\": 2000, \"batch\": 8, \"ctx\": 1024, \"layers\": 6, \"width\": 512, \"heads\": 8, \"lr\": 0.001, \"warmup\": 100, \"eval_every\": 250, \"eval_batches\": 10, \"ckpt_every\": 250, \"log_every\": 10, \"timing_skip\": 20, \"seed\": 1234, \"resume_dir\": null}}\n"}
+,{"stream_name":"stdout","time":3041.17147442,"data":"[\n"}
+,{"stream_name":"stdout","time":3041.171506514,"data":"  {\n"}
+,{"stream_name":"stdout","time":3041.171510273,"data":"    \"attention\": \"flash_attn_triton\",\n"}
+,{"stream_name":"stdout","time":3041.171513789,"data":"    \"tokens_per_sec\": 161477,\n"}
+,{"stream_name":"stdout","time":3041.171516859,"data":"    \"peak_mem_mb_per_gpu\": [\n"}
+,{"stream_name":"stdout","time":3041.171519996,"data":"      1392.3,\n"}
+,{"stream_name":"stdout","time":3041.17152285,"data":"      1392.3\n"}
+,{"stream_name":"stdout","time":3041.17152571,"data":"    ],\n"}
+,{"stream_name":"stdout","time":3041.171528508,"data":"    \"final_train_loss\": 0.6158,\n"}
+,{"stream_name":"stdout","time":3041.171531449,"data":"    \"final_val_loss\": 2.0077,\n"}
+,{"stream_name":"stdout","time":3041.171534287,"data":"    \"steps\": 2000,\n"}
+,{"stream_name":"stdout","time":3041.171537245,"data":"    \"resumed_from\": 0\n"}
+,{"stream_name":"stdout","time":3041.171540096,"data":"  },\n"}
+,{"stream_name":"stdout","time":3041.171542944,"data":"  {\n"}
+,{"stream_name":"stdout","time":3041.17154571,"data":"    \"attention\": \"torch SDPA EFFICIENT_ATTENTION\",\n"}
+,{"stream_name":"stdout","time":3041.171548753,"data":"    \"tokens_per_sec\": 152861,\n"}
+,{"stream_name":"stdout","time":3041.171551587,"data":"    \"peak_mem_mb_per_gpu\": [\n"}
+,{"stream_name":"stdout","time":3041.171554434,"data":"      1346.2,\n"}
+,{"stream_name":"stdout","time":3041.17155721,"data":"      1346.2\n"}
+,{"stream_name":"stdout","time":3041.171560142,"data":"    ],\n"}
+,{"stream_name":"stdout","time":3041.171563096,"data":"    \"final_train_loss\": 0.5343,\n"}
+,{"stream_name":"stdout","time":3041.171565988,"data":"    \"final_val_loss\": 2.1234,\n"}
+,{"stream_name":"stdout","time":3041.17156882,"data":"    \"steps\": 2000,\n"}
+,{"stream_name":"stdout","time":3041.17158173,"data":"    \"resumed_from\": 0\n"}
+,{"stream_name":"stdout","time":3041.171584194,"data":"  },\n"}
+,{"stream_name":"stdout","time":3041.171586385,"data":"  {\n"}
+,{"stream_name":"stdout","time":3041.171588494,"data":"    \"max_abs_train_loss_diff\": 0.08911412954330444,\n"}
+,{"stream_name":"stdout","time":3041.17159081,"data":"    \"mean_abs_train_loss_diff\": 0.03097076579928398,\n"}
+,{"stream_name":"stdout","time":3041.171593091,"data":"    \"compared_steps\": 200\n"}
+,{"stream_name":"stdout","time":3041.171595314,"data":"  }\n"}
+,{"stream_name":"stdout","time":3041.171597414,"data":"]\n"}
+,{"stream_name":"stdout","time":3041.257941158,"data":"failed stages: []\n"}
+,{"stream_name":"stderr","time":3043.630251767,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":3043.630286294,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":3043.918594625,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":3043.918622848,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":3044.724851844,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":3045.800366767,"data":"[NbConvertApp] Writing 296671 bytes to __results__.html\n"}
+]

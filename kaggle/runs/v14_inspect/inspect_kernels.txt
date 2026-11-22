@@ -1,0 +1,41 @@
+device Tesla T4 cc (7, 5) triton 3.6.0 torch 2.11.0+cu130
+torch.mm 2048^3: 18.09 TFLOP/s
+triton matmul BM=64 BN=64 BK=32 w=4: 1.23 TFLOP/s
+triton matmul BM=128 BN=128 BK=32 w=8: 0.08 TFLOP/s
+triton matmul BM=128 BN=64 BK=32 w=4: 0.09 TFLOP/s
+  matmul variant: regs=255 spills=80 ptx: mma.sync=0 fma=1024 local_ld_st=0
+  matmul variant: regs=64 spills=970 ptx: mma.sync=0 fma=2048 local_ld_st=0
+  matmul variant: regs=64 spills=948 ptx: mma.sync=0 fma=2048 local_ld_st=0
+
+d=64 sdpa_mem fwd: 10.91 ms 12.59 TFLOP/s
+d=64 triton fwd BM=64 BN=32 w=4: 109.98 ms 1.25 TFLOP/s
+d=64 triton fwd BM=64 BN=64 w=4: 265.55 ms 0.52 TFLOP/s
+d=64 triton fwd BM=128 BN=32 w=8: 106.62 ms 1.29 TFLOP/s
+d=64 triton fwd BM=128 BN=64 w=8: 326.01 ms 0.42 TFLOP/s
+d=64 triton fwd BM=32 BN=32 w=2: 124.47 ms 1.10 TFLOP/s
+d=64 triton bwd (default configs): 630.27 ms 0.55 TFLOP/s
+
+d=128 sdpa_mem fwd: 11.64 ms 11.81 TFLOP/s
+d=128 triton fwd BM=64 BN=32 w=4: 570.61 ms 0.24 TFLOP/s
+d=128 triton fwd BM=64 BN=64 w=4: 1121.64 ms 0.12 TFLOP/s
+d=128 BM=128 BN=32 w=8: OutOfResources out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+d=128 BM=128 BN=64 w=8: OutOfResources out of resource: shared memory, Required: 98304, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+d=128 triton fwd BM=32 BN=32 w=2: 571.36 ms 0.24 TFLOP/s
+d=128 triton bwd (default configs): 1642.23 ms 0.21 TFLOP/s
+
+compiled forward variants:
+  regs=255 spills=104 ptx: mma.sync=0 fma=4120 local_ld_st=0
+  regs=255 spills=446 ptx: mma.sync=0 fma=8240 local_ld_st=0
+  regs=255 spills=92 ptx: mma.sync=0 fma=4120 local_ld_st=0
+  regs=128 spills=566 ptx: mma.sync=0 fma=8240 local_ld_st=0
+  regs=255 spills=112 ptx: mma.sync=0 fma=4120 local_ld_st=0
+  regs=72 spills=998 ptx: mma.sync=0 fma=8216 local_ld_st=0
+  regs=64 spills=1870 ptx: mma.sync=0 fma=16432 local_ld_st=0
+  regs=? spills=? ptx: mma.sync=0 fma=8216 local_ld_st=0
+  regs=? spills=? ptx: mma.sync=0 fma=16432 local_ld_st=0
+  regs=72 spills=1030 ptx: mma.sync=0 fma=8216 local_ld_st=0
+compiled backward variants:
+  _attn_bwd_dkdv: regs=255 spills=302 ptx: mma.sync=0 fma=8208 local_ld_st=0
+  _attn_bwd_dkdv: regs=255 spills=1062 ptx: mma.sync=0 fma=16400 local_ld_st=0
+  _attn_bwd_dq: regs=255 spills=162 ptx: mma.sync=0 fma=6160 local_ld_st=0
+  _attn_bwd_dq: regs=255 spills=760 ptx: mma.sync=0 fma=12304 local_ld_st=0

@@ -1,0 +1,36 @@
+{
+  "attn": "triton",
+  "attn_backend": "flash_attn_triton",
+  "params_m": 19.445248,
+  "world_size": 2,
+  "steps": 2000,
+  "resumed_from": 0,
+  "tokens_per_sec": 161476.6855173291,
+  "timed_steps": 1980,
+  "peak_mem_mb_per_gpu": [
+    1392.3,
+    1392.3
+  ],
+  "gpu": "Tesla T4",
+  "torch": "2.11.0+cu130",
+  "args": {
+    "attn": "triton",
+    "out": "/kaggle/working/train/triton",
+    "data_dir": "/kaggle/working/train/data",
+    "steps": 2000,
+    "batch": 8,
+    "ctx": 1024,
+    "layers": 6,
+    "width": 512,
+    "heads": 8,
+    "lr": 0.001,
+    "warmup": 100,
+    "eval_every": 250,
+    "eval_batches": 10,
+    "ckpt_every": 250,
+    "log_every": 10,
+    "timing_skip": 20,
+    "seed": 1234,
+    "resume_dir": null
+  }
+}

@@ -1,0 +1,20 @@
+.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 22%]
+.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 45%]
+.s.s.s.s.s.sssssssssssss................................................ [ 68%]
+........................................................................ [ 91%]
+............................                                             [100%]
+============================= slowest 10 durations =============================
+410.18s call     tests/test_forward.py::test_autotuned_path[False-128]
+399.69s call     tests/test_forward.py::test_autotuned_path[True-128]
+226.74s call     tests/test_forward.py::test_autotuned_path[False-64]
+210.08s call     tests/test_forward.py::test_autotuned_path[True-64]
+7.30s call     tests/test_forward.py::test_forward_matches_reference[17-2-3-128-True-dtype0]
+6.97s call     tests/test_forward.py::test_forward_matches_reference[17-1-1-128-False-dtype0]
+6.96s call     tests/test_forward.py::test_forward_matches_reference[17-2-3-128-False-dtype0]
+6.89s call     tests/test_forward.py::test_forward_matches_reference[17-1-1-128-True-dtype0]
+6.67s call     tests/test_forward.py::test_block_configs[31-48-True-32x128]
+6.62s call     tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-True-dtype0]
+=========================== short test summary info ============================
+SKIPPED [84] tests/conftest.py:40: bfloat16 needs sm80 or newer
+SKIPPED [6] tests/test_forward.py:27: covered by the single-head case
+226 passed, 90 skipped in 1558.98s (0:25:58)

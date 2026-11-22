@@ -1,0 +1,31 @@
+[
+  {
+    "attention": "flash_attn_triton",
+    "tokens_per_sec": 42170,
+    "peak_mem_mb_per_gpu": [
+      1463.7,
+      1463.7
+    ],
+    "final_train_loss": 0.581,
+    "final_val_loss": 2.0764,
+    "steps": 2000,
+    "resumed_from": 0
+  },
+  {
+    "attention": "torch SDPA EFFICIENT_ATTENTION",
+    "tokens_per_sec": 143752,
+    "peak_mem_mb_per_gpu": [
+      1346.2,
+      1346.2
+    ],
+    "final_train_loss": 0.5763,
+    "final_val_loss": 2.048,
+    "steps": 2000,
+    "resumed_from": 0
+  },
+  {
+    "max_abs_train_loss_diff": 0.020850181579589844,
+    "mean_abs_train_loss_diff": 0.004648367762565613,
+    "compared_steps": 200
+  }
+]

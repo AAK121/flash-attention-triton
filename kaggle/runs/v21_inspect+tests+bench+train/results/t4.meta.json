@@ -1,0 +1,70 @@
+{
+  "clock_lock": [
+    "gpu0: lock 1590 MHz -> rc=4 The current user does not have permission to change clocks for GPU 00000000:00:04.0.\nTerminating early due to previous errors.",
+    "gpu1: lock 1590 MHz -> rc=4 The current user does not have permission to change clocks for GPU 00000000:00:05.0.\nTerminating early due to previous errors."
+  ],
+  "exit_codes": [
+    0,
+    0
+  ],
+  "shards": [
+    {
+      "timestamp_utc": "2026-11-22T17:38:31.463556+00:00",
+      "gpu": "Tesla T4",
+      "compute_capability": "7.5",
+      "driver": "580.178.04",
+      "cuda_runtime": "13.0",
+      "torch": "2.11.0+cu130",
+      "triton": "3.2.0",
+      "python": "3.13.16",
+      "fp16_tensor_peak_tflops": 65.0,
+      "clocks_sm_mem_mhz": "360 MHz, 405 MHz\n300 MHz, 405 MHz",
+      "max_clocks_sm_mem_mhz": "1590 MHz, 5001 MHz\n1590 MHz, 5001 MHz",
+      "temperature_c": "69\n44",
+      "power_draw_w": "15.36 W\n10.23 W",
+      "shard": 0,
+      "num_shards": 2,
+      "providers": [
+        "naive",
+        "sdpa_math",
+        "sdpa_mem",
+        "triton"
+      ],
+      "cuda_visible_devices": "0",
+      "repeats": 5,
+      "warmup_ms": 25,
+      "rep_ms": 100,
+      "tokens_per_batch": 16384,
+      "model_width": 2048
+    },
+    {
+      "timestamp_utc": "2026-11-22T17:38:31.520957+00:00",
+      "gpu": "Tesla T4",
+      "compute_capability": "7.5",
+      "driver": "580.178.04",
+      "cuda_runtime": "13.0",
+      "torch": "2.11.0+cu130",
+      "triton": "3.2.0",
+      "python": "3.13.16",
+      "fp16_tensor_peak_tflops": 65.0,
+      "clocks_sm_mem_mhz": "360 MHz, 405 MHz\n300 MHz, 405 MHz",
+      "max_clocks_sm_mem_mhz": "1590 MHz, 5001 MHz\n1590 MHz, 5001 MHz",
+      "temperature_c": "69\n45",
+      "power_draw_w": "12.40 W\n11.42 W",
+      "shard": 1,
+      "num_shards": 2,
+      "providers": [
+        "naive",
+        "sdpa_math",
+        "sdpa_mem",
+        "triton"
+      ],
+      "cuda_visible_devices": "1",
+      "repeats": 5,
+      "warmup_ms": 25,
+      "rep_ms": 100,
+      "tokens_per_batch": 16384,
+      "model_width": 2048
+    }
+  ]
+}

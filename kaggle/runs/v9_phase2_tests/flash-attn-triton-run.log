@@ -1,0 +1,68 @@
+[{"stream_name":"stdout","time":3.682858941,"data":"\n"}
+,{"stream_name":"stdout","time":3.682904823,"data":"$ nvidia-smi\n"}
+,{"stream_name":"stdout","time":3.714716407,"data":"Sat Nov 21 22:50:53 2026       \n"}
+,{"stream_name":"stdout","time":3.714737787,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.714743073,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":3.714747597,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.714751989,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":3.7147565240000002,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":3.714761368,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":3.714766143,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":3.7678413170000002,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":3.7678619749999998,"data":"| N/A   49C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":3.767867137,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":3.767871338,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.767875424,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":3.767879344,"data":"| N/A   46C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":3.767884195,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":3.767888829,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":3.768459731,"data":"\n"}
+,{"stream_name":"stdout","time":3.768471345,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.7684754209999998,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":3.768478896,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":3.768482319,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":3.768485668,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":3.770098237,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":3.770110382,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":4.087484896,"data":"\n"}
+,{"stream_name":"stdout","time":4.087508952,"data":"$ /usr/bin/python3 -m pip install --no-deps -q -e /tmp/flash-attn-triton\n"}
+,{"stream_name":"stdout","time":10.719230172,"data":"\n"}
+,{"stream_name":"stdout","time":10.719265425,"data":"$ /usr/bin/python3 -m pip install -q pytest\n"}
+,{"stream_name":"stdout","time":12.304022221,"data":"\n"}
+,{"stream_name":"stdout","time":12.304055257,"data":"$ /usr/bin/python3 -c \"import torch, triton; print('torch', torch.__version__, 'triton', triton.__version__, 'cuda', torch.version.cuda); print([torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])\"\n"}
+,{"stream_name":"stdout","time":21.040892287,"data":"torch 2.11.0+cu130 triton 3.6.0 cuda 13.0\n"}
+,{"stream_name":"stdout","time":21.040915169,"data":"['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":23.87003186,"data":"\n"}
+,{"stream_name":"stdout","time":23.870064686,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 /usr/bin/python3 -m pytest tests -q -rs --durations=10\n"}
+,{"stream_name":"stdout","time":418.029290963,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 12%]\n"}
+,{"stream_name":"stdout","time":685.452071231,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 24%]\n"}
+,{"stream_name":"stdout","time":923.231660663,"data":".s.s.s.s.s.sssssssssssss................................................ [ 37%]\n"}
+,{"stream_name":"stdout","time":1819.854785967,"data":".......................................................s.s.s.s.s.s.s.s.s [ 49%]\n"}
+,{"stream_name":"stdout","time":1820.07804964,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 61%]\n"}
+,{"stream_name":"stdout","time":1820.76638925,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.sssssss [ 74%]\n"}
+,{"stream_name":"stdout","time":1865.177358072,"data":"ssssss.................................................................. [ 86%]\n"}
+,{"stream_name":"stdout","time":1938.679642594,"data":"........................................................................ [ 98%]\n"}
+,{"stream_name":"stdout","time":1939.28081575,"data":".......                                                                  [100%]\n"}
+,{"stream_name":"stdout","time":1939.280854794,"data":"============================= slowest 10 durations =============================\n"}
+,{"stream_name":"stdout","time":1939.280875993,"data":"678.04s call     tests/test_backward.py::test_autotuned_backward\n"}
+,{"stream_name":"stdout","time":1939.280881158,"data":"55.71s call     tests/test_backward.py::test_gradients_match_reference[17-2-3-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.280886258,"data":"55.50s call     tests/test_backward.py::test_gradients_match_reference[1024-1-1-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.280890735,"data":"55.23s call     tests/test_backward.py::test_gradients_match_reference[17-1-1-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.280895436,"data":"55.18s call     tests/test_backward.py::test_gradients_match_reference[1024-2-3-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.280899499,"data":"35.35s call     tests/test_backward.py::test_backward_block_configs[31-48-True-128x32]\n"}
+,{"stream_name":"stdout","time":1939.280903514,"data":"35.28s call     tests/test_backward.py::test_gradients_match_reference[17-2-3-128-False-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.280907591,"data":"34.98s call     tests/test_backward.py::test_gradients_match_reference[17-1-1-128-False-dtype0]\n"}
+,{"stream_name":"stdout","time":1939.28091162,"data":"34.97s call     tests/test_backward.py::test_backward_block_configs[37-37-True-128x32]\n"}
+,{"stream_name":"stdout","time":1939.280916301,"data":"34.59s call     tests/test_backward.py::test_backward_block_configs[64-129-True-128x32]\n"}
+,{"stream_name":"stdout","time":1939.280921436,"data":"=========================== short test summary info ============================\n"}
+,{"stream_name":"stdout","time":1939.280941253,"data":"SKIPPED [168] tests/conftest.py:40: bfloat16 needs sm80 or newer\n"}
+,{"stream_name":"stdout","time":1939.280945161,"data":"SKIPPED [6] tests/test_backward.py:29: covered by the single-head case\n"}
+,{"stream_name":"stdout","time":1939.280948743,"data":"SKIPPED [6] tests/test_forward.py:27: covered by the single-head case\n"}
+,{"stream_name":"stdout","time":1939.280952066,"data":"403 passed, 180 skipped in 1911.10s (0:31:51)\n"}
+,{"stream_name":"stderr","time":1942.625000791,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1942.625038347,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1942.918757802,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1942.918790176,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1943.729430417,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1944.807526289,"data":"[NbConvertApp] Writing 281809 bytes to __results__.html\n"}
+]

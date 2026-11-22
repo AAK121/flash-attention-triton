@@ -1,0 +1,63 @@
+[{"stream_name":"stdout","time":2.405479288,"data":"\n"}
+,{"stream_name":"stdout","time":2.4055228189999998,"data":"$ nvidia-smi\n"}
+,{"stream_name":"stdout","time":2.440101631,"data":"Sat Nov 21 22:09:00 2026       \n"}
+,{"stream_name":"stdout","time":2.440130472,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":2.440136376,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":2.440140326,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.440144134,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":2.440147958,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":2.440151699,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":2.44015543,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":2.490855738,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":2.490895615,"data":"| N/A   52C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":2.490901161,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":2.4909054729999998,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.490909717,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":2.490914023,"data":"| N/A   57C    P8             11W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":2.490918278,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":2.490922457,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.491578648,"data":"\n"}
+,{"stream_name":"stdout","time":2.4915958959999998,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":2.4916005119999998,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":2.491605946,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":2.491611502,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":2.491616966,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":2.493209391,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":2.493224629,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":2.817911347,"data":"\n"}
+,{"stream_name":"stdout","time":2.8179397330000002,"data":"$ /usr/bin/python3 -m pip install --no-deps -q -e /tmp/flash-attn-triton\n"}
+,{"stream_name":"stdout","time":10.260318493,"data":"\n"}
+,{"stream_name":"stdout","time":10.260357289,"data":"$ /usr/bin/python3 -m pip install -q pytest\n"}
+,{"stream_name":"stdout","time":12.02111394,"data":"\n"}
+,{"stream_name":"stdout","time":12.021149581,"data":"$ /usr/bin/python3 -c \"import torch, triton; print('torch', torch.__version__, 'triton', triton.__version__, 'cuda', torch.version.cuda); print([torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])\"\n"}
+,{"stream_name":"stdout","time":19.907620908,"data":"torch 2.11.0+cu130 triton 3.6.0 cuda 13.0\n"}
+,{"stream_name":"stdout","time":19.907663173,"data":"['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":22.693762335,"data":"\n"}
+,{"stream_name":"stdout","time":22.693789886,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 /usr/bin/python3 -m pytest tests -q -rs --durations=10\n"}
+,{"stream_name":"stdout","time":112.853612933,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 22%]\n"}
+,{"stream_name":"stdout","time":169.587400152,"data":".s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 45%]\n"}
+,{"stream_name":"stdout","time":248.578873008,"data":".s.s.s.s.s.sssssssssssss................................................ [ 68%]\n"}
+,{"stream_name":"stdout","time":308.938044652,"data":"........................................................................ [ 91%]\n"}
+,{"stream_name":"stdout","time":1586.32047632,"data":"............................                                             [100%]\n"}
+,{"stream_name":"stdout","time":1586.32056171,"data":"============================= slowest 10 durations =============================\n"}
+,{"stream_name":"stdout","time":1586.320571078,"data":"410.18s call     tests/test_forward.py::test_autotuned_path[False-128]\n"}
+,{"stream_name":"stdout","time":1586.320575913,"data":"399.69s call     tests/test_forward.py::test_autotuned_path[True-128]\n"}
+,{"stream_name":"stdout","time":1586.32058097,"data":"226.74s call     tests/test_forward.py::test_autotuned_path[False-64]\n"}
+,{"stream_name":"stdout","time":1586.320586168,"data":"210.08s call     tests/test_forward.py::test_autotuned_path[True-64]\n"}
+,{"stream_name":"stdout","time":1586.320590866,"data":"7.30s call     tests/test_forward.py::test_forward_matches_reference[17-2-3-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1586.320595536,"data":"6.97s call     tests/test_forward.py::test_forward_matches_reference[17-1-1-128-False-dtype0]\n"}
+,{"stream_name":"stdout","time":1586.320600357,"data":"6.96s call     tests/test_forward.py::test_forward_matches_reference[17-2-3-128-False-dtype0]\n"}
+,{"stream_name":"stdout","time":1586.32060481,"data":"6.89s call     tests/test_forward.py::test_forward_matches_reference[17-1-1-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1586.320609193,"data":"6.67s call     tests/test_forward.py::test_block_configs[31-48-True-32x128]\n"}
+,{"stream_name":"stdout","time":1586.320613437,"data":"6.62s call     tests/test_forward.py::test_forward_matches_reference[1024-2-3-128-True-dtype0]\n"}
+,{"stream_name":"stdout","time":1586.320617822,"data":"=========================== short test summary info ============================\n"}
+,{"stream_name":"stdout","time":1586.320622903,"data":"SKIPPED [84] tests/conftest.py:40: bfloat16 needs sm80 or newer\n"}
+,{"stream_name":"stdout","time":1586.320628246,"data":"SKIPPED [6] tests/test_forward.py:27: covered by the single-head case\n"}
+,{"stream_name":"stdout","time":1586.320633264,"data":"226 passed, 90 skipped in 1558.98s (0:25:58)\n"}
+,{"stream_name":"stderr","time":1589.650869792,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1589.650917173,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1589.947688267,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1589.947749116,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1590.808687321,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1591.935817808,"data":"[NbConvertApp] Writing 281809 bytes to __results__.html\n"}
+]

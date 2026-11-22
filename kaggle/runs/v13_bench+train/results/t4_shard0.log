@@ -1,0 +1,768 @@
+[shard 0] fwd     d= 64 causal=0 n=  256 naive      ok     27.271 ms   1.26 TFLOP/s (4s)
+[shard 0] fwd     d= 64 causal=0 n=  512 naive      ok     54.082 ms   1.27 TFLOP/s (4s)
+[shard 0] fwd     d= 64 causal=0 n= 1024 naive      ok    105.957 ms   1.30 TFLOP/s (6s)
+[shard 0] fwd     d= 64 causal=0 n= 2048 naive      ok    214.998 ms   1.28 TFLOP/s (10s)
+[shard 0] fwd     d= 64 causal=0 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd     d= 64 causal=0 n=  256 sdpa_math  ok     32.135 ms   1.07 TFLOP/s (4s)
+[shard 0] fwd     d= 64 causal=0 n=  512 sdpa_math  ok     60.084 ms   1.14 TFLOP/s (4s)
+[shard 0] fwd     d= 64 causal=0 n= 1024 sdpa_math  ok    115.072 ms   1.19 TFLOP/s (6s)
+[shard 0] fwd     d= 64 causal=0 n= 2048 sdpa_math  ok    236.158 ms   1.16 TFLOP/s (11s)
+[shard 0] fwd     d= 64 causal=0 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd     d= 64 causal=0 n=  256 sdpa_mem   ok      3.344 ms  10.28 TFLOP/s (2s)
+[shard 0] fwd     d= 64 causal=0 n=  512 sdpa_mem   ok      6.230 ms  11.03 TFLOP/s (2s)
+[shard 0] fwd     d= 64 causal=0 n= 1024 sdpa_mem   ok     11.694 ms  11.75 TFLOP/s (2s)
+[shard 0] fwd     d= 64 causal=0 n= 2048 sdpa_mem   ok     23.363 ms  11.77 TFLOP/s (3s)
+[shard 0] fwd     d= 64 causal=0 n= 4096 sdpa_mem   ok     45.820 ms  12.00 TFLOP/s (4s)
+[shard 0] fwd     d= 64 causal=0 n= 8192 sdpa_mem   ok     91.621 ms  12.00 TFLOP/s (5s)
+[shard 0] fwd     d= 64 causal=0 n=16384 sdpa_mem   ok    186.278 ms  11.81 TFLOP/s (9s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 222.99s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n=  256 triton     ok     30.509 ms   1.13 TFLOP/s (226s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 31.78s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n=  512 triton     ok     59.865 ms   1.15 TFLOP/s (36s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 61.85s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n= 1024 triton     ok    118.088 ms   1.16 TFLOP/s (68s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 123.88s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n= 2048 triton     ok    231.676 ms   1.19 TFLOP/s (135s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 246.97s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n= 4096 triton     ok    461.990 ms   1.19 TFLOP/s (268s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 492.58s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n= 8192 triton     ok    921.779 ms   1.19 TFLOP/s (533s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 64, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_fwd,
+with key as (64, False, False, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 985.20s,
+best config selected: BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d= 64 causal=0 n=16384 triton     ok   1826.030 ms   1.20 TFLOP/s (1064s)
+/usr/local/lib/python3.13/dist-packages/torch/autograd/graph.py:869: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:335.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[shard 0] bwd     d= 64 causal=0 n=  256 naive      ok     28.965 ms   2.97 TFLOP/s (3s)
+[shard 0] bwd     d= 64 causal=0 n=  512 naive      ok     55.683 ms   3.09 TFLOP/s (4s)
+[shard 0] bwd     d= 64 causal=0 n= 1024 naive      ok    108.764 ms   3.16 TFLOP/s (6s)
+[shard 0] bwd     d= 64 causal=0 n= 2048 naive      ok    215.463 ms   3.19 TFLOP/s (11s)
+[shard 0] bwd     d= 64 causal=0 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] bwd     d= 64 causal=0 n=  256 sdpa_math  ok     51.133 ms   1.68 TFLOP/s (3s)
+[shard 0] bwd     d= 64 causal=0 n=  512 sdpa_math  ok     92.476 ms   1.86 TFLOP/s (5s)
+[shard 0] bwd     d= 64 causal=0 n= 1024 sdpa_math  ok    178.937 ms   1.92 TFLOP/s (9s)
+[shard 0] bwd     d= 64 causal=0 n= 2048 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] bwd     d= 64 causal=0 n=  256 sdpa_mem   ok     16.362 ms   5.25 TFLOP/s (2s)
+[shard 0] bwd     d= 64 causal=0 n=  512 sdpa_mem   ok     27.781 ms   6.18 TFLOP/s (3s)
+[shard 0] bwd     d= 64 causal=0 n= 1024 sdpa_mem   ok     45.610 ms   7.53 TFLOP/s (4s)
+[shard 0] bwd     d= 64 causal=0 n= 2048 sdpa_mem   ok     81.861 ms   8.39 TFLOP/s (5s)
+[shard 0] bwd     d= 64 causal=0 n= 4096 sdpa_mem   ok    155.739 ms   8.82 TFLOP/s (8s)
+[shard 0] bwd     d= 64 causal=0 n= 8192 sdpa_mem   ok    316.805 ms   8.68 TFLOP/s (15s)
+[shard 0] bwd     d= 64 causal=0 n=16384 sdpa_mem   ok    740.600 ms   7.42 TFLOP/s (32s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 239.78s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 140.62s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n=  256 triton     ok    159.309 ms   0.54 TFLOP/s (389s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 37.14s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 25.33s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n=  512 triton     ok    324.449 ms   0.53 TFLOP/s (77s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 75.16s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 51.34s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n= 1024 triton     ok    660.408 ms   0.52 TFLOP/s (155s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 151.22s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 103.25s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n= 2048 triton     ok   1315.783 ms   0.52 TFLOP/s (310s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 302.81s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 206.44s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n= 4096 triton     ok   2622.484 ms   0.52 TFLOP/s (619s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 604.75s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 412.96s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n= 8192 triton     ok   5239.077 ms   0.52 TFLOP/s (1236s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (64, False, False, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 1212.49s,
+best config selected: BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 128, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (64, False, False, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 825.76s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d= 64 causal=0 n=16384 triton     ok  10463.302 ms   0.53 TFLOP/s (2472s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  256 naive      ok     56.759 ms   2.12 TFLOP/s (4s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  512 naive      ok    110.287 ms   2.18 TFLOP/s (6s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 1024 naive      ok    219.852 ms   2.19 TFLOP/s (11s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 2048 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  256 sdpa_math  ok     83.527 ms   1.44 TFLOP/s (5s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  512 sdpa_math  ok    156.793 ms   1.53 TFLOP/s (8s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 1024 sdpa_math  ok    299.612 ms   1.61 TFLOP/s (14s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 2048 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  256 sdpa_mem   ok     19.705 ms   6.10 TFLOP/s (3s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  512 sdpa_mem   ok     33.404 ms   7.20 TFLOP/s (3s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 1024 sdpa_mem   ok     57.516 ms   8.36 TFLOP/s (4s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 2048 sdpa_mem   ok    104.559 ms   9.20 TFLOP/s (6s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 4096 sdpa_mem   ok    200.380 ms   9.60 TFLOP/s (10s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 8192 sdpa_mem   ok    408.914 ms   9.41 TFLOP/s (19s)
+[shard 0] fwd_bwd d= 64 causal=0 n=16384 sdpa_mem   ok    904.680 ms   8.51 TFLOP/s (39s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  256 triton     ok    200.940 ms   0.60 TFLOP/s (10s)
+[shard 0] fwd_bwd d= 64 causal=0 n=  512 triton     ok    394.311 ms   0.61 TFLOP/s (18s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 1024 triton     ok    779.541 ms   0.62 TFLOP/s (34s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 2048 triton     ok   1546.911 ms   0.62 TFLOP/s (66s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 4096 triton     ok   3085.924 ms   0.62 TFLOP/s (131s)
+[shard 0] fwd_bwd d= 64 causal=0 n= 8192 triton     ok   6152.290 ms   0.63 TFLOP/s (260s)
+[shard 0] fwd_bwd d= 64 causal=0 n=16384 triton     ok  12297.691 ms   0.63 TFLOP/s (518s)
+[shard 0] fwd     d=128 causal=1 n=  256 naive      ok     17.046 ms   1.01 TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n=  512 naive      ok     32.955 ms   1.04 TFLOP/s (3s)
+[shard 0] fwd     d=128 causal=1 n= 1024 naive      ok     65.436 ms   1.05 TFLOP/s (4s)
+[shard 0] fwd     d=128 causal=1 n= 2048 naive      ok    133.689 ms   1.03 TFLOP/s (7s)
+[shard 0] fwd     d=128 causal=1 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n=  256 sdpa_math  ok     26.499 ms   0.65 TFLOP/s (3s)
+[shard 0] fwd     d=128 causal=1 n=  512 sdpa_math  ok     46.889 ms   0.73 TFLOP/s (4s)
+[shard 0] fwd     d=128 causal=1 n= 1024 sdpa_math  ok     87.788 ms   0.78 TFLOP/s (5s)
+[shard 0] fwd     d=128 causal=1 n= 2048 sdpa_math  ok    172.951 ms   0.79 TFLOP/s (9s)
+[shard 0] fwd     d=128 causal=1 n= 4096 sdpa_math  ok    361.622 ms   0.76 TFLOP/s (17s)
+[shard 0] fwd     d=128 causal=1 n= 8192 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n=  256 sdpa_mem   ok      2.449 ms   7.01 TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n=  512 sdpa_mem   ok      3.958 ms   8.68 TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n= 1024 sdpa_mem   ok      6.847 ms  10.04 TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n= 2048 sdpa_mem   ok     12.479 ms  11.01 TFLOP/s (2s)
+[shard 0] fwd     d=128 causal=1 n= 4096 sdpa_mem   ok     23.796 ms  11.55 TFLOP/s (3s)
+[shard 0] fwd     d=128 causal=1 n= 8192 sdpa_mem   ok     46.094 ms  11.93 TFLOP/s (4s)
+[shard 0] fwd     d=128 causal=1 n=16384 sdpa_mem   ok     99.859 ms  11.01 TFLOP/s (6s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 394.64s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n=  256 triton     ok     82.920 ms   0.21 TFLOP/s (400s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 13.54s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n=  512 triton     ok    154.211 ms   0.22 TFLOP/s (21s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 24.77s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n= 1024 triton     ok    297.685 ms   0.23 TFLOP/s (39s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 47.51s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n= 2048 triton     ok    584.847 ms   0.23 TFLOP/s (73s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 94.60s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n= 4096 triton     ok   1167.616 ms   0.24 TFLOP/s (145s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 188.37s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n= 8192 triton     ok   2316.376 ms   0.24 TFLOP/s (287s)
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 64, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_fwd with config BLOCK_M: 128, BLOCK_N: 32, num_warps: 8, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_fwd,
+with key as (128, False, True, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32'),
+finished after 377.64s,
+best config selected: BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] fwd     d=128 causal=1 n=16384 triton     ok   4654.702 ms   0.24 TFLOP/s (574s)
+[shard 0] bwd     d=128 causal=1 n=  256 naive      ok     19.274 ms   2.23 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n=  512 naive      ok     35.033 ms   2.45 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n= 1024 naive      ok     66.171 ms   2.60 TFLOP/s (4s)
+[shard 0] bwd     d=128 causal=1 n= 2048 naive      ok    128.546 ms   2.67 TFLOP/s (7s)
+[shard 0] bwd     d=128 causal=1 n= 4096 naive      ok    261.199 ms   2.63 TFLOP/s (13s)
+[shard 0] bwd     d=128 causal=1 n= 8192 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] bwd     d=128 causal=1 n=  256 sdpa_math  ok     34.031 ms   1.26 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n=  512 sdpa_math  ok     59.910 ms   1.43 TFLOP/s (4s)
+[shard 0] bwd     d=128 causal=1 n= 1024 sdpa_math  ok    110.719 ms   1.55 TFLOP/s (6s)
+[shard 0] bwd     d=128 causal=1 n= 2048 sdpa_math  ok    215.281 ms   1.60 TFLOP/s (11s)
+[shard 0] bwd     d=128 causal=1 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] bwd     d=128 causal=1 n=  256 sdpa_mem   ok     12.787 ms   3.36 TFLOP/s (2s)
+[shard 0] bwd     d=128 causal=1 n=  512 sdpa_mem   ok     17.590 ms   4.88 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n= 1024 sdpa_mem   ok     25.927 ms   6.63 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n= 2048 sdpa_mem   ok     43.402 ms   7.92 TFLOP/s (3s)
+[shard 0] bwd     d=128 causal=1 n= 4096 sdpa_mem   ok     79.966 ms   8.59 TFLOP/s (5s)
+[shard 0] bwd     d=128 causal=1 n= 8192 sdpa_mem   ok    158.668 ms   8.66 TFLOP/s (8s)
+[shard 0] bwd     d=128 causal=1 n=16384 sdpa_mem   ok    313.754 ms   8.76 TFLOP/s (15s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 231.52s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 256, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 78.33s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n=  256 triton     ok    433.701 ms   0.10 TFLOP/s (329s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 9.85s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 512, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 6.39s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n=  512 triton     ok    807.672 ms   0.11 TFLOP/s (51s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 18.95s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 1024, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 12.27s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n= 1024 triton     ok   1568.535 ms   0.11 TFLOP/s (98s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 37.14s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 2048, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 24.19s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n= 2048 triton     ok   3085.534 ms   0.11 TFLOP/s (190s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 73.57s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 4096, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 48.01s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n= 4096 triton     ok   6113.332 ms   0.11 TFLOP/s (376s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 146.00s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 8192, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 95.48s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n= 8192 triton     ok  12159.654 ms   0.11 TFLOP/s (746s)
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dkdv with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Triton autotuning for function _attn_bwd_dkdv,
+with key as (128, False, True, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16', 'torch.float16'),
+finished after 290.77s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 32, BLOCK_N: 64, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Autotuning kernel _attn_bwd_dq with config BLOCK_M: 64, BLOCK_N: 32, num_warps: 4, num_ctas: 1, num_stages: 1, maxnreg: None
+Autotuning failed with out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.
+Triton autotuning for function _attn_bwd_dq,
+with key as (128, False, True, 16384, 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float16', 'torch.float32', 'torch.float32', 'torch.float16'),
+finished after 190.57s,
+best config selected: BLOCK_M: 32, BLOCK_N: 32, num_warps: 2, num_ctas: 1, num_stages: 1, maxnreg: None;
+[shard 0] bwd     d=128 causal=1 n=16384 triton     ok  24159.400 ms   0.11 TFLOP/s (1482s)
+[shard 0] fwd_bwd d=128 causal=1 n=  256 naive      ok     36.595 ms   1.64 TFLOP/s (3s)
+[shard 0] fwd_bwd d=128 causal=1 n=  512 naive      ok     68.031 ms   1.77 TFLOP/s (4s)
+[shard 0] fwd_bwd d=128 causal=1 n= 1024 naive      ok    131.478 ms   1.83 TFLOP/s (7s)
+[shard 0] fwd_bwd d=128 causal=1 n= 2048 naive      ok    260.892 ms   1.84 TFLOP/s (12s)
+[shard 0] fwd_bwd d=128 causal=1 n= 4096 naive      oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd_bwd d=128 causal=1 n=  256 sdpa_math  ok     59.003 ms   1.02 TFLOP/s (4s)
+[shard 0] fwd_bwd d=128 causal=1 n=  512 sdpa_math  ok    105.994 ms   1.13 TFLOP/s (6s)
+[shard 0] fwd_bwd d=128 causal=1 n= 1024 sdpa_math  ok    201.067 ms   1.20 TFLOP/s (10s)
+[shard 0] fwd_bwd d=128 causal=1 n= 2048 sdpa_math  ok    386.113 ms   1.25 TFLOP/s (18s)
+[shard 0] fwd_bwd d=128 causal=1 n= 4096 sdpa_math  oom       nan ms    nan TFLOP/s (2s)
+[shard 0] fwd_bwd d=128 causal=1 n=  256 sdpa_mem   ok     15.340 ms   3.92 TFLOP/s (2s)
+[shard 0] fwd_bwd d=128 causal=1 n=  512 sdpa_mem   ok     21.491 ms   5.60 TFLOP/s (3s)
+[shard 0] fwd_bwd d=128 causal=1 n= 1024 sdpa_mem   ok     33.139 ms   7.26 TFLOP/s (3s)
+[shard 0] fwd_bwd d=128 causal=1 n= 2048 sdpa_mem   ok     55.986 ms   8.59 TFLOP/s (4s)
+[shard 0] fwd_bwd d=128 causal=1 n= 4096 sdpa_mem   ok    104.319 ms   9.22 TFLOP/s (6s)
+[shard 0] fwd_bwd d=128 causal=1 n= 8192 sdpa_mem   ok    206.803 ms   9.30 TFLOP/s (10s)
+[shard 0] fwd_bwd d=128 causal=1 n=16384 sdpa_mem   ok    416.385 ms   9.24 TFLOP/s (19s)
+[shard 0] fwd_bwd d=128 causal=1 n=  256 triton     ok    526.677 ms   0.11 TFLOP/s (24s)
+[shard 0] fwd_bwd d=128 causal=1 n=  512 triton     ok    974.495 ms   0.12 TFLOP/s (42s)
+[shard 0] fwd_bwd d=128 causal=1 n= 1024 triton     ok   1880.588 ms   0.13 TFLOP/s (80s)
+[shard 0] fwd_bwd d=128 causal=1 n= 2048 triton     ok   3681.706 ms   0.13 TFLOP/s (156s)
+[shard 0] fwd_bwd d=128 causal=1 n= 4096 triton     ok   7290.264 ms   0.13 TFLOP/s (308s)
+[shard 0] fwd_bwd d=128 causal=1 n= 8192 triton     ok  14473.117 ms   0.13 TFLOP/s (609s)
+[shard 0] fwd_bwd d=128 causal=1 n=16384 triton     ok  28927.129 ms   0.13 TFLOP/s (1217s)

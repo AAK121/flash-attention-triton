@@ -1,0 +1,284 @@
+[{"stream_name":"stdout","time":2.918041107,"data":"stages: ['triton_versions']\n"}
+,{"stream_name":"stdout","time":2.918077222,"data":"\n"}
+,{"stream_name":"stdout","time":2.91808193,"data":"$ nvidia-smi\n"}
+,{"stream_name":"stdout","time":2.951967812,"data":"Sun Nov 22 16:57:26 2026       \n"}
+,{"stream_name":"stdout","time":2.951992292,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":2.951999505,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":2.952007055,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.952009739,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":2.952012253,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":2.952014787,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":2.952017341,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":2.997511099,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":2.997544478,"data":"| N/A   55C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":2.997548826,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":2.997551806,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.997554764,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":2.997557484,"data":"| N/A   49C    P8             11W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":2.997561212,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":2.997579295,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":2.998158271,"data":"\n"}
+,{"stream_name":"stdout","time":2.998172449,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":2.998177169,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":2.998181387,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":2.998185584,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":2.99818964,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":2.999813132,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":2.99982805,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":3.325567058,"data":"\n"}
+,{"stream_name":"stdout","time":3.325592779,"data":"$ /usr/bin/python3 -m pip install --no-deps -q -e /tmp/flash-attn-triton\n"}
+,{"stream_name":"stdout","time":9.067609892,"data":"\n"}
+,{"stream_name":"stdout","time":9.067651627,"data":"$ /usr/bin/python3 -m pip install -q pytest\n"}
+,{"stream_name":"stdout","time":10.654606416,"data":"\n"}
+,{"stream_name":"stdout","time":10.65465107,"data":"$ /usr/bin/python3 -c \"import torch, triton; print('torch', torch.__version__, 'triton', triton.__version__, 'cuda', torch.version.cuda); print([torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])\"\n"}
+,{"stream_name":"stdout","time":16.764703731,"data":"torch 2.11.0+cu130 triton 3.6.0 cuda 13.0\n"}
+,{"stream_name":"stdout","time":16.764785959,"data":"['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":19.105822973,"data":"\n"}
+,{"stream_name":"stdout","time":19.105855737,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.0.0 triton==3.0.0\n"}
+,{"stream_name":"stdout","time":19.663940976,"data":"ERROR: Could not find a version that satisfies the requirement triton==3.0.0 (from versions: 3.2.0, 3.3.0, 3.3.1, 3.4.0, 3.5.0, 3.5.1, 3.6.0, 3.7.0, 3.7.1, 3.8.0, 3.9.0)\n"}
+,{"stream_name":"stdout","time":19.66424752,"data":"ERROR: No matching distribution found for triton==3.0.0\n"}
+,{"stream_name":"stdout","time":19.725323888,"data":"\n"}
+,{"stream_name":"stdout","time":19.725353573,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.1.0 triton==3.1.0\n"}
+,{"stream_name":"stdout","time":20.148497901,"data":"ERROR: Could not find a version that satisfies the requirement triton==3.1.0 (from versions: 3.2.0, 3.3.0, 3.3.1, 3.4.0, 3.5.0, 3.5.1, 3.6.0, 3.7.0, 3.7.1, 3.8.0, 3.9.0)\n"}
+,{"stream_name":"stdout","time":20.148781218,"data":"ERROR: No matching distribution found for triton==3.1.0\n"}
+,{"stream_name":"stdout","time":20.205535584,"data":"\n"}
+,{"stream_name":"stdout","time":20.205564646,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.2.0 triton==3.2.0\n"}
+,{"stream_name":"stdout","time":28.195684452,"data":"\n"}
+,{"stream_name":"stdout","time":28.195721614,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 PYTHONPATH=/tmp/triton-3.2.0:/tmp/flash-attn-triton/src /usr/bin/python3 benchmarks/inspect_kernels.py\n"}
+,{"stream_name":"stdout","time":59.921986379,"data":"device Tesla T4 cc (7, 5) triton 3.2.0 torch 2.11.0+cu130\n"}
+,{"stream_name":"stdout","time":59.922022409,"data":"torch.mm 2048^3: 18.09 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922028051,"data":"triton matmul BM=64 BN=64 BK=32 w=4: 9.43 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922032543,"data":"triton matmul BM=128 BN=128 BK=32 w=8: 15.44 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.92203661,"data":"triton matmul BM=128 BN=64 BK=32 w=4: 21.35 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922040937,"data":"\n"}
+,{"stream_name":"stdout","time":59.922044828,"data":"d=64 sdpa_mem fwd: 10.98 ms 12.52 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922049262,"data":"d=64 triton fwd BM=64 BN=32 w=4: 7.99 ms 17.19 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922053298,"data":"d=64 triton fwd BM=64 BN=64 w=4: 7.48 ms 18.37 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922057452,"data":"d=64 triton fwd BM=128 BN=32 w=8: 7.01 ms 19.60 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922061589,"data":"d=64 triton fwd BM=128 BN=64 w=8: 6.87 ms 20.00 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922065556,"data":"d=64 triton fwd BM=32 BN=32 w=2: 11.07 ms 12.41 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.92206958,"data":"d=64 triton bwd (default configs): 25.86 ms 13.29 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922073759,"data":"\n"}
+,{"stream_name":"stdout","time":59.922089584,"data":"d=128 sdpa_mem fwd: 10.94 ms 12.57 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922093027,"data":"d=128 triton fwd BM=64 BN=32 w=4: 9.73 ms 14.12 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922096217,"data":"d=128 triton fwd BM=64 BN=64 w=4: 11.86 ms 11.59 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922099357,"data":"d=128 triton fwd BM=128 BN=32 w=8: 7.28 ms 18.87 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922102616,"data":"d=128 triton fwd BM=128 BN=64 w=8: 6.34 ms 21.68 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922105997,"data":"d=128 triton fwd BM=32 BN=32 w=2: 10.60 ms 12.96 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922109145,"data":"d=128 triton bwd (default configs): 32.42 ms 10.60 TFLOP/s\n"}
+,{"stream_name":"stdout","time":59.922112382,"data":"\n"}
+,{"stream_name":"stdout","time":59.922115434,"data":"compiled forward variants:\n"}
+,{"stream_name":"stdout","time":59.922118416,"data":"compiled backward variants:\n"}
+,{"stream_name":"stdout","time":60.570277986,"data":"\n"}
+,{"stream_name":"stdout","time":60.570322352,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.3.1 triton==3.3.1\n"}
+,{"stream_name":"stdout","time":66.646801422,"data":"\n"}
+,{"stream_name":"stdout","time":66.646830534,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 PYTHONPATH=/tmp/triton-3.3.1:/tmp/flash-attn-triton/src /usr/bin/python3 benchmarks/inspect_kernels.py\n"}
+,{"stream_name":"stdout","time":70.068711951,"data":"Unsupported conversion from f16 to f16\n"}
+,{"stream_name":"stdout","time":70.068738589,"data":"LLVM ERROR: Unsupported rounding mode for conversion.\n"}
+,{"stream_name":"stdout","time":70.069148506,"data":"#blocked = #ttg.blocked\u003c{sizePerThread = [4, 4], threadsPerWarp = [2, 16], warpsPerCTA = [4, 1], order = [1, 0]}\u003e\n"}
+,{"stream_name":"stdout","time":70.069167339,"data":"#blocked1 = #ttg.blocked\u003c{sizePerThread = [1, 8], threadsPerWarp = [8, 4], warpsPerCTA = [4, 1], order = [1, 0]}\u003e\n"}
+,{"stream_name":"stdout","time":70.069174656,"data":"#blocked2 = #ttg.blocked\u003c{sizePerThread = [1, 8], threadsPerWarp = [4, 8], warpsPerCTA = [4, 1], order = [1, 0]}\u003e\n"}
+,{"stream_name":"stdout","time":70.069180564,"data":"#shared = #ttg.swizzled_shared\u003c{vec = 1, perPhase = 1, maxPhase = 1, order = [1, 0]}\u003e\n"}
+,{"stream_name":"stdout","time":70.069186065,"data":"#smem = #ttg.shared_memory\n"}
+,{"stream_name":"stdout","time":70.069281388,"data":"module attributes {\"ttg.num-ctas\" = 1 : i32, \"ttg.num-warps\" = 4 : i32, ttg.target = \"cuda:75\", \"ttg.threads-per-warp\" = 32 : i32} {\n"}
+,{"stream_name":"stdout","time":70.069497119,"data":"  tt.func public @_matmul(%arg0: !tt.ptr\u003cf16\u003e {tt.divisibility = 16 : i32}, %arg1: !tt.ptr\u003cf16\u003e {tt.divisibility = 16 : i32}, %arg2: !tt.ptr\u003cf16\u003e {tt.divisibility = 16 : i32}, %arg3: i32 {tt.divisibility = 16 : i32}, %arg4: i32 {tt.divisibility = 16 : i32}, %arg5: i32 {tt.divisibility = 16 : i32}) attributes {noinline = false} {\n"}
+,{"stream_name":"stdout","time":70.069509036,"data":"    %c64_i32 = arith.constant 64 : i32\n"}
+,{"stream_name":"stdout","time":70.06991212,"data":"    %c0_i32 = arith.constant 0 : i32\n"}
+,{"stream_name":"stdout","time":70.06992728,"data":"    %c32_i32 = arith.constant 32 : i32\n"}
+,{"stream_name":"stdout","time":70.069932077,"data":"    %cst = arith.constant dense\u003c0.000000e+00\u003e : tensor\u003c64x64xf32, #blocked\u003e\n"}
+,{"stream_name":"stdout","time":70.06993712,"data":"    %0 = tt.get_program_id x : i32\n"}
+,{"stream_name":"stdout","time":70.069952459,"data":"    %1 = tt.get_program_id y : i32\n"}
+,{"stream_name":"stdout","time":70.069966882,"data":"    %2 = arith.muli %0, %c64_i32 : i32\n"}
+,{"stream_name":"stdout","time":70.069970781,"data":"    %3 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.069975369,"data":"    %4 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.069979601,"data":"    %5 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 0, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.069983994,"data":"    %6 = tt.splat %2 : i32 -\u003e tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.069988347,"data":"    %7 = tt.splat %2 : i32 -\u003e tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.069992541,"data":"    %8 = arith.addi %6, %3 : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.07002271,"data":"    %9 = arith.addi %7, %4 : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.070035046,"data":"    %10 = arith.muli %1, %c64_i32 : i32\n"}
+,{"stream_name":"stdout","time":70.070060641,"data":"    %11 = tt.splat %10 : i32 -\u003e tensor\u003c64xi32, #ttg.slice\u003c{dim = 0, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.070132536,"data":"    %12 = arith.addi %11, %5 : tensor\u003c64xi32, #ttg.slice\u003c{dim = 0, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.070195771,"data":"    %13 = tt.make_range {end = 32 : i32, start = 0 : i32} : tensor\u003c32xi32, #ttg.slice\u003c{dim = 0, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.07027104,"data":"    %14 = tt.make_range {end = 32 : i32, start = 0 : i32} : tensor\u003c32xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.070338339,"data":"    %15 = tt.expand_dims %8 {axis = 1 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked1}\u003e\u003e -\u003e tensor\u003c64x1xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070400919,"data":"    %16 = tt.splat %arg5 : i32 -\u003e tensor\u003c64x1xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070416011,"data":"    %17 = arith.muli %15, %16 : tensor\u003c64x1xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070492264,"data":"    %18 = tt.splat %arg0 : !tt.ptr\u003cf16\u003e -\u003e tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070574581,"data":"    %19 = tt.addptr %18, %17 : tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked1\u003e, tensor\u003c64x1xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070629747,"data":"    %20 = tt.broadcast %19 : tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked1\u003e -\u003e tensor\u003c64x32x!tt.ptr\u003cf16\u003e, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.070776414,"data":"    %21 = tt.splat %arg4 : i32 -\u003e tensor\u003c32x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.070788247,"data":"    %22 = tt.splat %arg1 : !tt.ptr\u003cf16\u003e -\u003e tensor\u003c32x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.070869907,"data":"    %23 = tt.expand_dims %12 {axis = 0 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 0, parent = #blocked2}\u003e\u003e -\u003e tensor\u003c1x64xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.070877077,"data":"    %24 = tt.broadcast %23 : tensor\u003c1x64xi32, #blocked2\u003e -\u003e tensor\u003c32x64xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071005585,"data":"    %25 = scf.for %arg6 = %c0_i32 to %arg5 step %c32_i32 iter_args(%arg7 = %cst) -\u003e (tensor\u003c64x64xf32, #blocked\u003e)  : i32 {\n"}
+,{"stream_name":"stdout","time":70.071012349,"data":"      %36 = tt.splat %arg6 : i32 -\u003e tensor\u003c32xi32, #ttg.slice\u003c{dim = 0, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.071077536,"data":"      %37 = tt.splat %arg6 : i32 -\u003e tensor\u003c32xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.071098991,"data":"      %38 = arith.addi %36, %13 : tensor\u003c32xi32, #ttg.slice\u003c{dim = 0, parent = #blocked1}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.071189467,"data":"      %39 = arith.addi %37, %14 : tensor\u003c32xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.071232945,"data":"      %40 = tt.expand_dims %38 {axis = 0 : i32} : tensor\u003c32xi32, #ttg.slice\u003c{dim = 0, parent = #blocked1}\u003e\u003e -\u003e tensor\u003c1x32xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.071333616,"data":"      %41 = tt.broadcast %40 : tensor\u003c1x32xi32, #blocked1\u003e -\u003e tensor\u003c64x32xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.071393162,"data":"      %42 = tt.addptr %20, %41 : tensor\u003c64x32x!tt.ptr\u003cf16\u003e, #blocked1\u003e, tensor\u003c64x32xi32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.071466741,"data":"      %43 = tt.load %42 : tensor\u003c64x32x!tt.ptr\u003cf16\u003e, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.071536118,"data":"      %44 = tt.expand_dims %39 {axis = 1 : i32} : tensor\u003c32xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e -\u003e tensor\u003c32x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.07158324,"data":"      %45 = arith.muli %44, %21 : tensor\u003c32x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071670421,"data":"      %46 = tt.addptr %22, %45 : tensor\u003c32x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e, tensor\u003c32x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071768673,"data":"      %47 = tt.broadcast %46 : tensor\u003c32x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e -\u003e tensor\u003c32x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071881918,"data":"      %48 = tt.addptr %47, %24 : tensor\u003c32x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e, tensor\u003c32x64xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071888402,"data":"      %49 = tt.load %48 : tensor\u003c32x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.071949805,"data":"      %50 = tt.fp_to_fp %43 : tensor\u003c64x32xf16, #blocked1\u003e -\u003e tensor\u003c64x32xf32, #blocked1\u003e\n"}
+,{"stream_name":"stdout","time":70.072006137,"data":"      %51 = ttg.local_alloc %50 : (tensor\u003c64x32xf32, #blocked1\u003e) -\u003e !ttg.memdesc\u003c64x32xf32, #shared, #smem\u003e\n"}
+,{"stream_name":"stdout","time":70.072055683,"data":"      %52 = ttg.local_load %51 : !ttg.memdesc\u003c64x32xf32, #shared, #smem\u003e -\u003e tensor\u003c64x32xf32, #ttg.dot_op\u003c{opIdx = 0, parent = #blocked}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.072109554,"data":"      %53 = tt.fp_to_fp %49 : tensor\u003c32x64xf16, #blocked2\u003e -\u003e tensor\u003c32x64xf32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072178874,"data":"      %54 = ttg.local_alloc %53 : (tensor\u003c32x64xf32, #blocked2\u003e) -\u003e !ttg.memdesc\u003c32x64xf32, #shared, #smem\u003e\n"}
+,{"stream_name":"stdout","time":70.072197463,"data":"      %55 = ttg.local_load %54 : !ttg.memdesc\u003c32x64xf32, #shared, #smem\u003e -\u003e tensor\u003c32x64xf32, #ttg.dot_op\u003c{opIdx = 1, parent = #blocked}\u003e\u003e\n"}
+,{"stream_name":"stdout","time":70.072330589,"data":"      %56 = tt.dot %52, %55, %arg7, inputPrecision = tf32 : tensor\u003c64x32xf32, #ttg.dot_op\u003c{opIdx = 0, parent = #blocked}\u003e\u003e * tensor\u003c32x64xf32, #ttg.dot_op\u003c{opIdx = 1, parent = #blocked}\u003e\u003e -\u003e tensor\u003c64x64xf32, #blocked\u003e\n"}
+,{"stream_name":"stdout","time":70.072337878,"data":"      scf.yield %56 : tensor\u003c64x64xf32, #blocked\u003e\n"}
+,{"stream_name":"stdout","time":70.072342175,"data":"    }\n"}
+,{"stream_name":"stdout","time":70.072447854,"data":"    %26 = tt.expand_dims %9 {axis = 1 : i32} : tensor\u003c64xi32, #ttg.slice\u003c{dim = 1, parent = #blocked2}\u003e\u003e -\u003e tensor\u003c64x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072462103,"data":"    %27 = tt.splat %arg4 : i32 -\u003e tensor\u003c64x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072535878,"data":"    %28 = arith.muli %26, %27 : tensor\u003c64x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072583606,"data":"    %29 = tt.splat %arg2 : !tt.ptr\u003cf16\u003e -\u003e tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.07267851,"data":"    %30 = tt.addptr %29, %28 : tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e, tensor\u003c64x1xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072731455,"data":"    %31 = tt.broadcast %30 : tensor\u003c64x1x!tt.ptr\u003cf16\u003e, #blocked2\u003e -\u003e tensor\u003c64x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072803316,"data":"    %32 = tt.broadcast %23 : tensor\u003c1x64xi32, #blocked2\u003e -\u003e tensor\u003c64x64xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072864253,"data":"    %33 = tt.addptr %31, %32 : tensor\u003c64x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e, tensor\u003c64x64xi32, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.072969745,"data":"    %34 = arith.truncf %25 : tensor\u003c64x64xf32, #blocked\u003e to tensor\u003c64x64xf16, #blocked\u003e\n"}
+,{"stream_name":"stdout","time":70.072977339,"data":"    %35 = ttg.convert_layout %34 : tensor\u003c64x64xf16, #blocked\u003e -\u003e tensor\u003c64x64xf16, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.073049671,"data":"    tt.store %33, %35 : tensor\u003c64x64x!tt.ptr\u003cf16\u003e, #blocked2\u003e\n"}
+,{"stream_name":"stdout","time":70.073055446,"data":"    tt.return\n"}
+,{"stream_name":"stdout","time":70.073059321,"data":"  }\n"}
+,{"stream_name":"stdout","time":70.073063091,"data":"}\n"}
+,{"stream_name":"stdout","time":70.073066749,"data":"\n"}
+,{"stream_name":"stdout","time":70.073070428,"data":"{-#\n"}
+,{"stream_name":"stdout","time":70.073081165,"data":"  external_resources: {\n"}
+,{"stream_name":"stdout","time":70.073085602,"data":"    mlir_reproducer: {\n"}
+,{"stream_name":"stdout","time":70.073955736,"data":"      pipeline: \"builtin.module(triton-nvidia-mma-lowering, tritongpu-combine-tensor-select-and-if, tritongpu-allocate-warp-groups, convert-scf-to-cf, allocate-shared-memory, triton-tensor-memory-allocation, tritongpu-global-scratch-memory-allocation, convert-triton-gpu-to-llvm{compute-capability=75 ptx-version=84}, canonicalize{  max-iterations=10 max-num-rewrites=-1 region-simplify=normal test-convergence=false top-down=true}, cse, convert-nv-gpu-to-llvm, convert-warp-specialize-to-llvm, canonicalize{  max-iterations=10 max-num-rewrites=-1 region-simplify=normal test-convergence=false top-down=true}, cse, symbol-dce, enable-line-info)\",\n"}
+,{"stream_name":"stdout","time":70.073986379,"data":"      disable_threading: false,\n"}
+,{"stream_name":"stdout","time":70.073991131,"data":"      verify_each: true\n"}
+,{"stream_name":"stdout","time":70.073994776,"data":"    }\n"}
+,{"stream_name":"stdout","time":70.073998408,"data":"  }\n"}
+,{"stream_name":"stdout","time":70.074002076,"data":"#-}\n"}
+,{"stream_name":"stdout","time":70.074056681,"data":"/tmp/flash-attn-triton/benchmarks/inspect_kernels.py:29:0: error: Failures have been detected while processing an MLIR pass pipeline\n"}
+,{"stream_name":"stdout","time":70.074067732,"data":"/tmp/flash-attn-triton/benchmarks/inspect_kernels.py:29:0: note: Pipeline failed while executing [`ConvertTritonGPUToLLVM` on 'builtin.module' operation]: reproducer generated at `std::errs, please share the reproducer above with Triton project.`\n"}
+,{"stream_name":"stdout","time":70.075205985,"data":"device Tesla T4 cc (7, 5) triton 3.3.1 torch 2.11.0+cu130\n"}
+,{"stream_name":"stdout","time":70.075222252,"data":"torch.mm 2048^3: 23.47 TFLOP/s\n"}
+,{"stream_name":"stdout","time":70.076389197,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stdout","time":70.077487716,"data":"  File \"/tmp/flash-attn-triton/benchmarks/inspect_kernels.py\", line 123, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":70.077503806,"data":"    main()\n"}
+,{"stream_name":"stdout","time":70.077508369,"data":"    ~~~~^^\n"}
+,{"stream_name":"stdout","time":70.077512053,"data":"  File \"/tmp/flash-attn-triton/benchmarks/inspect_kernels.py\", line 81, in main\n"}
+,{"stream_name":"stdout","time":70.077516193,"data":"    _matmul[grid](a, b, c, n, n, n, BM=bm, BN=bn, BK=bk, num_warps=w)\n"}
+,{"stream_name":"stdout","time":70.077520005,"data":"    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":70.077523421,"data":"  File \"/tmp/triton-3.3.1/triton/runtime/jit.py\", line 347, in \u003clambda\u003e\n"}
+,{"stream_name":"stdout","time":70.077527262,"data":"    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)\n"}
+,{"stream_name":"stdout","time":70.077530799,"data":"                                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":70.077534377,"data":"  File \"/tmp/triton-3.3.1/triton/runtime/jit.py\", line 569, in run\n"}
+,{"stream_name":"stdout","time":70.077537849,"data":"    kernel = self.compile(src, target=target, options=options.__dict__)\n"}
+,{"stream_name":"stdout","time":70.077541302,"data":"  File \"/tmp/triton-3.3.1/triton/compiler/compiler.py\", line 284, in compile\n"}
+,{"stream_name":"stdout","time":70.077544857,"data":"    next_module = compile_ir(module, metadata)\n"}
+,{"stream_name":"stdout","time":70.077548201,"data":"  File \"/tmp/triton-3.3.1/triton/backends/nvidia/compiler.py\", line 450, in \u003clambda\u003e\n"}
+,{"stream_name":"stdout","time":70.077551826,"data":"    stages[\"llir\"] = lambda src, metadata: self.make_llir(src, metadata, options, capability)\n"}
+,{"stream_name":"stdout","time":70.077555418,"data":"                                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":70.077559353,"data":"  File \"/tmp/triton-3.3.1/triton/backends/nvidia/compiler.py\", line 341, in make_llir\n"}
+,{"stream_name":"stdout","time":70.07756334,"data":"    pm.run(mod)\n"}
+,{"stream_name":"stdout","time":70.077566591,"data":"    ~~~~~~^^^^^\n"}
+,{"stream_name":"stdout","time":70.077570058,"data":"RuntimeError: PassManager::run failed\n"}
+,{"stream_name":"stdout","time":70.634175917,"data":"\n"}
+,{"stream_name":"stdout","time":70.634209162,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.4.0 triton==3.4.0\n"}
+,{"stream_name":"stdout","time":77.251518641,"data":"\n"}
+,{"stream_name":"stdout","time":77.251554546,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 PYTHONPATH=/tmp/triton-3.4.0:/tmp/flash-attn-triton/src /usr/bin/python3 benchmarks/inspect_kernels.py\n"}
+,{"stream_name":"stdout","time":242.604757975,"data":"device Tesla T4 cc (7, 5) triton 3.4.0 torch 2.11.0+cu130\n"}
+,{"stream_name":"stdout","time":242.604797192,"data":"torch.mm 2048^3: 18.09 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604801764,"data":"triton matmul BM=64 BN=64 BK=32 w=4: 1.19 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.60480482,"data":"triton matmul BM=128 BN=128 BK=32 w=8: 0.09 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604807747,"data":"triton matmul BM=128 BN=64 BK=32 w=4: 0.23 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604810749,"data":"  matmul variant: regs=255 spills=86 ptx: mma.sync=0 fma=1024 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604813715,"data":"  matmul variant: regs=64 spills=786 ptx: mma.sync=0 fma=2048 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604816584,"data":"  matmul variant: regs=168 spills=530 ptx: mma.sync=0 fma=2048 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604819497,"data":"\n"}
+,{"stream_name":"stdout","time":242.604822344,"data":"d=64 sdpa_mem fwd: 11.30 ms 12.16 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604825171,"data":"d=64 triton fwd BM=64 BN=32 w=4: 112.66 ms 1.22 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604828018,"data":"d=64 triton fwd BM=64 BN=64 w=4: 329.21 ms 0.42 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604830922,"data":"d=64 triton fwd BM=128 BN=32 w=8: 108.49 ms 1.27 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.60483386,"data":"d=64 triton fwd BM=128 BN=64 w=8: 303.53 ms 0.45 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604837271,"data":"d=64 triton fwd BM=32 BN=32 w=2: 127.55 ms 1.08 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604855598,"data":"d=64 triton bwd (default configs): 628.85 ms 0.55 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.60486077,"data":"\n"}
+,{"stream_name":"stdout","time":242.604865433,"data":"d=128 sdpa_mem fwd: 11.87 ms 11.58 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604870432,"data":"d=128 triton fwd BM=64 BN=32 w=4: 756.96 ms 0.18 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604875019,"data":"d=128 triton fwd BM=64 BN=64 w=4: 1053.88 ms 0.13 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604879322,"data":"d=128 BM=128 BN=32 w=8: OutOfResources out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.\n"}
+,{"stream_name":"stdout","time":242.604883885,"data":"d=128 BM=128 BN=64 w=8: OutOfResources out of resource: shared memory, Required: 98304, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.\n"}
+,{"stream_name":"stdout","time":242.604888475,"data":"d=128 triton fwd BM=32 BN=32 w=2: 1152.28 ms 0.12 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604892634,"data":"d=128 triton bwd (default configs): 1915.56 ms 0.18 TFLOP/s\n"}
+,{"stream_name":"stdout","time":242.604898709,"data":"\n"}
+,{"stream_name":"stdout","time":242.604905744,"data":"compiled forward variants:\n"}
+,{"stream_name":"stdout","time":242.604908661,"data":"  regs=255 spills=100 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.60491151,"data":"  regs=128 spills=536 ptx: mma.sync=0 fma=8240 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604914343,"data":"  regs=255 spills=94 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604926058,"data":"  regs=128 spills=522 ptx: mma.sync=0 fma=8240 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604928527,"data":"  regs=255 spills=110 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604930802,"data":"  regs=72 spills=876 ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604933085,"data":"  regs=64 spills=1560 ptx: mma.sync=0 fma=16432 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604935432,"data":"  regs=? spills=? ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604949556,"data":"  regs=? spills=? ptx: mma.sync=0 fma=16432 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604954542,"data":"  regs=64 spills=1014 ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604958809,"data":"compiled backward variants:\n"}
+,{"stream_name":"stdout","time":242.604962219,"data":"  _attn_bwd_dkdv: regs=255 spills=298 ptx: mma.sync=0 fma=8208 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604966347,"data":"  _attn_bwd_dkdv: regs=168 spills=1226 ptx: mma.sync=0 fma=16400 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604970106,"data":"  _attn_bwd_dq: regs=255 spills=156 ptx: mma.sync=0 fma=6160 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":242.604973853,"data":"  _attn_bwd_dq: regs=168 spills=656 ptx: mma.sync=0 fma=12304 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":243.210896632,"data":"\n"}
+,{"stream_name":"stdout","time":243.210924326,"data":"$ /usr/bin/python3 -m pip install -q --no-deps --target /tmp/triton-3.5.1 triton==3.5.1\n"}
+,{"stream_name":"stdout","time":249.768197032,"data":"\n"}
+,{"stream_name":"stdout","time":249.768233632,"data":"$ cd /tmp/flash-attn-triton \u0026\u0026 PYTHONPATH=/tmp/triton-3.5.1:/tmp/flash-attn-triton/src /usr/bin/python3 benchmarks/inspect_kernels.py\n"}
+,{"stream_name":"stdout","time":416.305811036,"data":"device Tesla T4 cc (7, 5) triton 3.5.1 torch 2.11.0+cu130\n"}
+,{"stream_name":"stdout","time":416.305857307,"data":"torch.mm 2048^3: 19.44 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305880271,"data":"triton matmul BM=64 BN=64 BK=32 w=4: 1.27 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305884587,"data":"triton matmul BM=128 BN=128 BK=32 w=8: 0.09 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305889029,"data":"triton matmul BM=128 BN=64 BK=32 w=4: 0.10 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305893391,"data":"  matmul variant: regs=255 spills=80 ptx: mma.sync=0 fma=1024 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.305898084,"data":"  matmul variant: regs=64 spills=970 ptx: mma.sync=0 fma=2048 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.305902515,"data":"  matmul variant: regs=64 spills=970 ptx: mma.sync=0 fma=2048 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.305906839,"data":"\n"}
+,{"stream_name":"stdout","time":416.30591131,"data":"d=64 sdpa_mem fwd: 13.06 ms 10.53 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305915693,"data":"d=64 triton fwd BM=64 BN=32 w=4: 120.27 ms 1.14 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305920052,"data":"d=64 triton fwd BM=64 BN=64 w=4: 300.84 ms 0.46 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305924405,"data":"d=64 triton fwd BM=128 BN=32 w=8: 116.23 ms 1.18 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305928737,"data":"d=64 triton fwd BM=128 BN=64 w=8: 324.12 ms 0.42 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305933126,"data":"d=64 triton fwd BM=32 BN=32 w=2: 144.24 ms 0.95 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305937447,"data":"d=64 triton bwd (default configs): 645.13 ms 0.53 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305941639,"data":"\n"}
+,{"stream_name":"stdout","time":416.305959434,"data":"d=128 sdpa_mem fwd: 12.74 ms 10.79 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305963351,"data":"d=128 triton fwd BM=64 BN=32 w=4: 815.54 ms 0.17 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305967075,"data":"d=128 triton fwd BM=64 BN=64 w=4: 1210.69 ms 0.11 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305970567,"data":"d=128 BM=128 BN=32 w=8: OutOfResources out of resource: shared memory, Required: 81920, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.\n"}
+,{"stream_name":"stdout","time":416.305974433,"data":"d=128 BM=128 BN=64 w=8: OutOfResources out of resource: shared memory, Required: 98304, Hardware limit: 65536. Reducing block sizes or `num_stages` may help.\n"}
+,{"stream_name":"stdout","time":416.305978,"data":"d=128 triton fwd BM=32 BN=32 w=2: 1214.67 ms 0.11 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305981445,"data":"d=128 triton bwd (default configs): 1661.25 ms 0.21 TFLOP/s\n"}
+,{"stream_name":"stdout","time":416.305984902,"data":"\n"}
+,{"stream_name":"stdout","time":416.305988119,"data":"compiled forward variants:\n"}
+,{"stream_name":"stdout","time":416.305991718,"data":"  regs=255 spills=108 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.305995259,"data":"  regs=168 spills=584 ptx: mma.sync=0 fma=8240 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.305998684,"data":"  regs=255 spills=82 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306002025,"data":"  regs=128 spills=584 ptx: mma.sync=0 fma=8240 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306005681,"data":"  regs=255 spills=128 ptx: mma.sync=0 fma=4120 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306009416,"data":"  regs=72 spills=1014 ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306013493,"data":"  regs=64 spills=1844 ptx: mma.sync=0 fma=16432 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306016997,"data":"  regs=? spills=? ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306020911,"data":"  regs=? spills=? ptx: mma.sync=0 fma=16432 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306025789,"data":"  regs=64 spills=1264 ptx: mma.sync=0 fma=8216 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306029061,"data":"compiled backward variants:\n"}
+,{"stream_name":"stdout","time":416.306032555,"data":"  _attn_bwd_dkdv: regs=255 spills=304 ptx: mma.sync=0 fma=8208 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306036473,"data":"  _attn_bwd_dkdv: regs=255 spills=1110 ptx: mma.sync=0 fma=16400 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.3060399,"data":"  _attn_bwd_dq: regs=255 spills=174 ptx: mma.sync=0 fma=6160 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.306043389,"data":"  _attn_bwd_dq: regs=255 spills=762 ptx: mma.sync=0 fma=12304 local_ld_st=0\n"}
+,{"stream_name":"stdout","time":416.922778996,"data":"failed stages: []\n"}
+,{"stream_name":"stderr","time":418.94856722,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":418.948601081,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":419.189503746,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":419.189546107,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":419.960175103,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":420.884488389,"data":"[NbConvertApp] Writing 291507 bytes to __results__.html\n"}
+]

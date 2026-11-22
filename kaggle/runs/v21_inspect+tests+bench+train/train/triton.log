@@ -1,0 +1,35 @@
+W1122 18:04:40.644000 3572 torch/distributed/run.py:851] 
+W1122 18:04:40.644000 3572 torch/distributed/run.py:851] *****************************************
+W1122 18:04:40.644000 3572 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1122 18:04:40.644000 3572 torch/distributed/run.py:851] *****************************************
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W1122 18:04:43.437813854 ProcessGroupNCCL.cpp:5188] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+attn=triton params=19.45M world=2 tokens/step=16384
+{"step": 100, "train_loss": 2.496239185333252, "lr": 0.001, "step_ms": 100.09507499989923}
+{"step": 200, "train_loss": 2.4123594760894775, "lr": 0.0009939844482079717, "step_ms": 99.60455999998885}
+{"step": 250, "train_loss": 2.4078798294067383, "lr": 0.000986412179550874, "step_ms": 106.83784599996216, "val_loss": 2.4611454010009766}
+{"step": 300, "train_loss": 2.3683204650878906, "lr": 0.0009758587731913156, "step_ms": 109.75123200023518}
+{"step": 400, "train_loss": 1.9688727855682373, "lr": 0.0009461167809729686, "step_ms": 108.13943799985282}
+{"step": 500, "train_loss": 1.702357530593872, "lr": 0.0009055697555690607, "step_ms": 101.90092699986053, "val_loss": 1.8584389686584473}
+{"step": 600, "train_loss": 1.5375064611434937, "lr": 0.0008553237141344035, "step_ms": 101.06499899984556}
+{"step": 700, "train_loss": 1.413456678390503, "lr": 0.0007967492376976802, "step_ms": 99.2118180001853}
+{"step": 750, "train_loss": 1.321771264076233, "lr": 0.0007648304162799347, "step_ms": 99.19896900009917, "val_loss": 1.5957404375076294}
+{"step": 800, "train_loss": 1.3307969570159912, "lr": 0.0007314440852838206, "step_ms": 99.3503839999903}
+{"step": 900, "train_loss": 1.279889464378357, "lr": 0.0006611896112128479, "step_ms": 101.83919600012814}
+{"step": 1000, "train_loss": 1.2114017009735107, "lr": 0.0005879021743976725, "step_ms": 101.32285600002433, "val_loss": 1.5256839990615845}
+{"step": 1100, "train_loss": 1.1128973960876465, "lr": 0.0005135808650685232, "step_ms": 99.76889500012476}
+{"step": 1200, "train_loss": 1.0798864364624023, "lr": 0.0004402529748027052, "step_ms": 100.80601899971953}
+{"step": 1250, "train_loss": 1.070967435836792, "lr": 0.0004045891843912986, "step_ms": 101.76849399977073, "val_loss": 1.5551766157150269}
+{"step": 1300, "train_loss": 1.0255773067474365, "lr": 0.0003699186972951266, "step_ms": 100.12922199985042}
+{"step": 1400, "train_loss": 0.937584400177002, "lr": 0.0003044965682884168, "step_ms": 100.01810099993236}
+{"step": 1500, "train_loss": 0.858707070350647, "lr": 0.00024577113291911624, "step_ms": 100.36075099969821, "val_loss": 1.6539015769958496}
+{"step": 1600, "train_loss": 0.7977354526519775, "lr": 0.00019534426797831518, "step_ms": 100.57776400026341}
+{"step": 1700, "train_loss": 0.7566118240356445, "lr": 0.00015459148688857239, "step_ms": 100.82591499985938}
+{"step": 1750, "train_loss": 0.7241296768188477, "lr": 0.00013820145226638113, "step_ms": 100.37085400017531, "val_loss": 1.8274106979370117}
+{"step": 1800, "train_loss": 0.6933742761611938, "lr": 0.00012462441928344452, "step_ms": 99.24376599974494}
+{"step": 1900, "train_loss": 0.661777913570404, "lr": 0.00010626048864888435, "step_ms": 101.02103300005183}
+{"step": 2000, "train_loss": 0.6157607436180115, "lr": 0.00010000061514140841, "step_ms": 100.51177100012865, "val_loss": 2.007744789123535}
+{"attn": "triton", "attn_backend": "flash_attn_triton", "params_m": 19.445248, "world_size": 2, "steps": 2000, "resumed_from": 0, "tokens_per_sec": 161476.6855173291, "timed_steps": 1980, "peak_mem_mb_per_gpu": [1392.3, 1392.3], "gpu": "Tesla T4", "torch": "2.11.0+cu130", "args": {"attn": "triton", "out": "/kaggle/working/train/triton", "data_dir": "/kaggle/working/train/data", "steps": 2000, "batch": 8, "ctx": 1024, "layers": 6, "width": 512, "heads": 8, "lr": 0.001, "warmup": 100, "eval_every": 250, "eval_batches": 10, "ckpt_every": 250, "log_every": 10, "timing_skip": 20, "seed": 1234, "resume_dir": null}}

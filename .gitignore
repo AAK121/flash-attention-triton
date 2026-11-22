@@ -10,3 +10,4 @@ NOTES.md
 kaggle/_staging/
 *.pt
 kaggle/out/
+kaggle/runs/**/data/
