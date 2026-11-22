@@ -3,7 +3,7 @@ from __future__ import annotations
 import torch
 
 from ._bwd import attn_backward, attn_backward_varlen
-from ._device import bf16_supported, interpreting
+from ._device import bf16_supported, interpreting, warn_if_dot_lacks_tensor_cores
 from ._fwd import attn_forward, attn_forward_varlen
 
 _SUPPORTED_HEAD_DIMS = (16, 32, 64, 128)
@@ -35,6 +35,8 @@ def _check_inputs(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> None:
         raise ValueError("q, k, v must be on the same device")
     if q.device.type != "cuda" and not interpreting():
         raise ValueError("inputs must be CUDA tensors (or set TRITON_INTERPRET=1 for CPU)")
+    if q.device.type == "cuda":
+        warn_if_dot_lacks_tensor_cores(q.device)
 
 
 def _check_window(window_size: tuple[int, int] | None) -> tuple[int, int] | None:
