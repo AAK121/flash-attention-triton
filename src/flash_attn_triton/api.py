@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import torch
 
-from ._bwd import attn_backward
+from ._bwd import attn_backward, attn_backward_varlen
 from ._device import bf16_supported, interpreting
-from ._fwd import attn_forward
+from ._fwd import attn_forward, attn_forward_varlen
 
 _SUPPORTED_HEAD_DIMS = (16, 32, 64, 128)
 
@@ -94,3 +94,62 @@ def flash_attention(
     _check_inputs(q, k, v)
     window = _check_window(window_size)
     return FlashAttentionFunction.apply(q, k, v, causal, sm_scale, window)
+
+
+class FlashAttentionVarlenFunction(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, q, k, v, cu_q, cu_k, max_q, max_k, causal, sm_scale, window):
+        o, lse = attn_forward_varlen(q, k, v, cu_q, cu_k, max_q, max_k, causal, sm_scale, window)
+        ctx.save_for_backward(q, k, v, o, lse, cu_q, cu_k)
+        ctx.args = (max_q, max_k, causal, sm_scale, window)
+        return o
+
+    @staticmethod
+    def backward(ctx, do):
+        q, k, v, o, lse, cu_q, cu_k = ctx.saved_tensors
+        max_q, max_k, causal, sm_scale, window = ctx.args
+        dq, dk, dv = attn_backward_varlen(
+            do, q, k, v, o, lse, cu_q, cu_k, max_q, max_k, causal, sm_scale, window
+        )
+        return dq, dk, dv, None, None, None, None, None, None, None
+
+
+def flash_attention_varlen(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    cu_seqlens_q: torch.Tensor,
+    cu_seqlens_k: torch.Tensor,
+    max_seqlen_q: int,
+    max_seqlen_k: int,
+    causal: bool = False,
+    sm_scale: float | None = None,
+    window_size: tuple[int, int] | None = None,
+) -> torch.Tensor:
+    """Attention over a packed batch of sequences with different lengths.
+
+    Args:
+        q: (total_q, heads, head_dim), all query sequences concatenated.
+        k, v: (total_k, kv_heads, head_dim).
+        cu_seqlens_q, cu_seqlens_k: int32 tensors of length batch + 1 with the
+            running offsets; sequence b is q[cu_seqlens_q[b]:cu_seqlens_q[b + 1]].
+        max_seqlen_q, max_seqlen_k: longest sequence in the batch; sizes the grid.
+        causal, sm_scale, window_size: as in flash_attention, per sequence.
+
+    No padding is stored or computed: programs beyond a sequence's length exit
+    immediately.
+    """
+    if q.ndim != 3 or k.ndim != 3 or v.ndim != 3:
+        raise ValueError("packed q, k, v must have shape (tokens, heads, head_dim)")
+    # Reuse the dense checks on (1, heads, tokens, dim) views of the packed tensors.
+    _check_inputs(*(t.transpose(0, 1).unsqueeze(0) for t in (q, k, v)))
+    for name, cu in (("cu_seqlens_q", cu_seqlens_q), ("cu_seqlens_k", cu_seqlens_k)):
+        if cu.dtype != torch.int32 or cu.ndim != 1 or cu.device != q.device:
+            raise ValueError(f"{name} must be a 1-D int32 tensor on the inputs' device")
+    if cu_seqlens_q.numel() != cu_seqlens_k.numel():
+        raise ValueError("cu_seqlens_q and cu_seqlens_k must describe the same batch")
+    window = _check_window(window_size)
+    return FlashAttentionVarlenFunction.apply(
+        q, k, v, cu_seqlens_q, cu_seqlens_k, int(max_seqlen_q), int(max_seqlen_k),
+        causal, sm_scale, window,
+    )

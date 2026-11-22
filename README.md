@@ -2,7 +2,8 @@
 
 FlashAttention-2 written from scratch in Triton: forward and backward kernels
 behind a `torch.autograd.Function`, with grouped-query and sliding-window
-attention. Work in progress: benchmarks and the training demo follow.
+attention and variable-length packed batches. Work in progress: benchmark
+results and the training demo results follow.
 
 ## Install
 
@@ -41,6 +42,7 @@ attends keys `j` with `i + off - left <= j <= i + off + right`, `off = seq_k - s
 | Backward (dQ, dK, dV), deterministic, no atomics | done |
 | GQA/MQA (`kv_heads` dividing `heads`), dK/dV summed over the group in-kernel | done |
 | Sliding window `window_size=(left, right)`, with tile skipping outside it | done |
+| Variable-length packed batches (`flash_attention_varlen`, `cu_seqlens`) | done |
 | Benchmarks, training demo | planned |
 
 ## Tests
