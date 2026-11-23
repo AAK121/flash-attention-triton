@@ -11,3 +11,6 @@ kaggle/_staging/
 *.pt
 kaggle/out/
 kaggle/runs/**/data/
+docs/report/main.pdf
+docs/report/*.blg
+docs/report/*.log

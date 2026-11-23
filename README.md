@@ -12,6 +12,10 @@ FlashAttention-2 benchmark sweep. As a drop-in replacement for SDPA in a 19M
 parameter GPT trained with DDP on two T4s, it trains 5.6% faster with matching
 loss curves.
 
+The full write-up is a technical report in paper format:
+[docs/report/flash_attention_triton_report.pdf](docs/report/flash_attention_triton_report.pdf)
+(LaTeX source in `docs/report/`, built with Tectonic).
+
 ![forward+backward throughput, head_dim 64](benchmarks/plots/tflops_fwd_bwd_d64.png)
 
 ## Results
@@ -29,7 +33,7 @@ batch, model width 2048. Throughput at N=16k, in TFLOP/s:
 
 Forward+backward peak memory is 708 MB against 900 MB for SDPA
 mem-efficient, flat in N; naive attention and SDPA math run out of the T4's
-15 GB at N = 4096.
+15 GB from N = 2048 (from N = 4096 for the forward pass alone).
 
 The full sweep (N = 256 to 16k, every mode), the method, and an analysis of
 where the remaining 62% of peak goes are in

@@ -70,7 +70,8 @@ takes 410 ms against 826 ms.
 
 The two tiled kernels use memory that does not depend on N at a fixed token
 count, because nothing of size N² is ever materialized. Both naive and math
-attention run out of the T4's 15 GB at N = 4096.
+attention run out of the T4's 15 GB from N = 2048 in this mode (from 4096 for the
+forward pass alone).
 
 ## Analysis
 
