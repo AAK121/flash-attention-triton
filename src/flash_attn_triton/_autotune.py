@@ -64,21 +64,14 @@ def search_space() -> list[triton.Config]:
     ]
 
 
-# Shared-memory estimates, in elements. Each is conservative: rejecting a config
-# that would have fit only loses a candidate, while accepting one that does not
-# fit costs a compile that Triton then discards. Matrices that are converted from
-# the accumulator layout to an MMA operand layout (P, dS) round-trip through
-# shared memory and are counted too.
-
-
-# These are lower bounds on the shared memory a config needs: the streamed
-# operand tiles (once per pipeline stage) plus one fp16 tile for the layout
-# conversion of P or dS before the second matmul. Anything above the device
-# limit is certainly infeasible and is pruned before compiling. Whether a
-# config near the limit fits depends on the compiler release (Triton 3.2 keeps
-# the resident operand in registers on sm75, 3.6 stages it through shared
-# memory as well), so those cases are left to the compiler; the autotuner
-# drops a config that fails with OutOfResources.
+# Shared-memory estimates, in elements, used as lower bounds: the streamed
+# operand tiles (once per pipeline stage) plus one fp16 tile for converting P or
+# dS from the accumulator layout to an MMA operand layout. A config above the
+# device limit cannot fit and is pruned before compiling. How much more a config
+# really needs depends on the compiler release (measured on a T4: BLOCK 128x64 at
+# d=128 needs 98 KB under Triton 3.6 and fits in 64 KB under 3.2), so configs
+# near the limit are left to the compiler, and the autotuner drops any that
+# fail with OutOfResources.
 
 
 def smem_forward(bm: int, bn: int, d: int, stages: int) -> int:
