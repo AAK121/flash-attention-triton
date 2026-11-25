@@ -12,7 +12,7 @@ FlashAttention-2 benchmark sweep. As a drop-in replacement for SDPA in a 19M
 parameter GPT trained with DDP on two T4s, it trains 5.6% faster with matching
 loss curves.
 
-The full write-up is a technical report in paper format:
+The full write-up, in paper format:
 [docs/report/flash_attention_triton_report.pdf](docs/report/flash_attention_triton_report.pdf)
 (LaTeX source in `docs/report/`, built with Tectonic).
 

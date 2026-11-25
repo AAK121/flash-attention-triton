@@ -1,4 +1,4 @@
-% FlashAttention-2 in Triton: technical report (CVPR author-kit layout).
+% FlashAttention-2 in Triton (CVPR author-kit layout).
 % Build: tectonic main.tex
 
 \documentclass[10pt,twocolumn,letterpaper]{article}
@@ -31,8 +31,7 @@
 \algrenewcommand\algorithmiccomment[1]{\hfill$\triangleright$ #1}
 
 \title{FlashAttention-2 from Scratch in Triton:\\
-Exact Tiled Attention on a Tesla T4\\[4pt]
-{\large Independent Project Technical Report}}
+Exact Tiled Attention on a Tesla T4}
 
 \author{Alok Kale\\
 Indian Institute of Technology Bombay}
@@ -79,10 +78,9 @@ writes the score matrix to HBM. FlashAttention-2~\cite{dao2024flashattention2}
 reorders the loops and the work split between warps so that more of the
 runtime is spent in matrix-multiply units.
 
-This report describes a from-scratch implementation of FlashAttention-2 in
-Triton~\cite{tillet2019triton}, evaluated on the hardware we had: Kaggle's
-2$\times$ Tesla T4 (Turing, sm75). The T4 is a demanding target for tiled
-kernels. It has 64\,KB of shared memory per SM, no asynchronous global-to-shared
+We present a from-scratch implementation of FlashAttention-2 in
+Triton~\cite{tillet2019triton}, evaluated on 2$\times$ Tesla T4 GPUs
+(Turing, sm75). The T4 is a demanding target for tiled kernels. It has 64\,KB of shared memory per SM, no asynchronous global-to-shared
 copies, and no bf16 tensor cores.
 
 Our contributions are:
